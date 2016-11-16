@@ -31,6 +31,8 @@ class RoulettePane extends StackPane {
     fill = Color.Black
   }
 
+  private val mRoulette = new ChoiceArc(200, 0, 30)
+
   private val mCursorArcPane = new FlowPane() {
     children = new Arc() {
       `type` = ArcType.Round
@@ -51,7 +53,7 @@ class RoulettePane extends StackPane {
     fill = Color.White
   }
 
-  children = List(mBackgroundCircle, mCursorArcPane, mCenterCircle)
+  children = List(mBackgroundCircle, mCenterCircle, mRoulette, mCursorArcPane)
 
   alignment = Pos.Center
   margin = Insets(10)
