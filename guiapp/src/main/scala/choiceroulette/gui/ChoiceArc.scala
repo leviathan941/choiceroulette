@@ -1,3 +1,19 @@
+/*
+ * Copyright 2016 Alexey Kuzin <amkuzink@gmail.com>
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package choiceroulette.gui
 
 import scalafx.scene.Group
@@ -27,17 +43,32 @@ class ChoiceArc(radius: Double,
     stroke = Color.Red
     strokeType = StrokeType.Inside
     fill = Color.Aqua
-
   }
 
   private val mBackRectangle = Rectangle(2 * radius, 2 * radius, Color.Transparent)
 
   private val mText = new Text("Choice") {
-    stroke = Color.White
+    stroke = Color.Blue
   }
 
   private def rotateText(text: Text): Unit = {
     text.transforms.add(new Rotate(-(angleStart + angleLength / 2), radius, radius))
+  }
+
+  private def getArcCenter(arc: Arc): (Double, Double) = {
+    val chordLen = 2 * arc.radiusX.value * math.sin(arc.length.value / 2)
+    val arcCenter = (arc.centerX.value, arc.centerY.value)
+    val arcRadius = arc.radiusX.value
+
+    val (x1, y1) = getCirclePointCoordinates(arcCenter, arcRadius, arc.startAngle.value)
+    val (x2, y2) = getCirclePointCoordinates(arcCenter, arcRadius, arc.startAngle.value + arc.length.value)
+  }
+
+  private def getCirclePointCoordinates(center: (Double, Double),
+                                        radius: Double,
+                                        angle: Double): (Double, Double) = {
+    (center._1 + radius * math.cos(angle),
+      center._2 + radius * math.sin(angle))
   }
 
   rotateText(mText)
