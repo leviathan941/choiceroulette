@@ -18,15 +18,15 @@ package choiceroulette.gui
 
 import scala.language.implicitConversions
 import scalafx.beans.property.DoubleProperty
-import scalafx.geometry.Pos
 import scalafx.scene.Group
 import scalafx.scene.layout.StackPane
 import scalafx.scene.paint.Color
 import scalafx.scene.shape._
 import scalafx.scene.text.Text
-import scalafx.scene.transform.{Rotate, Translate}
+import scalafx.scene.transform.Rotate
 
-/**
+/** Choice arc for the roulette.
+  *
   * @author Alexey Kuzin <amkuzink@gmail.com>
   */
 class ChoiceArc(radius: Double,
@@ -45,7 +45,7 @@ class ChoiceArc(radius: Double,
     strokeLineCap = StrokeLineCap.Butt
     stroke = Color.Red
     strokeType = StrokeType.Inside
-    fill = Color.Aqua
+    fill = Color.Aquamarine
   }
 
   private val mBackRectangle = Rectangle(2 * radius, 2 * radius, Color.Transparent)

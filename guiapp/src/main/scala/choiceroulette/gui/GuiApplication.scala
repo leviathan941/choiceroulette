@@ -23,13 +23,14 @@ import scalafx.scene.Scene
 import scalafx.scene.layout.{Priority, VBox}
 import scalafx.scene.paint.Color
 
-/**
+/** Main GUI application class.
+  *
   * @author Alexey Kuzin <amkuzink@gmail.com>
   */
 object GuiApplication extends JFXApp {
 
   private val mAppMenuBar = new AppMenuBar
-  private val mRoulettePane = new RoulettePane
+  private val mRoulettePane = new RoulettePane(200)
 
   stage = new PrimaryStage {
     title = "Choice Roulette"

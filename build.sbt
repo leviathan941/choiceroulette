@@ -44,7 +44,7 @@ lazy val root: Project = (project in srcPath).
 lazy val guiApp: Project = (project in srcPath / "guiapp").
   settings(commonSettings: _*).
   settings(
-    name := "choiceroulette-cli",
+    name := "choiceroulette-gui",
     description := "GUI for choice roulette",
     libraryDependencies ++= Seq(
       scalaFx withJavadoc() withSources()

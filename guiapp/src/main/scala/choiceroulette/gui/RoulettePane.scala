@@ -21,39 +21,49 @@ import scalafx.scene.layout.{FlowPane, StackPane}
 import scalafx.scene.paint.Color
 import scalafx.scene.shape.{Arc, ArcType, Circle}
 
-/**
+/** Pane for roulette view.
+  *
   * @author Alexey Kuzin <amkuzink@gmail.com>
   */
-class RoulettePane extends StackPane {
+class RoulettePane(private val radius: Double) extends StackPane { pane =>
 
   private val mBackgroundCircle = new Circle() {
-    radius = 200
+    radius = pane.radius
     fill = Color.Black
   }
 
-  private val mRoulette = new ChoiceArc(200, 0, 30)
+  private val mRoulette = createRouletteSectors(16)
 
   private val mCursorArcPane = new FlowPane() {
     children = new Arc() {
       `type` = ArcType.Round
-      radiusX = 35
-      radiusY = 100
+      radiusX = pane.radius / 6
+      radiusY = pane.radius / 2
       startAngle = 170
       length = 20
-      fill = Color.White
+      fill = Color.Black
     }
 
-    maxWidth = 400
-    maxHeight = 400
+    maxWidth = 2 * radius
+    maxHeight = 2 * radius
     alignment = Pos.CenterLeft
   }
 
   private val mCenterCircle = new Circle() {
-    radius = 20
-    fill = Color.White
+    radius = pane.radius / 10
+    fill = Color.Black
   }
 
-  children = List(mBackgroundCircle, mCenterCircle, mRoulette, mCursorArcPane)
+  private def createRouletteSectors(number: Int): List[ChoiceArc] = {
+    val angles = Range.Double.inclusive(0, 360, 360.0 / number)
+    for (idx <- angles.indices.toList
+      if idx != 0 && idx < angles.size;
+      startAngle = angles(idx - 1);
+      angleLen = angles(idx) - startAngle
+    ) yield new ChoiceArc(pane.radius, startAngle, angleLen)
+  }
+
+  children = mBackgroundCircle :: mRoulette ::: mCenterCircle :: mCursorArcPane :: Nil
 
   alignment = Pos.Center
   margin = Insets(10)

@@ -20,7 +20,8 @@ import scalafx.Includes.handle
 import scalafx.geometry.Insets
 import scalafx.scene.control.{Menu, MenuBar, MenuItem}
 
-/**
+/** Application menu bar.
+  *
   * @author Alexey Kuzin <amkuzink@gmail.com>
   */
 class AppMenuBar extends MenuBar {
