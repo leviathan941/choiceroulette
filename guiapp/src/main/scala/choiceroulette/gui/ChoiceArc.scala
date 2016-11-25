@@ -54,7 +54,7 @@ class ChoiceArc(radius: Double,
     stroke = Color.Blue
   }
 
-  private def getArcCenter(arc: Arc): (Double, Double) = {
+  private def getTextPoint(arc: Arc): (Double, Double) = {
     val arcStartAngleRad = math.toRadians(arc.startAngle)
     val acrLenAngleRad = math.toRadians(arc.length)
     val arcRadius: Double = arc.radiusX
@@ -63,14 +63,13 @@ class ChoiceArc(radius: Double,
     val p1 = getCirclePointCoordinates(arcCenter, arcRadius, arcStartAngleRad)
     val p2 = getCirclePointCoordinates(arcCenter, arcRadius, arcStartAngleRad + acrLenAngleRad)
 
-    getArcCenter(arcCenter, p2, p1)
+    getTextStartPoint(p1, p2)
   }
 
-  private def getArcCenter(p1: (Double, Double),
-                           p2: (Double, Double),
-                           p3: (Double, Double)): (Double, Double) = {
-    val x = (p1._1 + p2._1 + p3._1) / 3
-    val y = (p1._2 + p2._2 + p3._2) / 3
+  private def getTextStartPoint(p1: (Double, Double),
+                                p2: (Double, Double)): (Double, Double) = {
+    val x = (p1._1 + p2._1) / 2
+    val y = (p1._2 + p2._2) / 2
     (x, y)
   }
 
@@ -84,8 +83,7 @@ class ChoiceArc(radius: Double,
   implicit def double2DoubleProperty(number: Double): DoubleProperty = DoubleProperty(number)
   implicit def doubleProperty2Double(property: DoubleProperty): Double = property.value
 
-  mText.moveToArcCenter(mArc)
-  mText.rotateTextToArc(mArc)
+  mText.moveInsideArc(mArc)
 
   children = new Group(mBackRectangle, mArc, mText)
   minHeight = 0
@@ -95,14 +93,20 @@ class ChoiceArc(radius: Double,
 
   private class UpdatableText(text: String) extends Text(text) { thisText =>
 
-    def moveToArcCenter(arc: Arc): Unit = {
-      val (x, y) = getArcCenter(arc)
-      relocate(x, y)
+    def moveInsideArc(arc: Arc): Unit = {
+      val angle = math.toRadians(rotateTextToArc(arc))
+      val (x, y) = getTextPoint(arc)
+
+      val shift = thisText.layoutBounds.value.getHeight / 2
+      val dx = shift * math.sin(angle)
+      val dy = shift * math.cos(angle)
+      relocate(x + dx, y - dy)
     }
 
-    def rotateTextToArc(arc: Arc): Unit = {
-      val angle = -(arc.startAngle.value + arc.length.value / 2)
-      transforms.add(new Rotate(angle, 0, 0))
+    private def rotateTextToArc(arc: Arc): Double = {
+      val angle = 180 - arc.startAngle.value - arc.length.value / 2
+      transforms.add(new Rotate(angle, layoutBounds.value.getMinX, layoutBounds.value.getMinY))
+      angle
     }
   }
 }
