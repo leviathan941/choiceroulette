@@ -16,22 +16,23 @@
 
 package choiceroulette.gui
 
-import scalafx.application.JFXApp
-import scalafx.application.JFXApp.PrimaryStage
-import scalafx.scene.Scene
-import scalafx.scene.paint.Color
+import scalafx.geometry.Insets
+import scalafx.scene.layout.BorderPane
 
-/** Main GUI application class.
+/** Main pane containing top-level GUI components.
   *
   * @author Alexey Kuzin <amkuzink@gmail.com>
   */
-object GuiApplication extends JFXApp {
+class MainPane extends BorderPane {
 
-  stage = new PrimaryStage {
-    title = "Choice Roulette"
-    scene = new Scene() {
-      fill = Color.LightGrey
-      root = new MainPane
-    }
-  }
+  private val mAppMenuBar = new AppMenuBar
+  private val mRoulettePane = new RoulettePane(200)
+
+  top = mAppMenuBar
+  center = mRoulettePane
+  prefWidth = 1024
+  prefHeight = 768
+  maxWidth = Double.MaxValue
+  maxHeight = Double.MaxValue
+  margin = Insets(0)
 }
