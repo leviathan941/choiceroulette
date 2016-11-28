@@ -14,30 +14,30 @@
  * limitations under the License.
  */
 
-package choiceroulette.gui
+package choiceroulette.gui.preferences
 
-import choiceroulette.gui.preferences.PreferencesPane
-
+import scalafx.Includes
 import scalafx.geometry.Insets
-import scalafx.scene.layout.BorderPane
+import scalafx.scene.control.Spinner
+import scalafx.scene.layout.VBox
 
-/** Main pane containing top-level GUI components.
+/** Pane for roulette preferences.
   *
   * @author Alexey Kuzin <amkuzink@gmail.com>
   */
-class MainPane extends BorderPane {
+class PreferencesPane(private val prefChangeListener: PreferencesChangeListener) extends VBox {
 
-  private val mAppMenuBar = new AppMenuBar
-  private val mRoulettePane = new RoulettePane(200)
-  private val mPrefsPane = new PreferencesPane(mRoulettePane)
+  private val mMaxCountSpinner = new Spinner[Int](1, 16, 2) {
+    editable = true
+    prefWidth = 100
+    editor.value.setOnAction(Includes.handle {
+      prefChangeListener.choiceCountChanged(value.value)
+    })
+  }
 
-  top = mAppMenuBar
-  center = mRoulettePane
-  right = mPrefsPane
-
-  prefWidth = 1024
-  prefHeight = 768
-  maxWidth = Double.MaxValue
-  maxHeight = Double.MaxValue
-  margin = Insets(0)
+  children = List(mMaxCountSpinner)
+  minWidth = 200
+  padding = Insets(10)
+  style = "-fx-border-width: 1px;" +
+      "-fx-border-color: grey;"
 }

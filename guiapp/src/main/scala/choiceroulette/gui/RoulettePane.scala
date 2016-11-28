@@ -16,6 +16,8 @@
 
 package choiceroulette.gui
 
+import choiceroulette.gui.preferences.PreferencesChangeListener
+
 import scalafx.geometry.{Insets, Pos}
 import scalafx.scene.layout.{FlowPane, StackPane}
 import scalafx.scene.paint.Color
@@ -25,14 +27,12 @@ import scalafx.scene.shape.{Arc, ArcType, Circle}
   *
   * @author Alexey Kuzin <amkuzink@gmail.com>
   */
-class RoulettePane(private val radius: Double) extends StackPane { pane =>
+class RoulettePane(private val radius: Double) extends StackPane with PreferencesChangeListener { pane =>
 
   private val mBackgroundCircle = new Circle() {
     radius = pane.radius
     fill = Color.Black
   }
-
-  private val mRoulette = createRouletteSectors(16)
 
   private val mCursorArcPane = new FlowPane() {
     children = new Arc() {
@@ -63,8 +63,14 @@ class RoulettePane(private val radius: Double) extends StackPane { pane =>
     ) yield new ChoiceArc(pane.radius, startAngle, angleLen)
   }
 
-  children = mBackgroundCircle :: mRoulette ::: mCenterCircle :: mCursorArcPane :: Nil
+  override def choiceCountChanged(count: Int): Unit = {
+    children = mBackgroundCircle :: createRouletteSectors(count) ::: mCenterCircle :: mCursorArcPane :: Nil
+  }
+
+  children = mBackgroundCircle :: createRouletteSectors(2) ::: mCenterCircle :: mCursorArcPane :: Nil
 
   alignment = Pos.Center
-  margin = Insets(10)
+  padding = Insets(10)
+  style = "-fx-border-width: 1px;" +
+    "-fx-border-color: grey;"
 }

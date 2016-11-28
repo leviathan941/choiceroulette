@@ -14,30 +14,12 @@
  * limitations under the License.
  */
 
-package choiceroulette.gui
+package choiceroulette.gui.preferences
 
-import choiceroulette.gui.preferences.PreferencesPane
-
-import scalafx.geometry.Insets
-import scalafx.scene.layout.BorderPane
-
-/** Main pane containing top-level GUI components.
+/** Listener for preferences changes.
   *
   * @author Alexey Kuzin <amkuzink@gmail.com>
   */
-class MainPane extends BorderPane {
-
-  private val mAppMenuBar = new AppMenuBar
-  private val mRoulettePane = new RoulettePane(200)
-  private val mPrefsPane = new PreferencesPane(mRoulettePane)
-
-  top = mAppMenuBar
-  center = mRoulettePane
-  right = mPrefsPane
-
-  prefWidth = 1024
-  prefHeight = 768
-  maxWidth = Double.MaxValue
-  maxHeight = Double.MaxValue
-  margin = Insets(0)
+trait PreferencesChangeListener {
+  def choiceCountChanged(count: Int): Unit
 }
