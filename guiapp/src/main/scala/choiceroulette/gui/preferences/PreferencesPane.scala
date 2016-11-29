@@ -16,10 +16,9 @@
 
 package choiceroulette.gui.preferences
 
-import scalafx.Includes
-import scalafx.geometry.Insets
-import scalafx.scene.control.Spinner
-import scalafx.scene.layout.VBox
+import scalafx.geometry.{Insets, Pos}
+import scalafx.scene.control.{Label, Spinner}
+import scalafx.scene.layout.{HBox, VBox}
 
 /** Pane for roulette preferences.
   *
@@ -27,15 +26,17 @@ import scalafx.scene.layout.VBox
   */
 class PreferencesPane(private val prefChangeListener: PreferencesChangeListener) extends VBox {
 
-  private val mMaxCountSpinner = new Spinner[Int](1, 16, 2) {
+  private val mChoiceCountSpinner = new Spinner[Int](2, 16, 2) {
     editable = true
-    prefWidth = 100
-    editor.value.setOnAction(Includes.handle {
-      prefChangeListener.choiceCountChanged(value.value)
-    })
+    prefWidth = 80
+    value.onChange(prefChangeListener.choiceCountChanged(value.value))
   }
 
-  children = List(mMaxCountSpinner)
+  private val mCountSpinnerLayout = new HBox(10, Label("Count:"), mChoiceCountSpinner) {
+    alignment = Pos.BaselineLeft
+  }
+
+  children = List(mCountSpinnerLayout)
   minWidth = 200
   padding = Insets(10)
   style = "-fx-border-width: 1px;" +
