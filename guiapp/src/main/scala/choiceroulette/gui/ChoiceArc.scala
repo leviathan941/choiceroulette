@@ -31,7 +31,8 @@ import scalafx.scene.transform.Rotate
   */
 class ChoiceArc(radius: Double,
                 angleStart: Double,
-                angleLength: Double) extends StackPane {
+                angleLength: Double,
+                choiceText: String) extends StackPane {
 
   private val mArc = new Arc() {
     `type` = ArcType.Round
@@ -50,7 +51,7 @@ class ChoiceArc(radius: Double,
 
   private val mBackRectangle = Rectangle(2 * radius, 2 * radius, Color.Transparent)
 
-  private val mText = new UpdatableText("Choice") {
+  private val mText = new UpdatableText(choiceText) {
     stroke = Color.Blue
   }
 

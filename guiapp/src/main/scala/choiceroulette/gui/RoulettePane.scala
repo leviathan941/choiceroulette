@@ -62,7 +62,7 @@ class RoulettePane(private val radius: Double) extends StackPane with Preference
       if idx != 0 && idx < angles.size;
       startAngle = angles(idx - 1);
       angleLen = angles(idx) - startAngle
-    ) yield new ChoiceArc(pane.radius, startAngle, angleLen)
+    ) yield new ChoiceArc(pane.radius, startAngle, angleLen, "Choice " + idx)
   }
 
   override def choiceCountChanged(count: Int): Unit = {
