@@ -14,9 +14,10 @@
  * limitations under the License.
  */
 
-package choiceroulette.gui
+package choiceroulette.gui.roulette
 
 import choiceroulette.gui.preferences.PreferencesChangeListener
+import choiceroulette.gui.utils.CircleUtils
 
 import scalafx.geometry.{Insets, Pos}
 import scalafx.scene.layout.{FlowPane, StackPane}
@@ -55,9 +56,7 @@ class RoulettePane(private val radius: Double) extends StackPane with Preference
   }
 
   private def createRouletteSectors(number: Int): List[ChoiceArc] = {
-    val angleStep = math.floor(360.0 / number * 100000) / 100000
-
-    val angles = Range.Double.inclusive(0, 360, angleStep)
+    val angles = CircleUtils.splitCircleToSectors(number)
     for (idx <- angles.indices.toList
       if idx != 0 && idx < angles.size;
       startAngle = angles(idx - 1);

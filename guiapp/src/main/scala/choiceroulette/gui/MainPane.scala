@@ -17,6 +17,7 @@
 package choiceroulette.gui
 
 import choiceroulette.gui.preferences.PreferencesPane
+import choiceroulette.gui.roulette.RoulettePane
 
 import scalafx.geometry.Insets
 import scalafx.scene.layout.BorderPane

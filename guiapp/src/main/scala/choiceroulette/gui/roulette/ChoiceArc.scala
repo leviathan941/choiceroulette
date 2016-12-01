@@ -14,7 +14,9 @@
  * limitations under the License.
  */
 
-package choiceroulette.gui
+package choiceroulette.gui.roulette
+
+import choiceroulette.gui.utils.CircleUtils
 
 import scala.language.implicitConversions
 import scalafx.beans.property.DoubleProperty
@@ -22,8 +24,6 @@ import scalafx.scene.Group
 import scalafx.scene.layout.StackPane
 import scalafx.scene.paint.Color
 import scalafx.scene.shape._
-import scalafx.scene.text.Text
-import scalafx.scene.transform.Rotate
 
 /** Choice arc for the roulette.
   *
@@ -51,63 +51,29 @@ class ChoiceArc(radius: Double,
 
   private val mBackRectangle = Rectangle(2 * radius, 2 * radius, Color.Transparent)
 
-  private val mText = new UpdatableText(choiceText) {
+  private val mText = new ArcText(choiceText) {
     stroke = Color.Blue
   }
 
-  private def getTextPoint(arc: Arc): (Double, Double) = {
+  private def getTextStartPoint(arc: Arc): (Double, Double) = {
     val arcStartAngleRad = math.toRadians(arc.startAngle)
     val acrLenAngleRad = math.toRadians(arc.length)
     val arcRadius: Double = arc.radiusX
     val arcCenter: (Double, Double) = (arc.centerX, arc.centerY)
 
-    val p1 = getCirclePointCoordinates(arcCenter, arcRadius, arcStartAngleRad)
-    val p2 = getCirclePointCoordinates(arcCenter, arcRadius, arcStartAngleRad + acrLenAngleRad)
+    val circlePoint = CircleUtils.getCirclePoint(arcCenter, arcRadius, arcStartAngleRad + acrLenAngleRad / 2)
 
-    getTextStartPoint(p1, p2)
-  }
-
-  private def getTextStartPoint(p1: (Double, Double),
-                                p2: (Double, Double)): (Double, Double) = {
-    val x = (p1._1 + p2._1) / 2
-    val y = (p1._2 + p2._2) / 2
-    (x, y)
-  }
-
-  private def getCirclePointCoordinates(center: (Double, Double),
-                                        radius: Double,
-                                        angle: Double): (Double, Double) = {
-    (center._1 + radius * math.cos(angle),
-      center._2 - radius * math.sin(angle))
+    CircleUtils.shiftPointAlongRadius(arcCenter, circlePoint, -10)
   }
 
   implicit def double2DoubleProperty(number: Double): DoubleProperty = DoubleProperty(number)
   implicit def doubleProperty2Double(property: DoubleProperty): Double = property.value
 
-  mText.moveInsideArc(mArc)
+  mText.moveInsideArc(mArc, getTextStartPoint(mArc))
 
   children = new Group(mBackRectangle, mArc, mText)
   minHeight = 0
   minWidth = 0
   maxHeight = 2 * radius
   maxWidth = 2 * radius
-
-  private class UpdatableText(text: String) extends Text(text) { thisText =>
-
-    def moveInsideArc(arc: Arc): Unit = {
-      val angle = math.toRadians(rotateTextToArc(arc))
-      val (x, y) = getTextPoint(arc)
-
-      val shift = thisText.layoutBounds.value.getHeight / 2
-      val dx = shift * math.sin(angle)
-      val dy = shift * math.cos(angle)
-      relocate(x + dx, y - dy)
-    }
-
-    private def rotateTextToArc(arc: Arc): Double = {
-      val angle = 180 - arc.startAngle.value - arc.length.value / 2
-      transforms.add(new Rotate(angle, layoutBounds.value.getMinX, layoutBounds.value.getMinY))
-      angle
-    }
-  }
 }
