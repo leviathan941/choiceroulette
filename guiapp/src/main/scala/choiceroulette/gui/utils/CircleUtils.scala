@@ -27,13 +27,8 @@ object CircleUtils {
   def shiftPointAlongRadius(center: (Double, Double),
                             p: (Double, Double),
                             shift: Double): (Double, Double) = {
-    val x = p._1 - center._1
-    val y = p._2 - center._2
-    val r = math.sqrt(x * x + y * y)
-    val phi = math.atan2(y, x)
-
-    val sfr = r + shift
-    (sfr * math.cos(phi) + center._1, sfr * math.sin(phi) + center._2)
+    val (r, phi) = cartesianToPolar(p, center)
+    polarToCartesian((r + shift, phi), center)
   }
 
   def getCirclePoint(center: (Double, Double),
@@ -47,5 +42,18 @@ object CircleUtils {
     val angleStep = math.floor(360.0 / number * 100000) / 100000
 
     Range.Double.inclusive(0, 360, angleStep)
+  }
+
+  def cartesianToPolar(cartesian: (Double, Double),
+                       center: (Double, Double)): (Double, Double) = {
+    val x = cartesian._1 - center._1
+    val y = cartesian._2 - center._2
+    (math.sqrt(x * x + y * y), math.atan2(y, x))
+  }
+
+  def polarToCartesian(polar: (Double, Double),
+                       center: (Double, Double)): (Double, Double) = {
+    (polar._1 * math.cos(polar._2) + center._1,
+      polar._1 * math.sin(polar._2) + center._2)
   }
 }

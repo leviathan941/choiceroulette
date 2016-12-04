@@ -69,6 +69,14 @@ class ChoiceArc(radius: Double,
   implicit def double2DoubleProperty(number: Double): DoubleProperty = DoubleProperty(number)
   implicit def doubleProperty2Double(property: DoubleProperty): Double = property.value
 
+  def highlight(): Unit = {
+    mArc.stroke = Color.White
+  }
+
+  def clearHighlight(): Unit = {
+    mArc.stroke = Color.Red
+  }
+
   mText.moveInsideArc(mArc, getTextStartPoint(mArc))
 
   children = new Group(mBackRectangle, mArc, mText)

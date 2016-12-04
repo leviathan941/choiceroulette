@@ -27,18 +27,55 @@ import scalafx.scene.layout.StackPane
 class ArcsPane(private val radius: Double,
                arcsNumber: Int) extends StackPane {
 
-  private def createRouletteSectors(number: Int): List[ChoiceArc] = {
+  private var mArcsData: List[ArcData] = Nil
+
+  def updateArcs(number: Int): Unit = {
+    mArcsData = createRouletteSectors(number)
+    children = mArcsData.map(_.arc)
+  }
+
+  def highlightArc(loc: (Double, Double)): Unit = {
+    mArcsData.foreach(_.arc.clearHighlight())
+
+    getArc(loc) match {
+      case Some(arc) => arc.highlight()
+      case _ =>
+    }
+  }
+
+  private def getArc(loc: (Double, Double)): Option[ChoiceArc] = {
+    val center = (radius, radius)
+    val (r, phi) = CircleUtils.cartesianToPolar(loc, center)
+
+    if (r > radius)
+      None
+    else
+      findArc(math.toDegrees(r))
+  }
+
+  private def findArc(degrees: Double): Option[ChoiceArc] = {
+    mArcsData.find(
+      data => { degrees > data.startAngle && degrees < data.endAngle }
+    ) match {
+      case Some(arcData) => Some(arcData.arc)
+      case _ => None
+    }
+  }
+
+  private def createRouletteSectors(number: Int): List[ArcData] = {
     val angles = CircleUtils.splitCircleToSectors(number)
     for (idx <- angles.indices.toList
          if idx != 0 && idx < angles.size;
          startAngle = angles(idx - 1);
          angleLen = angles(idx) - startAngle
-    ) yield new ChoiceArc(radius, startAngle, angleLen, "Choice " + idx)
+    ) yield {
+      ArcData(startAngle,
+        startAngle + angleLen,
+        new ChoiceArc(radius, startAngle, angleLen, "Choice " + idx))
+    }
   }
 
-  def updateArcs(number: Int): Unit = {
-    children = createRouletteSectors(number)
-  }
+  private case class ArcData(startAngle: Double, endAngle: Double, arc: ChoiceArc)
 
-  children = createRouletteSectors(arcsNumber)
+  updateArcs(arcsNumber)
 }

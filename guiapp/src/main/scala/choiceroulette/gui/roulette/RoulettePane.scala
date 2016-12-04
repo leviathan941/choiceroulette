@@ -18,7 +18,9 @@ package choiceroulette.gui.roulette
 
 import choiceroulette.gui.preferences.PreferencesChangeListener
 
-import scalafx.geometry.{Insets, Pos}
+import scalafx.Includes._
+import scalafx.geometry.Pos
+import scalafx.scene.input.MouseEvent
 import scalafx.scene.layout.{FlowPane, StackPane}
 import scalafx.scene.paint.Color
 import scalafx.scene.shape.{Arc, ArcType, Circle}
@@ -60,9 +62,14 @@ class RoulettePane(radius: Double) extends StackPane with PreferencesChangeListe
     mArcsPane.updateArcs(count)
   }
 
+  onMouseMoved = (event: MouseEvent) => {
+    mArcsPane.highlightArc(event.x -> event.y)
+  }
+
   children = mBackgroundCircle :: mArcsPane :: mCenterCircle :: mCursorArcPane :: Nil
+  maxWidth = 2 * pane.radius
+  maxHeight = 2 * pane.radius
   alignment = Pos.Center
-  padding = Insets(10)
   style = "-fx-border-width: 1px;" +
     "-fx-border-color: grey;"
 }
