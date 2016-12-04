@@ -17,7 +17,6 @@
 package choiceroulette.gui.roulette
 
 import choiceroulette.gui.preferences.PreferencesChangeListener
-import choiceroulette.gui.utils.CircleUtils
 
 import scalafx.geometry.{Insets, Pos}
 import scalafx.scene.layout.{FlowPane, StackPane}
@@ -28,20 +27,22 @@ import scalafx.scene.shape.{Arc, ArcType, Circle}
   *
   * @author Alexey Kuzin <amkuzink@gmail.com>
   */
-class RoulettePane(private val radius: Double) extends StackPane with PreferencesChangeListener { pane =>
+class RoulettePane(radius: Double) extends StackPane with PreferencesChangeListener { pane =>
 
   private val mBackgroundCircle = new Circle() {
     radius = pane.radius
     fill = Color.Black
   }
 
+  private val mArcsPane = new ArcsPane(radius, 2)
+
   private val mCursorArcPane = new FlowPane() {
     children = new Arc() {
       `type` = ArcType.Round
-      radiusX = pane.radius / 6
+      radiusX = pane.radius / 10
       radiusY = pane.radius / 2
-      startAngle = 170
-      length = 20
+      startAngle = 175
+      length = 10
       fill = Color.Black
     }
 
@@ -55,21 +56,11 @@ class RoulettePane(private val radius: Double) extends StackPane with Preference
     fill = Color.Black
   }
 
-  private def createRouletteSectors(number: Int): List[ChoiceArc] = {
-    val angles = CircleUtils.splitCircleToSectors(number)
-    for (idx <- angles.indices.toList
-      if idx != 0 && idx < angles.size;
-      startAngle = angles(idx - 1);
-      angleLen = angles(idx) - startAngle
-    ) yield new ChoiceArc(pane.radius, startAngle, angleLen, "Choice " + idx)
-  }
-
   override def choiceCountChanged(count: Int): Unit = {
-    children = mBackgroundCircle :: createRouletteSectors(count) ::: mCenterCircle :: mCursorArcPane :: Nil
+    mArcsPane.updateArcs(count)
   }
 
-  children = mBackgroundCircle :: createRouletteSectors(2) ::: mCenterCircle :: mCursorArcPane :: Nil
-
+  children = mBackgroundCircle :: mArcsPane :: mCenterCircle :: mCursorArcPane :: Nil
   alignment = Pos.Center
   padding = Insets(10)
   style = "-fx-border-width: 1px;" +

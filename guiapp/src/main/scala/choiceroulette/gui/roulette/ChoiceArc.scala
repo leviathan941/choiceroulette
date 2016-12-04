@@ -63,7 +63,7 @@ class ChoiceArc(radius: Double,
 
     val circlePoint = CircleUtils.getCirclePoint(arcCenter, arcRadius, arcStartAngleRad + acrLenAngleRad / 2)
 
-    CircleUtils.shiftPointAlongRadius(arcCenter, circlePoint, -10)
+    CircleUtils.shiftPointAlongRadius(arcCenter, circlePoint, -20)
   }
 
   implicit def double2DoubleProperty(number: Double): DoubleProperty = DoubleProperty(number)
