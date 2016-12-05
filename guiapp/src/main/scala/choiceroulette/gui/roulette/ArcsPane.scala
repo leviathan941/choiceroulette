@@ -55,7 +55,7 @@ class ArcsPane(private val radius: Double,
 
   private def findArc(degrees: Double): Option[ChoiceArc] = {
     mArcsData.find(
-      data => { degrees > data.startAngle && degrees < data.endAngle }
+      data => degrees > data.startAngle && degrees < data.endAngle
     ) match {
       case Some(arcData) => Some(arcData.arc)
       case _ => None
@@ -64,15 +64,11 @@ class ArcsPane(private val radius: Double,
 
   private def createRouletteSectors(number: Int): List[ArcData] = {
     val angles = CircleUtils.splitCircleToSectors(number)
-    for (idx <- angles.indices.toList
-         if idx != 0 && idx < angles.size;
-         startAngle = angles(idx - 1);
-         angleLen = angles(idx) - startAngle
-    ) yield {
-      ArcData(startAngle,
-        startAngle + angleLen,
-        new ChoiceArc(radius, startAngle, angleLen, "Choice " + idx))
-    }
+
+    angles.zip(angles.tail).map(arcAngle => {
+      ArcData(arcAngle._1, arcAngle._2,
+        new ChoiceArc(radius, arcAngle._1, arcAngle._2 - arcAngle._1, "Choice"))
+    }).toList
   }
 
   private case class ArcData(startAngle: Double, endAngle: Double, arc: ChoiceArc)

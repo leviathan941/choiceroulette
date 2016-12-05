@@ -70,6 +70,4 @@ class RoulettePane(radius: Double) extends StackPane with PreferencesChangeListe
   maxWidth = 2 * pane.radius
   maxHeight = 2 * pane.radius
   alignment = Pos.Center
-  style = "-fx-border-width: 1px;" +
-    "-fx-border-color: grey;"
 }
