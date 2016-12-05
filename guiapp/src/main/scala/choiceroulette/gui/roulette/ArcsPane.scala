@@ -50,7 +50,7 @@ class ArcsPane(private val radius: Double,
     if (r > radius)
       None
     else
-      findArc(math.toDegrees(r))
+      findArc(if (phi > 0) 360 - math.toDegrees(phi) else -math.toDegrees(phi))
   }
 
   private def findArc(degrees: Double): Option[ChoiceArc] = {
