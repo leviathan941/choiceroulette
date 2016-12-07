@@ -62,8 +62,9 @@ class RoulettePane(radius: Double) extends StackPane with PreferencesChangeListe
     mArcsPane.updateArcs(count)
   }
 
-  onMouseMoved = (event: MouseEvent) => {
-    mArcsPane.highlightArc(event.x -> event.y)
+  onMouseClicked = (event: MouseEvent) => {
+    if (event.clickCount == 2)
+      mArcsPane.showEditor(event.x -> event.y)
   }
 
   children = mBackgroundCircle :: mArcsPane :: mCenterCircle :: mCursorArcPane :: Nil

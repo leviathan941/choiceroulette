@@ -44,7 +44,6 @@ class ChoiceArc(radius: Double,
     centerY = radius
 
     strokeLineCap = StrokeLineCap.Butt
-    stroke = Color.Red
     strokeType = StrokeType.Inside
     fill = Color.Aquamarine
   }
@@ -56,27 +55,41 @@ class ChoiceArc(radius: Double,
   }
 
   private def getTextStartPoint(arc: Arc): (Double, Double) = {
+    val arcCenter: (Double, Double) = (arc.centerX, arc.centerY)
+
+    CircleUtils.shiftPointAlongRadius(arcCenter, getChordCenterPoint(arc), -20)
+  }
+
+  private def getChordCenterPoint(arc: Arc): (Double, Double) = {
     val arcStartAngleRad = math.toRadians(arc.startAngle)
     val acrLenAngleRad = math.toRadians(arc.length)
     val arcRadius: Double = arc.radiusX
     val arcCenter: (Double, Double) = (arc.centerX, arc.centerY)
 
-    val circlePoint = CircleUtils.getCirclePoint(arcCenter, arcRadius, arcStartAngleRad + acrLenAngleRad / 2)
-
-    CircleUtils.shiftPointAlongRadius(arcCenter, circlePoint, -20)
+    CircleUtils.getCirclePoint(arcCenter, arcRadius, arcStartAngleRad + acrLenAngleRad / 2)
   }
 
   implicit def double2DoubleProperty(number: Double): DoubleProperty = DoubleProperty(number)
   implicit def doubleProperty2Double(property: DoubleProperty): Double = property.value
 
   def highlight(): Unit = {
-    mArc.stroke = Color.White
+    mArc.stroke = Color.Black
+    mArc.strokeWidth = 2
   }
 
   def clearHighlight(): Unit = {
     mArc.stroke = Color.Red
+    mArc.strokeWidth = 1
   }
 
+  def text: String = mText.text.value
+
+  def text_= (text: String): Unit = {
+    if (!text.isEmpty)
+      mText.text = text
+  }
+
+  clearHighlight()
   mText.moveInsideArc(mArc, getTextStartPoint(mArc))
 
   children = new Group(mBackRectangle, mArc, mText)
