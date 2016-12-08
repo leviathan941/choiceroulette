@@ -18,10 +18,9 @@ package choiceroulette.gui.roulette
 
 import choiceroulette.gui.utils.CircleUtils
 
-import scalafx.scene.Group
 import scalafx.scene.layout.StackPane
 
-/** Stack pane containing choice arcs.
+/** Pane containing choice arcs.
   *
   * @author Alexey Kuzin <amkuzink@gmail.com>
   */
@@ -35,7 +34,7 @@ class ArcsPane(radius: Double, arcsNumber: Int) extends StackPane {
   }
 
   def highlightArc(loc: (Double, Double)): Unit = {
-    mArcsData.foreach(_.arc.clearHighlight())
+    clearHighlight()
 
     getArc(loc) match {
       case Some(arc) => arc.highlight()
@@ -43,23 +42,15 @@ class ArcsPane(radius: Double, arcsNumber: Int) extends StackPane {
     }
   }
 
-  def showEditor(loc: (Double, Double)): Unit = {
+  def clearHighlight(): Unit = {
     mArcsData.foreach(_.arc.clearHighlight())
-
-    getArc(loc) match {
-      case Some(arc) => showEditText(arc, loc)
-      case _ =>
-    }
   }
 
-  private def showEditText(arc: ChoiceArc, loc: (Double, Double)): Unit = {
-    val editText = new EditChoiceField(arc, resetArcs)
-    children = new Group() {
-      children = mArcsData.map(_.arc) ::: editText :: Nil
+  def createEditor(loc: (Double, Double), onHide: () => Unit): Option[EditChoiceField] = {
+    getArc(loc) match {
+      case Some(arc) => Some(new EditChoiceField(arc, onHide))
+      case _ => None
     }
-
-    editText.relocate(loc._1, loc._2)
-    editText.requestFocus()
   }
 
   private def resetArcs(): Unit = {

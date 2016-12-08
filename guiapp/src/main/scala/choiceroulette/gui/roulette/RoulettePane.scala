@@ -21,7 +21,7 @@ import choiceroulette.gui.preferences.PreferencesChangeListener
 import scalafx.Includes._
 import scalafx.geometry.Pos
 import scalafx.scene.input.MouseEvent
-import scalafx.scene.layout.{FlowPane, StackPane}
+import scalafx.scene.layout.{FlowPane, Pane, StackPane}
 import scalafx.scene.paint.Color
 import scalafx.scene.shape.{Arc, ArcType, Circle}
 
@@ -29,7 +29,7 @@ import scalafx.scene.shape.{Arc, ArcType, Circle}
   *
   * @author Alexey Kuzin <amkuzink@gmail.com>
   */
-class RoulettePane(radius: Double) extends StackPane with PreferencesChangeListener { pane =>
+class RoulettePane(radius: Double) extends Pane with PreferencesChangeListener { pane =>
 
   private val mBackgroundCircle = new Circle() {
     radius = pane.radius
@@ -58,17 +58,50 @@ class RoulettePane(radius: Double) extends StackPane with PreferencesChangeListe
     fill = Color.Black
   }
 
+  private val mRouletteStack = new StackPane() {
+
+    def moveToParentCenter(): Unit = {
+      relocate(pane.width.value / 2 - radius, pane.height.value / 2 - radius)
+    }
+
+    onMouseClicked = (event: MouseEvent) => {
+      if (event.clickCount == 2) {
+        mArcsPane.clearHighlight()
+
+        val location = event.x -> event.y
+        mArcsPane.createEditor(location, hideEditor) match {
+          case Some(editText) => showEditor(editText, location)
+          case _ =>
+        }
+      }
+    }
+
+    children = mBackgroundCircle :: mArcsPane :: mCenterCircle :: mCursorArcPane :: Nil
+    maxWidth = 2 * pane.radius
+    maxHeight = 2 * pane.radius
+  }
+
+  private def showEditor(editor: EditChoiceField, loc: (Double, Double)): Unit = {
+    children = mRouletteStack :: editor :: Nil
+
+    editor.choiceArc.highlight()
+    editor.relocate(mRouletteStack.layoutX.value + loc._1, mRouletteStack.layoutY.value + loc._2)
+    editor.requestFocus()
+  }
+
+  private def hideEditor(): Unit = {
+    mArcsPane.clearHighlight()
+    children = mRouletteStack
+  }
+
   override def choiceCountChanged(count: Int): Unit = {
     mArcsPane.updateArcs(count)
   }
 
-  onMouseClicked = (event: MouseEvent) => {
-    if (event.clickCount == 2)
-      mArcsPane.showEditor(event.x -> event.y)
-  }
+  height.onChange(mRouletteStack.moveToParentCenter())
+  width.onChange(mRouletteStack.moveToParentCenter())
 
-  children = mBackgroundCircle :: mArcsPane :: mCenterCircle :: mCursorArcPane :: Nil
-  maxWidth = 2 * pane.radius
-  maxHeight = 2 * pane.radius
-  alignment = Pos.Center
+  children = mRouletteStack
+  style = "-fx-border-width: 1px;" +
+    "-fx-border-color: grey;"
 }

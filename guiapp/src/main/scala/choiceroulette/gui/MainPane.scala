@@ -19,8 +19,8 @@ package choiceroulette.gui
 import choiceroulette.gui.preferences.PreferencesPane
 import choiceroulette.gui.roulette.RoulettePane
 
-import scalafx.geometry.{Insets, Pos}
-import scalafx.scene.layout.{BorderPane, FlowPane}
+import scalafx.geometry.Insets
+import scalafx.scene.layout.BorderPane
 
 /** Main pane containing top-level GUI components.
   *
@@ -33,12 +33,7 @@ class MainPane extends BorderPane {
   private val mPrefsPane = new PreferencesPane(mRoulettePane)
 
   top = mAppMenuBar
-  center = new FlowPane {
-    children = mRoulettePane
-    alignment = Pos.Center
-    style = "-fx-border-width: 1px;" +
-      "-fx-border-color: grey;"
-  }
+  center = mRoulettePane
   right = mPrefsPane
 
   prefWidth = 1024
