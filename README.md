@@ -1,4 +1,4 @@
-# Choice Roulette
+Choice Roulette
 ==============
 Roulette GUI for random choosing an option from the specified values.
 
