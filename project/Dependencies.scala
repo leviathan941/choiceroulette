@@ -18,7 +18,7 @@ import sbt._
 import Keys._
 
 object Dependencies {
-  lazy val scala212 = "2.12.0"
+  lazy val scala212 = "2.12.1"
 
   // lazy val scalaDi = "org.scaldi" %% "scaldi" % "latest.integration";
 

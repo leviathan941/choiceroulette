@@ -45,7 +45,7 @@ class AboutStage(owner: Window) extends Stage { about =>
   }
 
   initOwner(owner)
-  initStyle(StageStyle.UNDECORATED)
+  initStyle(StageStyle.Undecorated)
   title = "About Choice Roulette"
   resizable = false
   minWidth = 340

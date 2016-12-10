@@ -16,21 +16,23 @@
 
 package choiceroulette.gui.roulette
 
+import scalafx.scene.control.{Label, OverrunStyle}
 import scalafx.scene.shape.Arc
-import scalafx.scene.text.Text
+import scalafx.scene.text.{Font, FontWeight, Text}
 import scalafx.scene.transform.Rotate
 
-/** Text to be placed in an arc.
+/** Text label to be placed in an arc.
   *
   * @author Alexey Kuzin <amkuzink@gmail.com>
   */
-class ArcText(text: String) extends Text(text) {
+class ArcLabel(text: String) extends Label(text) { label =>
 
   def moveInsideArc(arc: Arc, point: (Double, Double)): Unit = {
     val angle = math.toRadians(rotateTextToArc(arc))
     val (dx, dy) = shiftTextCenterWidth(angle)
 
     relocate(point._1 + dx, point._2 - dy)
+    labelFor = arc
   }
 
   private def rotateTextToArc(arc: Arc): Double = {
@@ -40,7 +42,17 @@ class ArcText(text: String) extends Text(text) {
   }
 
   private def shiftTextCenterWidth(rotationAngle: Double): (Double, Double) = {
-    val shift = layoutBounds.value.getHeight / 2
+    val shift = getTextHeight / 2
     (shift * math.sin(rotationAngle), shift * math.cos(rotationAngle))
   }
+
+  private def getTextHeight: Double = {
+    new Text(text) {
+      delegate.setFont(label.font.value)
+    }.layoutBounds.value.getHeight
+  }
+
+  wrapText = false
+  font = Font.font("Helvetica", FontWeight.Bold, 14)
+  textOverrun = OverrunStyle.CenterEllipsis
 }

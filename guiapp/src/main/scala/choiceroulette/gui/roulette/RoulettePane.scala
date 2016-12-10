@@ -20,6 +20,7 @@ import choiceroulette.gui.preferences.PreferencesChangeListener
 
 import scalafx.Includes._
 import scalafx.geometry.Pos
+import scalafx.scene.Node
 import scalafx.scene.input.MouseEvent
 import scalafx.scene.layout.{FlowPane, Pane, StackPane}
 import scalafx.scene.paint.Color
@@ -31,14 +32,14 @@ import scalafx.scene.shape.{Arc, ArcType, Circle}
   */
 class RoulettePane(radius: Double) extends Pane with PreferencesChangeListener { pane =>
 
-  private val mBackgroundCircle = new Circle() {
+  private lazy val mBackgroundCircle = new Circle() {
     radius = pane.radius
     fill = Color.Black
   }
 
-  private val mArcsPane = new ArcsPane(radius, 2)
+  private lazy val mArcsPane = new ArcsPane(radius, 2)
 
-  private val mCursorArcPane = new FlowPane() {
+  private lazy val mCursorArcPane = new FlowPane() {
     children = new Arc() {
       `type` = ArcType.Round
       radiusX = pane.radius / 10
@@ -53,24 +54,20 @@ class RoulettePane(radius: Double) extends Pane with PreferencesChangeListener {
     alignment = Pos.CenterLeft
   }
 
-  private val mCenterCircle = new Circle() {
+  private lazy val mCenterCircle = new Circle() {
     radius = pane.radius / 10
     fill = Color.Black
   }
 
-  private val mRouletteStack = new StackPane() {
-
-    def moveToParentCenter(): Unit = {
-      relocate(pane.width.value / 2 - radius, pane.height.value / 2 - radius)
-    }
+  private lazy val mRouletteStack: StackPane = new StackPane() {
 
     onMouseClicked = (event: MouseEvent) => {
       if (event.clickCount == 2) {
         mArcsPane.clearHighlight()
 
         val location = event.x -> event.y
-        mArcsPane.createEditor(location, hideEditor) match {
-          case Some(editText) => showEditor(editText, location)
+        mArcsPane.createEditor(location, editorHider) match {
+          case Some(editText) => editorShower(editText, location)
           case _ =>
         }
       }
@@ -81,7 +78,7 @@ class RoulettePane(radius: Double) extends Pane with PreferencesChangeListener {
     maxHeight = 2 * pane.radius
   }
 
-  private def showEditor(editor: EditChoiceField, loc: (Double, Double)): Unit = {
+  private val editorShower = (editor: EditChoiceField, loc: (Double, Double)) => {
     children = mRouletteStack :: editor :: Nil
 
     editor.choiceArc.highlight()
@@ -89,17 +86,21 @@ class RoulettePane(radius: Double) extends Pane with PreferencesChangeListener {
     editor.requestFocus()
   }
 
-  private def hideEditor(): Unit = {
+  private val editorHider = () => {
     mArcsPane.clearHighlight()
     children = mRouletteStack
+  }
+
+  private def moveToPaneCenter(node: Node): Unit = {
+    node.relocate(pane.width.value / 2 - radius, pane.height.value / 2 - radius)
   }
 
   override def choiceCountChanged(count: Int): Unit = {
     mArcsPane.updateArcs(count)
   }
 
-  height.onChange(mRouletteStack.moveToParentCenter())
-  width.onChange(mRouletteStack.moveToParentCenter())
+  height.onChange(moveToPaneCenter(mRouletteStack))
+  width.onChange(moveToPaneCenter(mRouletteStack))
 
   children = mRouletteStack
   style = "-fx-border-width: 1px;" +
