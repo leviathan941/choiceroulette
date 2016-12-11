@@ -16,8 +16,10 @@
 
 package choiceroulette.gui.roulette
 
-import choiceroulette.gui.preferences.PreferencesChangeListener
+import choiceroulette.gui.controls.preferences.{PreferencesChangeListener, PreferencesController, PreferencesModule}
+import scaldi.Injectable.inject
 
+import scala.util.Random
 import scalafx.Includes._
 import scalafx.geometry.Pos
 import scalafx.scene.Node
@@ -31,6 +33,7 @@ import scalafx.scene.shape.{Arc, ArcType, Circle}
   * @author Alexey Kuzin <amkuzink@gmail.com>
   */
 class RoulettePane(radius: Double) extends Pane with PreferencesChangeListener { pane =>
+  implicit val injector = PreferencesModule
 
   private lazy val mBackgroundCircle = new Circle() {
     radius = pane.radius
@@ -63,11 +66,11 @@ class RoulettePane(radius: Double) extends Pane with PreferencesChangeListener {
 
     onMouseClicked = (event: MouseEvent) => {
       if (event.clickCount == 2) {
-        mArcsPane.clearHighlight()
+        popupHider()
 
         val location = event.x -> event.y
-        mArcsPane.createEditor(location, editorHider) match {
-          case Some(editText) => editorShower(editText, location)
+        mArcsPane.createEditor(location, popupHider) match {
+          case Some(editText) => showEditor(editText, location)
           case _ =>
         }
       }
@@ -78,15 +81,24 @@ class RoulettePane(radius: Double) extends Pane with PreferencesChangeListener {
     maxHeight = 2 * pane.radius
   }
 
-  private val editorShower = (editor: EditChoiceField, loc: (Double, Double)) => {
-    children = mRouletteStack :: editor :: Nil
+  private def showEditor(editor: EditChoiceField, loc: (Double, Double)): Unit = {
+    children += editor
 
     editor.choiceArc.highlight()
     editor.relocate(mRouletteStack.layoutX.value + loc._1, mRouletteStack.layoutY.value + loc._2)
     editor.requestFocus()
   }
 
-  private val editorHider = () => {
+  private def roll(): Unit = {
+    val arcNumber = Random.nextInt(mArcsPane.arcsCount)
+    showResult(mArcsPane.getArcText(arcNumber))
+  }
+
+  private def showResult(result: String): Unit = {
+    children += new RollResultPane(result, width.value -> height.value)
+  }
+
+  private val popupHider = () => {
     mArcsPane.clearHighlight()
     children = mRouletteStack
   }
@@ -102,6 +114,7 @@ class RoulettePane(radius: Double) extends Pane with PreferencesChangeListener {
   height.onChange(moveToPaneCenter(mRouletteStack))
   width.onChange(moveToPaneCenter(mRouletteStack))
 
+  inject[PreferencesController].listenPreferencesChange(this)
   children = mRouletteStack
   style = "-fx-border-width: 1px;" +
     "-fx-border-color: grey;"

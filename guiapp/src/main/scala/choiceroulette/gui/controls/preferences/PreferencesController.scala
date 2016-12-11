@@ -14,27 +14,22 @@
  * limitations under the License.
  */
 
-package choiceroulette.gui
+package choiceroulette.gui.controls.preferences
 
-import choiceroulette.gui.controls.preferences.PreferencesPane
-import choiceroulette.gui.roulette.RoulettePane
+import scala.collection.mutable
 
-import scalafx.geometry.Insets
-import scalafx.scene.layout.BorderPane
-
-/** Main pane containing top-level GUI components.
+/** Controls preferences changes.
   *
   * @author Alexey Kuzin <amkuzink@gmail.com>
   */
-class MainPane extends BorderPane {
+class PreferencesController {
 
-  top = new AppMenuBar
-  center = new RoulettePane(250)
-  right = new ControlPane
+  private lazy val mPrefChangeListeners = new mutable.HashSet[PreferencesChangeListener]()
 
-  prefWidth = 1024
-  prefHeight = 768
-  maxWidth = Double.MaxValue
-  maxHeight = Double.MaxValue
-  margin = Insets(0)
+  def listenPreferencesChange(listener: PreferencesChangeListener): Unit = mPrefChangeListeners += listener
+
+  def changeChoiceCount(count: Int): Unit = notifyListeners(_.choiceCountChanged(count))
+
+  private def notifyListeners(notifyMethod: PreferencesChangeListener => Unit): Unit =
+    mPrefChangeListeners.foreach(notifyMethod)
 }

@@ -53,6 +53,13 @@ class ArcsPane(radius: Double, arcsNumber: Int) extends StackPane {
     }
   }
 
+  def arcsCount: Int = mArcsData.size
+
+  def getArcText(number: Int): String = {
+    require(number < mArcsData.size, "Check arcs count first")
+    mArcsData(number).arc.text
+  }
+
   private def resetArcs(): Unit = {
     children = mArcsData.map(_.arc)
   }

@@ -14,31 +14,24 @@
  * limitations under the License.
  */
 
-package choiceroulette.gui.preferences
+package choiceroulette.gui
 
-import scalafx.geometry.{Insets, Pos}
-import scalafx.scene.control.{Label, Spinner}
-import scalafx.scene.layout.{HBox, VBox}
+import choiceroulette.gui.controls.preferences.{PreferencesModule, PreferencesPane}
+import scaldi.Injectable.inject
 
-/** Pane for roulette preferences.
+import scalafx.geometry.Insets
+import scalafx.scene.layout.VBox
+
+/** Pane for various roulette controls.
   *
   * @author Alexey Kuzin <amkuzink@gmail.com>
   */
-class PreferencesPane(private val prefChangeListener: PreferencesChangeListener) extends VBox {
+class ControlPane extends VBox {
+  implicit val injector = PreferencesModule
 
-  private val mChoiceCountSpinner = new Spinner[Int](2, 16, 2) {
-    editable = true
-    prefWidth = 80
-    value.onChange(prefChangeListener.choiceCountChanged(value.value))
-  }
-
-  private val mCountSpinnerLayout = new HBox(10, Label("Count:"), mChoiceCountSpinner) {
-    alignment = Pos.BaselineLeft
-  }
-
-  children = List(mCountSpinnerLayout)
+  children = inject[PreferencesPane]
   minWidth = 200
   padding = Insets(10)
   style = "-fx-border-width: 1px;" +
-      "-fx-border-color: grey;"
+    "-fx-border-color: grey;"
 }

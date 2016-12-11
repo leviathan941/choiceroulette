@@ -14,27 +14,22 @@
  * limitations under the License.
  */
 
-package choiceroulette.gui
+package choiceroulette.gui.controls.preferences
 
-import choiceroulette.gui.controls.preferences.PreferencesPane
-import choiceroulette.gui.roulette.RoulettePane
+import scalafx.scene.text.{Font, FontWeight}
 
-import scalafx.geometry.Insets
-import scalafx.scene.layout.BorderPane
-
-/** Main pane containing top-level GUI components.
+/** Provides fonts for different UI elements.
   *
   * @author Alexey Kuzin <amkuzink@gmail.com>
   */
-class MainPane extends BorderPane {
+object FontProvider {
 
-  top = new AppMenuBar
-  center = new RoulettePane(250)
-  right = new ControlPane
+  private val mDefaultFontFamily = "Helvetica"
+  private val mDefaultFontSize = 18
 
-  prefWidth = 1024
-  prefHeight = 768
-  maxWidth = Double.MaxValue
-  maxHeight = Double.MaxValue
-  margin = Insets(0)
+  val regularFont: Font = regularFont(FontWeight.Normal, mDefaultFontSize)
+
+  val boldRegularFont: Font = regularFont(FontWeight.Bold, mDefaultFontSize)
+
+  def regularFont(weight: FontWeight, size: Double): Font = Font.font(mDefaultFontFamily, weight, size)
 }

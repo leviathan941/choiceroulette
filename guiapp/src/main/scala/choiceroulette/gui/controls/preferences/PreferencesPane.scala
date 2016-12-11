@@ -14,12 +14,27 @@
  * limitations under the License.
  */
 
-package choiceroulette.gui.preferences
+package choiceroulette.gui.controls.preferences
 
-/** Listener for preferences changes.
+import scalafx.geometry.Pos
+import scalafx.scene.control.{Label, Spinner}
+import scalafx.scene.layout.{HBox, VBox}
+
+/** Pane for roulette preferences.
   *
   * @author Alexey Kuzin <amkuzink@gmail.com>
   */
-trait PreferencesChangeListener {
-  def choiceCountChanged(count: Int): Unit
+class PreferencesPane(prefController: PreferencesController) extends VBox {
+
+  private val mChoiceCountSpinner = new Spinner[Int](2, 16, 2) {
+    editable = true
+    prefWidth = 80
+    value.onChange(prefController.changeChoiceCount(value.value))
+  }
+
+  private val mCountSpinnerLayout = new HBox(10, Label("Count:"), mChoiceCountSpinner) {
+    alignment = Pos.BaselineLeft
+  }
+
+  children = List(mCountSpinnerLayout)
 }

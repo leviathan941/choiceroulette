@@ -14,27 +14,15 @@
  * limitations under the License.
  */
 
-package choiceroulette.gui
+package choiceroulette.gui.controls.preferences
 
-import choiceroulette.gui.controls.preferences.PreferencesPane
-import choiceroulette.gui.roulette.RoulettePane
+import scaldi.Module
 
-import scalafx.geometry.Insets
-import scalafx.scene.layout.BorderPane
-
-/** Main pane containing top-level GUI components.
+/** Preferences package module.
   *
   * @author Alexey Kuzin <amkuzink@gmail.com>
   */
-class MainPane extends BorderPane {
-
-  top = new AppMenuBar
-  center = new RoulettePane(250)
-  right = new ControlPane
-
-  prefWidth = 1024
-  prefHeight = 768
-  maxWidth = Double.MaxValue
-  maxHeight = Double.MaxValue
-  margin = Insets(0)
+object PreferencesModule extends Module {
+  bind [PreferencesController] to injected [PreferencesController]
+  bind [PreferencesPane] toProvider new PreferencesPane(inject [PreferencesController])
 }

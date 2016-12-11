@@ -47,7 +47,8 @@ lazy val guiApp: Project = (project in srcPath / "guiapp").
     name := "choiceroulette-gui",
     description := "GUI for choice roulette",
     libraryDependencies ++= Seq(
-      scalaFx withJavadoc() withSources()
+      scalaFx withJavadoc() withSources(),
+      scalaDi withJavadoc()
     ),
 
     mainClass in (Compile, run) := Some("choiceroulette.gui.GuiApplication"),
