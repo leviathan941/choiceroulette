@@ -16,10 +16,13 @@
 
 package choiceroulette.gui.controls.actions
 
+import choiceroulette.gui.controls.preferences.FontProvider
+
 import scalafx.Includes.handle
 import scalafx.geometry.{Insets, Pos}
 import scalafx.scene.control.Button
-import scalafx.scene.layout.{Priority, VBox}
+import scalafx.scene.layout._
+import scalafx.scene.paint.Color
 
 /** Pane for UI action controls.
   *
@@ -28,13 +31,36 @@ import scalafx.scene.layout.{Priority, VBox}
 class ActionsPane(actionController: ActionController) extends VBox {
 
   private val mRollButton = new Button("ROLL") {
+
+    private lazy val mColor: Color = Color.web("#44992a")
+    private lazy val mHoverColor = Color.web("#4dad30")
+    private lazy val mPressedColor: Color = Color.web("#32701f")
+
+    private def backgroundColor(color: Color) = new Background(Array(
+      new BackgroundFill(color, new CornerRadii(CornerRadii.Empty), Insets(0))))
+
     onAction = handle(actionController.rollRoulette())
+    onMousePressed = handle {
+      background = backgroundColor(mPressedColor)
+    }
+    onMouseEntered = handle {
+      background = backgroundColor(mHoverColor)
+    }
+    onMouseExited = handle {
+      background = backgroundColor(mColor)
+    }
+    onMouseReleased = handle {
+      background = backgroundColor(mColor)
+    }
+
     prefWidth = 100
+    font = FontProvider.boldRegularFont
+    textFill = Color.White
+    background = backgroundColor(mColor)
   }
 
   children = mRollButton
   alignment = Pos.BottomRight
-  alignmentInParent = Pos.BottomCenter
   hgrow = Priority.Always
-  padding = Insets(10)
+  padding = Insets(10, 50, 10, 50)
 }

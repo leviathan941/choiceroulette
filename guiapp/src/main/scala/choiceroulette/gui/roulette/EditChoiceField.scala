@@ -26,7 +26,7 @@ import scalafx.scene.input.{KeyCode, KeyEvent}
   */
 class EditChoiceField(val choiceArc: ChoiceArc, onHide: () => Unit) extends TextField {
 
-  maxWidth = 100
+  maxWidth = 200
   editable = true
   text = choiceArc.text
 

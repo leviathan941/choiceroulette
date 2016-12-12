@@ -102,11 +102,13 @@ class RoulettePane(prefController: PreferencesController,
   }
 
   private def showResult(result: String): Unit = {
+    prefController.setPreferencesEnabled(enable = false)
     children += new RollResultPane(result, width.value -> height.value, popupHider)
   }
 
   private val popupHider = () => {
     mArcsPane.clearHighlight()
+    prefController.setPreferencesEnabled(enable = true)
     children = mRouletteStack
   }
 

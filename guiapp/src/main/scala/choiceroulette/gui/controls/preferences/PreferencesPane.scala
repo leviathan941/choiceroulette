@@ -19,6 +19,7 @@ package choiceroulette.gui.controls.preferences
 import scalafx.geometry.{Insets, Pos}
 import scalafx.scene.control.{Label, Spinner}
 import scalafx.scene.layout.{HBox, VBox}
+import scalafx.scene.text.FontWeight
 
 /** Pane for roulette preferences.
   *
@@ -32,12 +33,17 @@ class PreferencesPane(prefController: PreferencesController) extends VBox {
     value.onChange(prefController.changeChoiceCount(value.value))
   }
 
-  private val mCountSpinnerLayout = new HBox(10, Label("Count:"), mChoiceCountSpinner) {
+  private val mChoiceCountLabel = new Label("Count:") {
+    font = FontProvider.regularFont(FontWeight.Normal, 15)
+  }
+
+  private val mCountSpinnerLayout = new HBox(30, mChoiceCountLabel, mChoiceCountSpinner) {
     alignment = Pos.BaselineLeft
   }
 
   children = List(mCountSpinnerLayout)
   minWidth = 200
+  alignment = Pos.TopCenter
   padding = Insets(10)
   style = "-fx-border-width: 1px;" +
     "-fx-border-color: grey;"

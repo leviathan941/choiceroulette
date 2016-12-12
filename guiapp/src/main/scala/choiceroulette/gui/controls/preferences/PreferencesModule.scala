@@ -24,5 +24,5 @@ import scaldi.Module
   */
 object PreferencesModule extends Module {
   binding to injected [PreferencesController]
-  binding toProvider new PreferencesPane(inject [PreferencesController])
+  binding to new PreferencesPane(inject [PreferencesController])
 }

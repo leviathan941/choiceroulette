@@ -35,5 +35,7 @@ object GuiApplication extends JFXApp {
       fill = Color.LightGrey
       root = inject [MainPane]
     }
+    minWidth = 800
+    minHeight = 640
   }
 }
