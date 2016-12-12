@@ -21,5 +21,5 @@ package choiceroulette.gui.controls.actions
   * @author Alexey Kuzin <amkuzink@gmail.com>
   */
 trait ActionListener {
-  def onRollAction(): Unit
+  def onSpinAction(): Unit
 }

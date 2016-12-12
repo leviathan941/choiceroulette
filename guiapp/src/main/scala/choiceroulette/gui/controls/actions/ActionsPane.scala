@@ -30,7 +30,7 @@ import scalafx.scene.paint.Color
   */
 class ActionsPane(actionController: ActionController) extends VBox {
 
-  private val mRollButton = new Button("ROLL") {
+  private val mSpinButton = new Button("SPIN") {
 
     private lazy val mColor: Color = Color.web("#44992a")
     private lazy val mHoverColor = Color.web("#4dad30")
@@ -39,7 +39,7 @@ class ActionsPane(actionController: ActionController) extends VBox {
     private def backgroundColor(color: Color) = new Background(Array(
       new BackgroundFill(color, new CornerRadii(CornerRadii.Empty), Insets(0))))
 
-    onAction = handle(actionController.rollRoulette())
+    onAction = handle(actionController.spinRoulette())
     onMousePressed = handle {
       background = backgroundColor(mPressedColor)
     }
@@ -59,7 +59,7 @@ class ActionsPane(actionController: ActionController) extends VBox {
     background = backgroundColor(mColor)
   }
 
-  children = mRollButton
+  children = mSpinButton
   alignment = Pos.BottomRight
   hgrow = Priority.Always
   padding = Insets(10, 50, 10, 50)

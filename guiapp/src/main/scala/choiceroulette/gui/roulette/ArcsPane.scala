@@ -48,7 +48,7 @@ class ArcsPane(radius: Double, arcsNumber: Int) extends StackPane {
 
   def createEditor(loc: (Double, Double), onHide: () => Unit): Option[EditChoiceField] = {
     getArc(loc) match {
-      case Some(arc) => Some(new EditChoiceField(arc, onHide))
+      case Some(arc) => Some(new EditChoiceField(arc, onHide, 50))
       case _ => None
     }
   }

@@ -28,8 +28,8 @@ class ActionController {
 
   def listenActions(listener: ActionListener): Unit = mActionListeners += listener
 
-  def rollRoulette(): Unit = {
-    notifyListeners(_.onRollAction())
+  def spinRoulette(): Unit = {
+    notifyListeners(_.onSpinAction())
   }
 
   private def notifyListeners(notifyMethod: ActionListener => Unit): Unit = {

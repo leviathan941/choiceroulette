@@ -24,11 +24,17 @@ import scalafx.scene.input.{KeyCode, KeyEvent}
   *
   * @author Alexey Kuzin <amkuzink@gmail.com>
   */
-class EditChoiceField(val choiceArc: ChoiceArc, onHide: () => Unit) extends TextField {
+class EditChoiceField(val choiceArc: ChoiceArc,
+                      onHide: () => Unit,
+                      textLimit: Int) extends TextField {
 
   maxWidth = 200
   editable = true
   text = choiceArc.text
+
+  text.onChange((_, oldValue, newValue) => {
+    if (newValue.length >= textLimit) text = oldValue
+  })
 
   onKeyReleased = (event: KeyEvent) => {
     event.code match {

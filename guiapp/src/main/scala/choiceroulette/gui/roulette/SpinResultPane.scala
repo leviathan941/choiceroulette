@@ -20,26 +20,29 @@ import choiceroulette.gui.controls.preferences.FontProvider
 
 import scalafx.Includes.handle
 import scalafx.geometry.{Insets, Pos}
-import scalafx.scene.control.Label
+import scalafx.scene.control.{Label, OverrunStyle}
 import scalafx.scene.layout._
 import scalafx.scene.paint._
-import scalafx.scene.text.FontWeight
+import scalafx.scene.text.{FontWeight, TextAlignment}
 
-/** Pane for roulette roll result.
+/** Pane for roulette spin result.
   *
   * @author Alexey Kuzin <amkuzink@gmail.com>
   */
-class RollResultPane(result: String, size: (Double, Double), clickHandler: () => Unit) extends StackPane {
+class SpinResultPane(result: String, size: (Double, Double), clickHandler: () => Unit) extends StackPane {
 
   private val mAnswerLabel: Label = new Label(result) {
     font = FontProvider.regularFont(FontWeight.ExtraBold, 75)
-    textFill = Color.White
+    textFill = Color.web("#dfe2de")
+    wrapText = true
+    textOverrun = OverrunStyle.Ellipsis
+    textAlignment = TextAlignment.Center
   }
 
   private val mGradient: Paint = RadialGradient(
     0, 0,
     0.5, 0.5,
-    1,
+    0.5,
     proportional = true,
     CycleMethod.NoCycle,
     List(Stop(1, Color.Black), Stop(0, Color.Transparent)))
@@ -53,4 +56,5 @@ class RollResultPane(result: String, size: (Double, Double), clickHandler: () =>
   alignment = Pos.Center
   prefWidth = size._1
   prefHeight = size._2
+  padding = Insets(20)
 }

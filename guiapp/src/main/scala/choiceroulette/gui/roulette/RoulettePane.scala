@@ -90,7 +90,7 @@ class RoulettePane(prefController: PreferencesController,
     editor.requestFocus()
   }
 
-  override def onRollAction(): Unit = {
+  override def onSpinAction(): Unit = {
     popupHider()
 
     val arcNumber = Random.nextInt(mArcsPane.arcsCount)
@@ -103,7 +103,7 @@ class RoulettePane(prefController: PreferencesController,
 
   private def showResult(result: String): Unit = {
     prefController.setPreferencesEnabled(enable = false)
-    children += new RollResultPane(result, width.value -> height.value, popupHider)
+    children += new SpinResultPane(result, width.value -> height.value, popupHider)
   }
 
   private val popupHider = () => {
