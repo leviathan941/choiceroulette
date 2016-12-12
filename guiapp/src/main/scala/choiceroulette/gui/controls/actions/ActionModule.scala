@@ -23,6 +23,6 @@ import scaldi.Module
   * @author Alexey Kuzin <amkuzink@gmail.com>
   */
 object ActionModule extends Module {
-  bind [ActionController] to injected [ActionController]
-  bind [ActionsPane] toProvider new ActionsPane(inject [ActionController])
+  binding to injected [ActionController]
+  binding toProvider new ActionsPane(inject [ActionController])
 }

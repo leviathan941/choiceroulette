@@ -25,7 +25,7 @@ import scaldi.Module
   * @author Alexey Kuzin <amkuzink@gmail.com>
   */
 class RouletteModule extends Module {
-  bind [RoulettePane] to new RoulettePane(
+  binding to new RoulettePane(
     prefController = inject [PreferencesController],
     actionController = inject [ActionController],
     radius = 250

@@ -23,6 +23,6 @@ import scaldi.Module
   * @author Alexey Kuzin <amkuzink@gmail.com>
   */
 object PreferencesModule extends Module {
-  bind [PreferencesController] to injected [PreferencesController]
-  bind [PreferencesPane] toProvider new PreferencesPane(inject [PreferencesController])
+  binding to injected [PreferencesController]
+  binding toProvider new PreferencesPane(inject [PreferencesController])
 }
