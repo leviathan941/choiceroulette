@@ -14,26 +14,25 @@
  * limitations under the License.
  */
 
-package choiceroulette.gui
-import scaldi.Injectable.inject
+package choiceroulette.gui.controls.actions
 
-import scalafx.application.JFXApp
-import scalafx.application.JFXApp.PrimaryStage
-import scalafx.scene.Scene
-import scalafx.scene.paint.Color
+import scala.collection.mutable
 
-/** Main GUI application class.
+/** Controls UI actions.
   *
   * @author Alexey Kuzin <amkuzink@gmail.com>
   */
-object GuiApplication extends JFXApp {
-  implicit val guiAppModule = new GuiModule
+class ActionController {
 
-  stage = new PrimaryStage {
-    title = "Choice Roulette"
-    scene = new Scene() {
-      fill = Color.LightGrey
-      root = inject [MainPane]
-    }
+  private lazy val mActionListeners = new mutable.HashSet[ActionListener]()
+
+  def listenActions(listener: ActionListener): Unit = mActionListeners += listener
+
+  def rollRoulette(): Unit = {
+    notifyListeners(_.onRollAction())
+  }
+
+  private def notifyListeners(notifyMethod: ActionListener => Unit): Unit = {
+    mActionListeners.foreach(notifyMethod)
   }
 }

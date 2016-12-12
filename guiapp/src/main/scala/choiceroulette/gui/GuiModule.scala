@@ -15,25 +15,24 @@
  */
 
 package choiceroulette.gui
-import scaldi.Injectable.inject
 
-import scalafx.application.JFXApp
-import scalafx.application.JFXApp.PrimaryStage
-import scalafx.scene.Scene
-import scalafx.scene.paint.Color
+import choiceroulette.gui.controls.actions.{ActionModule, ActionsPane}
+import choiceroulette.gui.controls.preferences.{PreferencesModule, PreferencesPane}
+import choiceroulette.gui.roulette.{RouletteModule, RoulettePane}
+import scaldi.{Module, MutableInjectorAggregation}
 
-/** Main GUI application class.
+/** Main module.
   *
   * @author Alexey Kuzin <amkuzink@gmail.com>
   */
-object GuiApplication extends JFXApp {
-  implicit val guiAppModule = new GuiModule
+class GuiModule extends Module {
+  override implicit val injector: MutableInjectorAggregation =
+    PreferencesModule :: ActionModule :: new RouletteModule
 
-  stage = new PrimaryStage {
-    title = "Choice Roulette"
-    scene = new Scene() {
-      fill = Color.LightGrey
-      root = inject [MainPane]
-    }
-  }
+  binding to new MainPane(
+    topPane = new AppMenuBar,
+    centerPane = inject [RoulettePane],
+    rightPane = inject [PreferencesPane],
+    bottomPane = inject [ActionsPane]
+  )
 }

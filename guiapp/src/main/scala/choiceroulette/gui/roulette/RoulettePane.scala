@@ -16,8 +16,8 @@
 
 package choiceroulette.gui.roulette
 
-import choiceroulette.gui.controls.preferences.{PreferencesChangeListener, PreferencesController, PreferencesModule}
-import scaldi.Injectable.inject
+import choiceroulette.gui.controls.actions.{ActionController, ActionListener}
+import choiceroulette.gui.controls.preferences.{PreferencesChangeListener, PreferencesController}
 
 import scala.util.Random
 import scalafx.Includes._
@@ -32,8 +32,9 @@ import scalafx.scene.shape.{Arc, ArcType, Circle}
   *
   * @author Alexey Kuzin <amkuzink@gmail.com>
   */
-class RoulettePane(radius: Double) extends Pane with PreferencesChangeListener { pane =>
-  implicit val injector = PreferencesModule
+class RoulettePane(prefController: PreferencesController,
+                   actionController: ActionController,
+                   radius: Double) extends Pane with PreferencesChangeListener with ActionListener { pane =>
 
   private lazy val mBackgroundCircle = new Circle() {
     radius = pane.radius
@@ -89,13 +90,19 @@ class RoulettePane(radius: Double) extends Pane with PreferencesChangeListener {
     editor.requestFocus()
   }
 
-  private def roll(): Unit = {
+  override def onRollAction(): Unit = {
+    popupHider()
+
     val arcNumber = Random.nextInt(mArcsPane.arcsCount)
     showResult(mArcsPane.getArcText(arcNumber))
   }
 
+  override def choiceCountChanged(count: Int): Unit = {
+    mArcsPane.updateArcs(count)
+  }
+
   private def showResult(result: String): Unit = {
-    children += new RollResultPane(result, width.value -> height.value)
+    children += new RollResultPane(result, width.value -> height.value, popupHider)
   }
 
   private val popupHider = () => {
@@ -107,14 +114,12 @@ class RoulettePane(radius: Double) extends Pane with PreferencesChangeListener {
     node.relocate(pane.width.value / 2 - radius, pane.height.value / 2 - radius)
   }
 
-  override def choiceCountChanged(count: Int): Unit = {
-    mArcsPane.updateArcs(count)
-  }
-
   height.onChange(moveToPaneCenter(mRouletteStack))
   width.onChange(moveToPaneCenter(mRouletteStack))
 
-  inject[PreferencesController].listenPreferencesChange(this)
+  prefController.listenPreferencesChange(this)
+  actionController.listenActions(this)
+
   children = mRouletteStack
   style = "-fx-border-width: 1px;" +
     "-fx-border-color: grey;"

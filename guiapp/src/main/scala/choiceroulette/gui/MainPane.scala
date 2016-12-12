@@ -18,19 +18,22 @@ package choiceroulette.gui
 
 import choiceroulette.gui.controls.preferences.PreferencesPane
 import choiceroulette.gui.roulette.RoulettePane
+import scaldi.Injectable.inject
 
 import scalafx.geometry.Insets
+import scalafx.scene.Node
 import scalafx.scene.layout.BorderPane
 
 /** Main pane containing top-level GUI components.
   *
   * @author Alexey Kuzin <amkuzink@gmail.com>
   */
-class MainPane extends BorderPane {
+class MainPane(topPane: Node, centerPane: Node, rightPane: Node, bottomPane: Node) extends BorderPane {
 
-  top = new AppMenuBar
-  center = new RoulettePane(250)
-  right = new ControlPane
+  top = topPane
+  center = centerPane
+  right = rightPane
+  bottom = bottomPane
 
   prefWidth = 1024
   prefHeight = 768

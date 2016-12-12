@@ -18,6 +18,7 @@ package choiceroulette.gui.roulette
 
 import choiceroulette.gui.controls.preferences.FontProvider
 
+import scalafx.Includes.handle
 import scalafx.geometry.{Insets, Pos}
 import scalafx.scene.control.Label
 import scalafx.scene.layout._
@@ -28,10 +29,11 @@ import scalafx.scene.text.FontWeight
   *
   * @author Alexey Kuzin <amkuzink@gmail.com>
   */
-class RollResultPane(result: String, size: (Double, Double)) extends StackPane {
+class RollResultPane(result: String, size: (Double, Double), clickHandler: () => Unit) extends StackPane {
 
   private val mAnswerLabel: Label = new Label(result) {
     font = FontProvider.regularFont(FontWeight.ExtraBold, 75)
+    textFill = Color.White
   }
 
   private val mGradient: Paint = RadialGradient(
@@ -41,6 +43,8 @@ class RollResultPane(result: String, size: (Double, Double)) extends StackPane {
     proportional = true,
     CycleMethod.NoCycle,
     List(Stop(1, Color.Black), Stop(0, Color.Transparent)))
+
+  onMouseClicked = handle(clickHandler())
 
   children = mAnswerLabel
   background = new Background(Array(

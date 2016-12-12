@@ -16,7 +16,7 @@
 
 package choiceroulette.gui.controls.preferences
 
-import scalafx.geometry.Pos
+import scalafx.geometry.{Insets, Pos}
 import scalafx.scene.control.{Label, Spinner}
 import scalafx.scene.layout.{HBox, VBox}
 
@@ -37,4 +37,8 @@ class PreferencesPane(prefController: PreferencesController) extends VBox {
   }
 
   children = List(mCountSpinnerLayout)
+  minWidth = 200
+  padding = Insets(10)
+  style = "-fx-border-width: 1px;" +
+    "-fx-border-color: grey;"
 }

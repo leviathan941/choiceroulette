@@ -14,24 +14,27 @@
  * limitations under the License.
  */
 
-package choiceroulette.gui
+package choiceroulette.gui.controls.actions
 
-import choiceroulette.gui.controls.preferences.{PreferencesModule, PreferencesPane}
-import scaldi.Injectable.inject
+import scalafx.Includes.handle
+import scalafx.geometry.{Insets, Pos}
+import scalafx.scene.control.Button
+import scalafx.scene.layout.{Priority, VBox}
 
-import scalafx.geometry.Insets
-import scalafx.scene.layout.VBox
-
-/** Pane for various roulette controls.
+/** Pane for UI action controls.
   *
   * @author Alexey Kuzin <amkuzink@gmail.com>
   */
-class ControlPane extends VBox {
-  implicit val injector = PreferencesModule
+class ActionsPane(actionController: ActionController) extends VBox {
 
-  children = inject[PreferencesPane]
-  minWidth = 200
+  private val mRollButton = new Button("ROLL") {
+    onAction = handle(actionController.rollRoulette())
+    prefWidth = 100
+  }
+
+  children = mRollButton
+  alignment = Pos.BottomRight
+  alignmentInParent = Pos.BottomCenter
+  hgrow = Priority.Always
   padding = Insets(10)
-  style = "-fx-border-width: 1px;" +
-    "-fx-border-color: grey;"
 }
