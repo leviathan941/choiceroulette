@@ -39,13 +39,21 @@ class EditChoiceField(val choiceArc: ChoiceArc,
   onKeyReleased = (event: KeyEvent) => {
     event.code match {
       case KeyCode.Enter => {
-        visible = false
         choiceArc.text = text.value
-        onHide()
+        hide()
       }
       case KeyCode.Escape => onHide()
       case _ =>
     }
+  }
+
+  focused.onChange((_, _, isFocused) => {
+    if (!isFocused) hide()
+  })
+
+  private def hide(): Unit = {
+    visible = false
+    onHide()
   }
 
   delegate.selectAll()
