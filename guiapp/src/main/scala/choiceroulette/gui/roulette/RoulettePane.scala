@@ -37,8 +37,8 @@ class RoulettePane(prefController: PreferencesController,
                    radius: Double) extends Pane with PreferencesChangeListener with ActionListener { pane =>
 
   private lazy val mBackgroundCircle = new Circle() {
-    radius = pane.radius
-    fill = Color.Black
+    radius = pane.radius + 3
+    fill = Color.DarkSlateGrey
   }
 
   private lazy val mArcsPane = new ArcsPane(radius, 2)
