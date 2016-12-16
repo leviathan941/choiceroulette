@@ -29,7 +29,10 @@ class ArcsPane(radius: Double, arcsNumber: Int) extends StackPane {
   private var mArcsData: List[ArcData] = Nil
 
   def fillPane(number: Int): Unit = {
+    val texts = mArcsData.map(_.arc.text)
     mArcsData = createRouletteSectors(number)
+    mArcsData.zip(texts).foreach(tup => tup._1.arc.text = tup._2)
+
     resetArcs()
   }
 
