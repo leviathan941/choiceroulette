@@ -14,26 +14,31 @@
  * limitations under the License.
  */
 
-package choiceroulette.gui
+package choiceroulette.gui.roulette
 
-import scalafx.geometry.Insets
-import scalafx.scene.Node
-import scalafx.scene.layout.BorderPane
+import scalafx.geometry.Pos
+import scalafx.scene.layout.FlowPane
+import scalafx.scene.paint.Color
+import scalafx.scene.shape.{Arc, ArcType}
 
-/** Main pane containing top-level GUI components.
+/** Cursor to point to won roulette arc.
   *
   * @author Alexey Kuzin <amkuzink@gmail.com>
   */
-class MainPane(topPane: Node, centerPane: Node, rightPane: Node, bottomPane: Node) extends BorderPane {
+class CursorArcPane(radius: Double) extends FlowPane {
 
-  top = topPane
-  center = centerPane
-  right = rightPane
-  bottom = bottomPane
+  val positionAngle = 180
 
-  prefWidth = 1024
-  prefHeight = 768
-  maxWidth = Double.MaxValue
-  maxHeight = Double.MaxValue
-  margin = Insets(0)
+  children = new Arc() {
+    `type` = ArcType.Round
+    radiusX = radius / 10
+    radiusY = radius / 2
+    startAngle = 175
+    length = 10
+    fill = Color.Black
+  }
+
+  maxWidth = 2 * radius
+  maxHeight = 2 * radius
+  alignment = Pos.CenterLeft
 }

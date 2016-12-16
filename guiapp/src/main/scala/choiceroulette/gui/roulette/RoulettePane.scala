@@ -22,10 +22,9 @@ import choiceroulette.gui.utils.CircleUtils
 
 import scala.util.Random
 import scalafx.Includes._
-import scalafx.geometry.Pos
 import scalafx.scene.Node
 import scalafx.scene.input.MouseEvent
-import scalafx.scene.layout.{FlowPane, Pane, StackPane}
+import scalafx.scene.layout.{Pane, StackPane}
 import scalafx.scene.paint.Color
 import scalafx.scene.shape._
 
@@ -47,20 +46,7 @@ class RoulettePane(prefController: PreferencesController,
 
   private lazy val mArcsPane = new ArcsPane(radius, 2)
 
-  private lazy val mCursorArcPane = new FlowPane() {
-    children = new Arc() {
-      `type` = ArcType.Round
-      radiusX = pane.radius / 10
-      radiusY = pane.radius / 2
-      startAngle = 175
-      length = 10
-      fill = Color.Black
-    }
-
-    maxWidth = 2 * radius
-    maxHeight = 2 * radius
-    alignment = Pos.CenterLeft
-  }
+  private lazy val mCursorArcPane = new CursorArcPane(radius)
 
   private lazy val mCenterCircle = new Circle() {
     radius = pane.radius / 10
@@ -99,7 +85,7 @@ class RoulettePane(prefController: PreferencesController,
     setControlsEnabled(enabled = false)
 
     val arcNumber = Random.nextInt(mArcsPane.arcsCount)
-    mArcsPane.rotateArcToPoint(arcNumber, 180, 8, CircleUtils.randomAngleBetween, showResult)
+    mArcsPane.rotateArcToPoint(arcNumber, mCursorArcPane.positionAngle, 8, CircleUtils.randomAngleBetween, showResult)
   }
 
   override def choiceCountChanged(count: Int): Unit = {
