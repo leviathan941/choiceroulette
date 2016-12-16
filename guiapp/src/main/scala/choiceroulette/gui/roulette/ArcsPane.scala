@@ -61,6 +61,7 @@ class ArcsPane(radius: Double, arcsNumber: Int) extends StackPane {
                        angleCalc: (Double, Double, Double) => Double,
                        resultShower: String => Unit): Unit = {
     require(arcNumber >= 0 && arcNumber < mArcsData.size, "Check arcs count first")
+    require(turns >= 0)
 
     val arcData = mArcsData(arcNumber)
     val angle = angleWithRotate(angleCalc(arcData.startAngle, arcData.endAngle, 5)) + turns * 360
