@@ -18,6 +18,7 @@ package choiceroulette.gui.roulette
 
 import choiceroulette.gui.controls.actions.{ActionController, ActionListener}
 import choiceroulette.gui.controls.preferences.{PreferencesChangeListener, PreferencesController}
+import choiceroulette.gui.utils.CircleUtils
 
 import scala.util.Random
 import scalafx.Includes._
@@ -26,7 +27,7 @@ import scalafx.scene.Node
 import scalafx.scene.input.MouseEvent
 import scalafx.scene.layout.{FlowPane, Pane, StackPane}
 import scalafx.scene.paint.Color
-import scalafx.scene.shape.{Arc, ArcType, Circle}
+import scalafx.scene.shape._
 
 /** Pane for roulette view.
   *
@@ -37,8 +38,11 @@ class RoulettePane(prefController: PreferencesController,
                    radius: Double) extends Pane with PreferencesChangeListener with ActionListener { pane =>
 
   private lazy val mBackgroundCircle = new Circle() {
-    radius = pane.radius + 3
+    radius = pane.radius
     fill = Color.DarkSlateGrey
+    strokeWidth = 3
+    strokeType = StrokeType.Outside
+    stroke = Color.DarkSlateGrey
   }
 
   private lazy val mArcsPane = new ArcsPane(radius, 2)
@@ -92,28 +96,33 @@ class RoulettePane(prefController: PreferencesController,
 
   override def onSpinAction(): Unit = {
     popupHider()
+    setControlsEnabled(enabled = false)
 
     val arcNumber = Random.nextInt(mArcsPane.arcsCount)
-    showResult(mArcsPane.getArcText(arcNumber))
+    mArcsPane.rotateArcToPoint(arcNumber, 180, 8, CircleUtils.randomAngleBetween, showResult)
   }
 
   override def choiceCountChanged(count: Int): Unit = {
-    mArcsPane.updateArcs(count)
+    mArcsPane.fillPane(count)
   }
 
-  private def showResult(result: String): Unit = {
-    prefController.setPreferencesEnabled(enable = false)
+  private val showResult: String => Unit = (result: String) => {
     children += new SpinResultPane(result, width.value -> height.value, popupHider)
   }
 
-  private val popupHider = () => {
+  private lazy val popupHider = () => {
     mArcsPane.clearHighlight()
-    prefController.setPreferencesEnabled(enable = true)
+    setControlsEnabled()
     children = mRouletteStack
   }
 
   private def moveToPaneCenter(node: Node): Unit = {
     node.relocate(pane.width.value / 2 - radius, pane.height.value / 2 - radius)
+  }
+
+  private def setControlsEnabled(enabled: Boolean = true): Unit = {
+    prefController.setPreferencesEnabled(enable = enabled)
+    actionController.setActionsEnabled(enable = enabled)
   }
 
   height.onChange(moveToPaneCenter(mRouletteStack))

@@ -24,5 +24,5 @@ import scaldi.Module
   */
 object ActionModule extends Module {
   binding to injected [ActionController]
-  binding toProvider new ActionsPane(inject [ActionController])
+  binding to new ActionsPane(inject [ActionController])
 }

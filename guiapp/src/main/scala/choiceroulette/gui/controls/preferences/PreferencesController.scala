@@ -37,5 +37,5 @@ class PreferencesController {
   private def notifyListeners(notifyMethod: PreferencesChangeListener => Unit): Unit =
     mPrefChangeListeners.foreach(notifyMethod)
 
-  def setPreferencesEnabled(enable: Boolean): Unit = mPrefPane.disable = !enable
+  def setPreferencesEnabled(enable: Boolean = true): Unit = mPrefPane.disable = !enable
 }

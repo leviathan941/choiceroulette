@@ -16,6 +16,8 @@
 
 package choiceroulette.gui.controls.actions
 
+import scaldi.Injectable.inject
+
 import scala.collection.mutable
 
 /** Controls UI actions.
@@ -23,8 +25,10 @@ import scala.collection.mutable
   * @author Alexey Kuzin <amkuzink@gmail.com>
   */
 class ActionController {
+  implicit val injector = ActionModule
 
   private lazy val mActionListeners = new mutable.HashSet[ActionListener]()
+  private lazy val mActionsPane: ActionsPane = inject [ActionsPane]
 
   def listenActions(listener: ActionListener): Unit = mActionListeners += listener
 
@@ -35,4 +39,6 @@ class ActionController {
   private def notifyListeners(notifyMethod: ActionListener => Unit): Unit = {
     mActionListeners.foreach(notifyMethod)
   }
+
+  def setActionsEnabled(enable: Boolean = true): Unit = mActionsPane.disable = !enable
 }

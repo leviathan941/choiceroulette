@@ -17,6 +17,7 @@
 package choiceroulette.gui.utils
 
 import scala.collection.immutable.NumericRange
+import scala.util.Random
 
 /** Util methods for various calculations in circle.
   *
@@ -55,5 +56,21 @@ object CircleUtils {
                        center: (Double, Double)): (Double, Double) = {
     (polar._1 * math.cos(polar._2) + center._1,
       polar._1 * math.sin(polar._2) + center._2)
+  }
+
+  def randomAngleBetween(start: Double, end: Double, offset: Double): Double = {
+    offset + start + Random.nextDouble() * (end - start - offset)
+  }
+
+  def simplifyAngle(degrees: Double): Double = {
+    degrees % 360
+  }
+
+  /** @param degrees Angle of degrees.
+    * @return angle converted from [-180, 180] to [0, 360].
+    */
+  def fromMathTo0to2Pi(degrees: Double): Double = {
+    if (degrees > 0) 360 - degrees
+    else -degrees
   }
 }

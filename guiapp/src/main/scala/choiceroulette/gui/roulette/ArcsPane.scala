@@ -28,7 +28,7 @@ class ArcsPane(radius: Double, arcsNumber: Int) extends StackPane {
 
   private var mArcsData: List[ArcData] = Nil
 
-  def updateArcs(number: Int): Unit = {
+  def fillPane(number: Int): Unit = {
     mArcsData = createRouletteSectors(number)
     resetArcs()
   }
@@ -55,9 +55,17 @@ class ArcsPane(radius: Double, arcsNumber: Int) extends StackPane {
 
   def arcsCount: Int = mArcsData.size
 
-  def getArcText(number: Int): String = {
-    require(number < mArcsData.size, "Check arcs count first")
-    mArcsData(number).arc.text
+  def rotateArcToPoint(arcNumber:Int,
+                       pointAngle: Double,
+                       turns: Double,
+                       angleCalc: (Double, Double, Double) => Double,
+                       resultShower: String => Unit): Unit = {
+    require(arcNumber >= 0 && arcNumber < mArcsData.size, "Check arcs count first")
+
+    val arcData = mArcsData(arcNumber)
+    val angle = angleWithRotate(angleCalc(arcData.startAngle, arcData.endAngle, 5)) + turns * 360
+    val rotator = new RouletteRotator(this, pointAngle + angle, () => resultShower(arcData.arc.text))
+    rotator.spinTheWheel()
   }
 
   private def resetArcs(): Unit = {
@@ -71,12 +79,17 @@ class ArcsPane(radius: Double, arcsNumber: Int) extends StackPane {
     if (r > radius)
       None
     else
-      findArc(if (phi > 0) 360 - math.toDegrees(phi) else -math.toDegrees(phi))
+      findArc(CircleUtils.fromMathTo0to2Pi(math.toDegrees(phi)))
   }
 
   private def findArc(degrees: Double): Option[ChoiceArc] = {
+    val simplified = simplifiedRotate()
+
     mArcsData.find(
-      data => degrees > data.startAngle && degrees < data.endAngle
+      data => {
+        CircleUtils.simplifyAngle(degrees + simplified) > data.startAngle &&
+          CircleUtils.simplifyAngle(degrees + simplified) < data.endAngle
+      }
     ) match {
       case Some(arcData) => Some(arcData.arc)
       case _ => None
@@ -88,11 +101,18 @@ class ArcsPane(radius: Double, arcsNumber: Int) extends StackPane {
 
     angles.zip(angles.tail).map(arcAngle => {
       ArcData(arcAngle._1, arcAngle._2,
-        new ChoiceArc(radius, arcAngle._1, arcAngle._2 - arcAngle._1, "Choice"))
+        new ChoiceArc(radius, arcAngle._1, arcAngle._2 - arcAngle._1, "Enter choice"))
     }).toList
   }
 
-  private case class ArcData(startAngle: Double, endAngle: Double, arc: ChoiceArc)
+  private def angleWithRotate(degrees: Double): Double = 360 - simplifiedRotate() + degrees
 
-  updateArcs(arcsNumber)
+  private def simplifiedRotate(): Double = {
+    rotate = CircleUtils.simplifyAngle(rotate.value)
+    rotate.value
+  }
+
+  case class ArcData(startAngle: Double, endAngle: Double, arc: ChoiceArc)
+
+  fillPane(arcsNumber)
 }

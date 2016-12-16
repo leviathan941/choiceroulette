@@ -20,7 +20,7 @@ val srcPath: File = file(".")
 
 lazy val commonSettings: Seq[Setting[_]] = Seq(
   scalaVersion := scala212,
-  version := "0.1.0-SNAPSHOT",
+  version := "0.2.0-SNAPSHOT",
   organization := "org.leviathan941",
   scalacOptions ++= Seq ("-feature", "-deprecation"),
   licenses += ("Apache 2.0", url("https://opensource.org/licenses/Apache-2.0")),
