@@ -14,15 +14,12 @@
  * limitations under the License.
  */
 
-package choiceroulette.gui.controls.actions
+package choiceroulette.gui.menubar
 
-import scaldi.Module
-
-/** Actions package module.
+/** Listener for menu bar actions.
   *
   * @author Alexey Kuzin <amkuzink@gmail.com>
   */
-object ActionModule extends Module {
-  binding to new ActionController
-  binding to injected [ActionsPane]
+trait MenuActionListener {
+  def cssFileOpened(path: String)
 }

@@ -18,6 +18,7 @@ package choiceroulette.gui
 
 import choiceroulette.gui.controls.actions.{ActionModule, ActionsPane}
 import choiceroulette.gui.controls.preferences.{PreferencesModule, PreferencesPane}
+import choiceroulette.gui.menubar.{AppMenuBar, MenuBarModule}
 import choiceroulette.gui.roulette.{RouletteModule, RoulettePane}
 import scaldi.{Module, MutableInjectorAggregation}
 
@@ -27,10 +28,10 @@ import scaldi.{Module, MutableInjectorAggregation}
   */
 class GuiModule extends Module {
   override implicit val injector: MutableInjectorAggregation =
-    PreferencesModule :: ActionModule :: new RouletteModule
+    PreferencesModule :: ActionModule :: new RouletteModule :: MenuBarModule
 
   binding to new MainPane(
-    topPane = new AppMenuBar,
+    topPane = inject [AppMenuBar],
     centerPane = inject [RoulettePane],
     rightPane = inject [PreferencesPane],
     bottomPane = inject [ActionsPane]

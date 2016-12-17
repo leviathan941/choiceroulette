@@ -14,15 +14,18 @@
  * limitations under the License.
  */
 
-package choiceroulette.gui.controls.actions
+package choiceroulette.gui.menubar
 
+import choiceroulette.gui.GuiApplication
 import scaldi.Module
 
-/** Actions package module.
+/** Menu bar package module.
   *
   * @author Alexey Kuzin <amkuzink@gmail.com>
   */
-object ActionModule extends Module {
-  binding to new ActionController
-  binding to injected [ActionsPane]
+object MenuBarModule extends Module {
+
+  binding toProvider new AboutStage(GuiApplication.stage)
+  binding to injected [AppMenuBar]
+  binding to new MenuBarController
 }

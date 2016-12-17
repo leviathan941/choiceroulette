@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-package choiceroulette.gui
+package choiceroulette.gui.menubar
 
 import scalafx.geometry.{Insets, Pos}
 import scalafx.scene.Scene
-import scalafx.scene.control.{TextArea, Label}
+import scalafx.scene.control.{Label, TextArea}
 import scalafx.scene.layout.VBox
 import scalafx.scene.paint.Color
-import scalafx.stage.{StageStyle, Window, Stage}
+import scalafx.stage.{Stage, StageStyle, Window}
 
 /** About stage contains information about creators.
   *

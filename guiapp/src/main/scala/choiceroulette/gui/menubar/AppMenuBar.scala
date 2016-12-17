@@ -14,7 +14,9 @@
  * limitations under the License.
  */
 
-package choiceroulette.gui
+package choiceroulette.gui.menubar
+
+import choiceroulette.gui.GuiApplication
 
 import scalafx.Includes.handle
 import scalafx.geometry.Insets
@@ -24,23 +26,32 @@ import scalafx.scene.control.{Menu, MenuBar, MenuItem}
   *
   * @author Alexey Kuzin <amkuzink@gmail.com>
   */
-class AppMenuBar extends MenuBar {
+class AppMenuBar(menuBarController: MenuBarController) extends MenuBar {
 
   private val mHelpMenu = new Menu("Help") {
-    lazy val mAboutItem = new MenuItem("About") {
-      onAction = handle { mAboutStage.show() }
+
+    private lazy val mAboutItem = new MenuItem("About") {
+      onAction = handle(mAboutStage.show())
     }
-    lazy val mAboutStage = new AboutStage(GuiApplication.stage)
+
+    private lazy val mAboutStage = new AboutStage(GuiApplication.stage)
 
     items = List(mAboutItem)
   }
 
-  var addHeatmapHandler: () => Unit = () =>
+  private val mFileMenu = new Menu("File") {
+
+    private lazy val mApplyCss = new MenuItem("Apply style from CSS") {
+      onAction = handle(menuBarController.openCssFile())
+    }
+
+    items = List(mApplyCss)
+  }
 
   useSystemMenuBar = true
   padding = Insets(0)
   style = "-fx-border-style: solid;" +
     "-fx-border-color: grey;" +
     "-fx-border-width: 0 1px 1px 0;"
-  menus = List(mHelpMenu)
+  menus = List(mFileMenu, mHelpMenu)
 }
