@@ -31,8 +31,6 @@ class MainPane(topPane: Node, centerPane: Node, rightPane: Node, bottomPane: Nod
   right = rightPane
   bottom = bottomPane
 
-  prefWidth = 1024
-  prefHeight = 768
   maxWidth = Double.MaxValue
   maxHeight = Double.MaxValue
   margin = Insets(0)

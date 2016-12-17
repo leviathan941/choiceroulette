@@ -22,6 +22,7 @@ import choiceroulette.gui.GuiApplication
 
 import scala.collection.mutable
 import scalafx.stage.FileChooser
+import scalafx.stage.FileChooser.ExtensionFilter
 
 /** Controls menu bar actions.
   *
@@ -35,6 +36,7 @@ class MenuBarController {
     new FileChooser {
       title = "Choose CSS file"
       initialDirectory = new File(".")
+      extensionFilters.add(new ExtensionFilter("CSS Files", "*.css"))
     }.showOpenDialog(GuiApplication.stage) match {
       case file: File => notifyListeners(_.cssFileOpened(file.getAbsolutePath))
       case _ =>
