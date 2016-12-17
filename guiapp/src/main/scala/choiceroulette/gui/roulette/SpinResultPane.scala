@@ -37,6 +37,7 @@ class SpinResultPane(result: String, size: (Double, Double), clickHandler: () =>
     wrapText = true
     textOverrun = OverrunStyle.Ellipsis
     textAlignment = TextAlignment.Center
+    id = "spin-result-text"
   }
 
   private val mGradient: Paint = RadialGradient(

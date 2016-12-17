@@ -32,6 +32,8 @@ class MenuBarController {
 
   private lazy val mMenuActionListeners = new mutable.HashSet[MenuActionListener]()
 
+  def listenActions(listener: MenuActionListener): Unit = mMenuActionListeners += listener
+
   def openCssFile(): Unit = {
     new FileChooser {
       title = "Choose CSS file"
