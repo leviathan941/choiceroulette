@@ -24,7 +24,7 @@ import scalafx.scene.layout.StackPane
   *
   * @author Alexey Kuzin <amkuzink@gmail.com>
   */
-class ArcsPane(radius: Double, arcsNumber: Int) extends StackPane {
+class ArcsPane(radius: Double) extends StackPane {
 
   private var mArcsData: List[ArcData] = Nil
 
@@ -117,6 +117,4 @@ class ArcsPane(radius: Double, arcsNumber: Int) extends StackPane {
   }
 
   case class ArcData(startAngle: Double, endAngle: Double, arc: ChoiceArc)
-
-  fillPane(arcsNumber)
 }

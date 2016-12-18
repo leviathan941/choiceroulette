@@ -58,4 +58,5 @@ class SpinResultPane(result: String, size: (Double, Double), clickHandler: () =>
   prefWidth = size._1
   prefHeight = size._2
   padding = Insets(20)
+  id = "spin-result"
 }

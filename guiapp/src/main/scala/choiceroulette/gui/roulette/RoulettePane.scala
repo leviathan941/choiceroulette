@@ -44,7 +44,7 @@ class RoulettePane(prefController: PreferencesController,
     stroke = Color.DarkSlateGrey
   }
 
-  private lazy val mArcsPane = new ArcsPane(radius, 2)
+  private lazy val mArcsPane = new ArcsPane(radius)
 
   private lazy val mCursorArcPane = new CursorArcPane(radius)
 
@@ -125,4 +125,6 @@ class RoulettePane(prefController: PreferencesController,
   children = mRouletteStack
   style = "-fx-border-width: 1px;" +
     "-fx-border-color: grey;"
+
+  mArcsPane.fillPane(2)
 }
