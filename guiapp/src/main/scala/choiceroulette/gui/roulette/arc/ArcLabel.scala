@@ -19,6 +19,7 @@ package choiceroulette.gui.roulette.arc
 import choiceroulette.gui.controls.preferences.FontProvider
 
 import scalafx.scene.control.{Label, OverrunStyle}
+import scalafx.scene.paint.Color
 import scalafx.scene.shape.Arc
 import scalafx.scene.text.Text
 import scalafx.scene.transform.Rotate
@@ -57,4 +58,6 @@ class ArcLabel(text: String) extends Label(text) { label =>
   wrapText = false
   font = FontProvider.boldRegularFont
   textOverrun = OverrunStyle.CenterEllipsis
+  textFill = Color.Blue
+  styleClass += "arc-label"
 }

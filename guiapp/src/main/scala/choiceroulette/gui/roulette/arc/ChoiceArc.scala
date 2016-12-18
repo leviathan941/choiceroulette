@@ -52,7 +52,6 @@ class ChoiceArc(radius: Double,
   private val mBackRectangle = Rectangle(2 * radius, 2 * radius, Color.Transparent)
 
   private val mText = new ArcLabel("Enter choice") {
-    textFill = Color.Blue
     maxWidth = 0.75 * radius
   }
 
