@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package choiceroulette.gui.roulette
+package choiceroulette.gui.roulette.arc
 
 import scalafx.geometry.Pos
 import scalafx.scene.layout.FlowPane

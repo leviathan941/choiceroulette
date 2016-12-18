@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package choiceroulette.gui.roulette
+package choiceroulette.gui.roulette.arc
 
 import choiceroulette.gui.utils.CircleUtils
 
@@ -22,7 +22,8 @@ import scala.language.implicitConversions
 import scalafx.beans.property.DoubleProperty
 import scalafx.scene.Group
 import scalafx.scene.layout.StackPane
-import scalafx.scene.paint.Color
+import scalafx.scene.paint.PaintIncludes._
+import scalafx.scene.paint.{Color, Paint}
 import scalafx.scene.shape._
 
 /** Choice arc for the roulette.
@@ -31,8 +32,7 @@ import scalafx.scene.shape._
   */
 class ChoiceArc(radius: Double,
                 angleStart: Double,
-                angleLength: Double,
-                choiceText: String) extends StackPane {
+                angleLength: Double) extends StackPane {
 
   private val mArc = new Arc() {
     `type` = ArcType.Round
@@ -46,11 +46,12 @@ class ChoiceArc(radius: Double,
     strokeLineCap = StrokeLineCap.Butt
     strokeType = StrokeType.Inside
     fill = Color.Aquamarine
+    styleClass += "choice-arc"
   }
 
   private val mBackRectangle = Rectangle(2 * radius, 2 * radius, Color.Transparent)
 
-  private val mText = new ArcLabel(choiceText) {
+  private val mText = new ArcLabel("Enter choice") {
     textFill = Color.Blue
     maxWidth = 0.75 * radius
   }
@@ -85,9 +86,15 @@ class ChoiceArc(radius: Double,
 
   def text: String = mText.text.value
 
-  def text_= (text: String): Unit = {
+  def text_=(text: String): Unit = {
     if (!text.isEmpty)
       mText.text = text
+  }
+
+  def color: Paint = mArc.fill.value
+
+  def color_=(paint: Paint): Unit = {
+    mArc.fill = paint
   }
 
   clearHighlight()

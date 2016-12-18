@@ -14,8 +14,7 @@
  * limitations under the License.
  */
 
-package choiceroulette.gui.roulette
-
+package choiceroulette.gui.roulette.arc
 
 import choiceroulette.gui.controls.preferences.FontProvider
 

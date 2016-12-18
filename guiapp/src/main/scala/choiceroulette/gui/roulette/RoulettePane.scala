@@ -18,6 +18,7 @@ package choiceroulette.gui.roulette
 
 import choiceroulette.gui.controls.actions.{ActionController, ActionListener}
 import choiceroulette.gui.controls.preferences.{PreferencesChangeListener, PreferencesController}
+import choiceroulette.gui.roulette.arc.{ArcsPane, CursorArcPane}
 import choiceroulette.gui.utils.CircleUtils
 
 import scala.util.Random

@@ -16,6 +16,8 @@
 
 package choiceroulette.gui.roulette
 
+import choiceroulette.gui.roulette.arc.ChoiceArc
+
 import scalafx.Includes._
 import scalafx.scene.control.TextField
 import scalafx.scene.input.{KeyCode, KeyEvent}
