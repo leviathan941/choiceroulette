@@ -30,7 +30,14 @@ class PreferencesPane(prefController: PreferencesController) extends VBox {
   private val mChoiceCountSpinner = new Spinner[Int](2, 16, 2) {
     editable = true
     prefWidth = 80
+
     value.onChange(prefController.changeChoiceCount(value.value))
+
+    editor.value.textProperty().addListener((_, oldValue, newValue) => {
+      if (!newValue.forall(_.isDigit)) {
+        editor.value.setText(oldValue)
+      }
+    })
   }
 
   private val mChoiceCountLabel = new Label("Count:") {

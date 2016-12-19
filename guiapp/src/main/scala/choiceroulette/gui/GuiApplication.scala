@@ -16,6 +16,7 @@
 
 package choiceroulette.gui
 import choiceroulette.gui.menubar.{MenuActionListener, MenuBarController, MenuBarModule}
+import choiceroulette.gui.utils.FileUtils
 import scaldi.Injectable.inject
 
 import scalafx.application.JFXApp
@@ -38,14 +39,14 @@ object GuiApplication extends JFXApp {
   stage = new PrimaryStage {
     title = "Choice Roulette"
     scene = mMainScene
-    minWidth = 800
-    minHeight = 640
+    minWidth = 840
+    minHeight = 720
   }
 
   inject [MenuBarController].listenActions(new MenuActionListener {
     override def cssFileOpened(path: String): Unit = {
       mMainScene.stylesheets.clear()
-      mMainScene.stylesheets.add("file:///" + path)
+      mMainScene.stylesheets.add(FileUtils.filePathToUrl(path))
     }
   })
 }
