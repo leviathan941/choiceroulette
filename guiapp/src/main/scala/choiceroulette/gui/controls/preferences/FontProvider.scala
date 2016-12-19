@@ -24,7 +24,10 @@ import scalafx.scene.text.{Font, FontWeight}
   */
 object FontProvider {
 
-  private val mDefaultFontFamily = "Helvetica"
+  private val mDefaultFontFamily =
+    if (Font.families.contains("PF DinText Pro")) "PF DinText Pro"
+    else "Helvetica"
+
   private val mDefaultFontSize = 18
 
   val regularFont: Font = regularFont(FontWeight.Normal, mDefaultFontSize)

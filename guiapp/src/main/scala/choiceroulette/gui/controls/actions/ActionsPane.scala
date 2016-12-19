@@ -63,4 +63,6 @@ class ActionsPane(actionController: ActionController) extends VBox {
   alignment = Pos.BottomRight
   hgrow = Priority.Always
   padding = Insets(10, 50, 10, 50)
+  style = "-fx-border-width: 1px;" +
+    "-fx-border-color: grey;"
 }
