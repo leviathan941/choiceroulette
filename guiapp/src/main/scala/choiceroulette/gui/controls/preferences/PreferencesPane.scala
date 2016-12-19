@@ -34,7 +34,7 @@ class PreferencesPane(prefController: PreferencesController) extends VBox {
     value.onChange(prefController.changeChoiceCount(value.value))
 
     editor.value.textProperty().addListener((_, oldValue, newValue) => {
-      if (!newValue.forall(_.isDigit)) {
+      if (!newValue.forall(_.isDigit) || newValue.length > 2) {
         editor.value.setText(oldValue)
       }
     })
