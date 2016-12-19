@@ -40,7 +40,7 @@ object GuiApplication extends JFXApp {
     title = "Choice Roulette"
     scene = mMainScene
     minWidth = 840
-    minHeight = 720
+    minHeight = 700
   }
 
   inject [MenuBarController].listenActions(new MenuActionListener {

@@ -26,8 +26,8 @@ import scalafx.scene.layout.BorderPane
   */
 class MainPane(topPane: Node, centerPane: Node, rightPane: Node, bottomPane: Node) extends BorderPane {
 
-  top = topPane
   center = centerPane
+  top = topPane
   right = rightPane
   bottom = bottomPane
 
