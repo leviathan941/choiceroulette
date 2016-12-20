@@ -14,32 +14,16 @@
  * limitations under the License.
  */
 
-package choiceroulette.gui.roulette.arc
+package choiceroulette.gui.utils
 
-import scalafx.geometry.Pos
-import scalafx.scene.layout.FlowPane
-import scalafx.scene.paint.Color
-import scalafx.scene.shape.{Arc, ArcType}
+import scala.language.implicitConversions
+import scalafx.beans.property.DoubleProperty
 
-/** Cursor to point to won roulette arc.
+/** Various usable implicit conversions.
   *
   * @author Alexey Kuzin <amkuzink@gmail.com>
   */
-class CursorArcPane(radius: Double) extends FlowPane {
-
-  val positionAngle = 180
-
-  children = new Arc() {
-    `type` = ArcType.Round
-    radiusX = radius / 10
-    radiusY = radius / 2
-    startAngle = 170
-    length = 20
-    fill = Color.Black
-    styleClass += "wheel-cursor"
-  }
-
-  maxWidth = 2 * radius
-  maxHeight = 2 * radius
-  alignment = Pos.CenterLeft
+object Conversions {
+  implicit def double2DoubleProperty(number: Double): DoubleProperty = DoubleProperty(number)
+  implicit def doubleProperty2Double(property: DoubleProperty): Double = property.value
 }

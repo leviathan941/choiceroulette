@@ -17,9 +17,8 @@
 package choiceroulette.gui.roulette.arc
 
 import choiceroulette.gui.utils.CircleUtils
+import choiceroulette.gui.utils.Conversions._
 
-import scala.language.implicitConversions
-import scalafx.beans.property.DoubleProperty
 import scalafx.scene.Group
 import scalafx.scene.layout.StackPane
 import scalafx.scene.paint.PaintIncludes._
@@ -34,7 +33,7 @@ class ChoiceArc(radius: Double,
                 angleStart: Double,
                 angleLength: Double) extends StackPane {
 
-  private val mArc = new Arc() {
+  private lazy val mArc = new Arc() {
     `type` = ArcType.Round
     radiusX = radius
     radiusY = radius
@@ -51,16 +50,16 @@ class ChoiceArc(radius: Double,
     styleClass += "choice-arc"
   }
 
-  private val mBackRectangle = Rectangle(2 * radius, 2 * radius, Color.Transparent)
+  private lazy val mBackRectangle = Rectangle(2 * radius, 2 * radius, Color.Transparent)
 
-  private val mText = new ArcLabel("Enter choice") {
-    maxWidth = 0.75 * radius
+  private lazy val mText = new ArcLabel(mArc, getTextStartPoint, "Enter choice") {
+    maxWidth = 0.6 * radius
   }
 
-  private def getTextStartPoint(arc: Arc): (Double, Double) = {
+  private lazy val getTextStartPoint: Arc => (Double, Double) = arc => {
     val arcCenter: (Double, Double) = (arc.centerX, arc.centerY)
 
-    CircleUtils.shiftPointAlongRadius(arcCenter, getChordCenterPoint(arc), -20)
+    CircleUtils.shiftPointAlongRadius(arcCenter, getChordCenterPoint(arc), -25)
   }
 
   private def getChordCenterPoint(arc: Arc): (Double, Double) = {
@@ -71,9 +70,6 @@ class ChoiceArc(radius: Double,
 
     CircleUtils.getCirclePoint(arcCenter, arcRadius, arcStartAngleRad + acrLenAngleRad / 2)
   }
-
-  implicit def double2DoubleProperty(number: Double): DoubleProperty = DoubleProperty(number)
-  implicit def doubleProperty2Double(property: DoubleProperty): Double = property.value
 
   def text: String = mText.text.value
 
@@ -87,8 +83,6 @@ class ChoiceArc(radius: Double,
   def color_=(paint: Paint): Unit = {
     mArc.fill = paint
   }
-
-  mText.moveInsideArc(mArc, getTextStartPoint(mArc))
 
   children = new Group(mBackRectangle, mArc, mText)
   minHeight = 0
