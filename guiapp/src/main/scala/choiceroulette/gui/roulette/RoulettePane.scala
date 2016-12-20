@@ -49,7 +49,7 @@ class RoulettePane(prefController: PreferencesController,
 
   private lazy val mCenterCircle = new Circle() {
     radius = pane.radius / 5
-    fill = Color.Black
+    fill = Color.DarkGray
     styleClass += "center-circle"
   }
 

@@ -31,7 +31,7 @@ class ArcsPane(radius: Double) extends StackPane(new ArcsPaneJfxDelegate) {
 
   case class ArcData(startAngle: Double, endAngle: Double, arc: ChoiceArc)
   private var mArcsData: List[ArcData] = Nil
-  private val mArcColors: Array[Paint] = Array(Color.LightGrey, Color.Aquamarine)
+  private val mArcColors: Array[Paint] = Array(Color.Lavender, Color.Aquamarine)
 
   def fillPane(number: Int): Unit = {
     val texts = mArcsData.map(_.arc.text)
