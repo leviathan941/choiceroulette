@@ -43,6 +43,7 @@ class ChoiceArc(radius: Double,
     centerX = radius
     centerY = radius
 
+    smooth = false
     strokeLineCap = StrokeLineCap.Butt
     strokeType = StrokeType.Inside
     stroke = Color.White
