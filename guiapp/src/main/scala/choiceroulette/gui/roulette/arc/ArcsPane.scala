@@ -42,19 +42,6 @@ class ArcsPane(radius: Double) extends StackPane(new ArcsPaneJfxDelegate) {
     resetArcs()
   }
 
-  def highlightArc(loc: (Double, Double)): Unit = {
-    clearHighlight()
-
-    getArc(loc) match {
-      case Some(arc) => arc.highlight()
-      case _ =>
-    }
-  }
-
-  def clearHighlight(): Unit = {
-    mArcsData.foreach(_.arc.clearHighlight())
-  }
-
   def createEditor(loc: (Double, Double), onHide: () => Unit): Option[EditChoiceField] = {
     getArc(loc) match {
       case Some(arc) => Some(new EditChoiceField(arc, onHide, 50))

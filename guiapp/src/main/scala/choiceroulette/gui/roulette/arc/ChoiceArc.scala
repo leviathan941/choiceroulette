@@ -45,6 +45,8 @@ class ChoiceArc(radius: Double,
 
     strokeLineCap = StrokeLineCap.Butt
     strokeType = StrokeType.Inside
+    stroke = Color.White
+    strokeWidth = 2
     fill = Color.Aquamarine
     styleClass += "choice-arc"
   }
@@ -73,16 +75,6 @@ class ChoiceArc(radius: Double,
   implicit def double2DoubleProperty(number: Double): DoubleProperty = DoubleProperty(number)
   implicit def doubleProperty2Double(property: DoubleProperty): Double = property.value
 
-  def highlight(): Unit = {
-    mArc.stroke = Color.Black
-    mArc.strokeWidth = 2
-  }
-
-  def clearHighlight(): Unit = {
-    mArc.stroke = Color.Red
-    mArc.strokeWidth = 1
-  }
-
   def text: String = mText.text.value
 
   def text_=(text: String): Unit = {
@@ -96,7 +88,6 @@ class ChoiceArc(radius: Double,
     mArc.fill = paint
   }
 
-  clearHighlight()
   mText.moveInsideArc(mArc, getTextStartPoint(mArc))
 
   children = new Group(mBackRectangle, mArc, mText)

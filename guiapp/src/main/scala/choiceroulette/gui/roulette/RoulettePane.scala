@@ -73,7 +73,6 @@ class RoulettePane(prefController: PreferencesController,
   private def showEditor(editor: EditChoiceField, loc: (Double, Double)): Unit = {
     children += editor
 
-    editor.choiceArc.highlight()
     editor.relocate(mRouletteStack.layoutX.value + loc._1, mRouletteStack.layoutY.value + loc._2)
     editor.requestFocus()
   }
@@ -100,7 +99,6 @@ class RoulettePane(prefController: PreferencesController,
   }
 
   private lazy val popupHider = () => {
-    mArcsPane.clearHighlight()
     setControlsEnabled()
     children = mRouletteStack
   }
