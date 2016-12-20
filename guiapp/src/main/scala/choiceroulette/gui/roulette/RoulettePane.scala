@@ -40,9 +40,6 @@ class RoulettePane(prefController: PreferencesController,
   private lazy val mBackgroundCircle = new Circle() {
     radius = pane.radius
     fill = Color.DarkSlateGrey
-    strokeWidth = 3
-    strokeType = StrokeType.Outside
-    stroke = Color.DarkSlateGrey
   }
 
   private lazy val mArcsPane = new ArcsPane(radius)
