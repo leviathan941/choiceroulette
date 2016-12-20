@@ -36,6 +36,7 @@ class CursorArcPane(radius: Double) extends FlowPane {
     startAngle = 175
     length = 10
     fill = Color.Black
+    styleClass += "wheel-cursor"
   }
 
   maxWidth = 2 * radius

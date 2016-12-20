@@ -39,7 +39,8 @@ class RoulettePane(prefController: PreferencesController,
 
   private lazy val mBackgroundCircle = new Circle() {
     radius = pane.radius
-    fill = Color.DarkSlateGrey
+    fill = Color.White
+    styleClass += "background-circle"
   }
 
   private lazy val mArcsPane = new ArcsPane(radius)
@@ -47,8 +48,9 @@ class RoulettePane(prefController: PreferencesController,
   private lazy val mCursorArcPane = new CursorArcPane(radius)
 
   private lazy val mCenterCircle = new Circle() {
-    radius = pane.radius / 10
+    radius = pane.radius / 5
     fill = Color.Black
+    styleClass += "center-circle"
   }
 
   private lazy val mRouletteStack: StackPane = new StackPane() {
