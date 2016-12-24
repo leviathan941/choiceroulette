@@ -28,7 +28,7 @@ import scaldi.{Module, MutableInjectorAggregation}
   */
 class GuiModule extends Module {
   override implicit val injector: MutableInjectorAggregation =
-    PreferencesModule :: ActionModule :: new RouletteModule :: MenuBarModule
+    PreferencesModule :: ActionModule :: RouletteModule :: MenuBarModule
 
   binding to new MainPane(
     topPane = inject [AppMenuBar],

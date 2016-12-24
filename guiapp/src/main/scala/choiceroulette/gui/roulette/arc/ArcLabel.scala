@@ -17,6 +17,8 @@
 package choiceroulette.gui.roulette.arc
 
 import choiceroulette.gui.controls.preferences.FontProvider
+import choiceroulette.gui.roulette.data.DataHolder.ArcLabelDataHolder
+import choiceroulette.gui.roulette.data.{DataHoldable, DataHolder, RouletteDataController}
 import choiceroulette.gui.utils.Conversions._
 
 import scalafx.beans.property.DoubleProperty
@@ -30,11 +32,12 @@ import scalafx.scene.transform.Rotate
   *
   * @author Alexey Kuzin <amkuzink@gmail.com>
   */
-class ArcLabel(arc: Arc,
+class ArcLabel(dataController: RouletteDataController,
+               arc: Arc,
                startPoint: Arc => (Double, Double),
-               text: String) extends Label(text) { label =>
+               textStr: String) extends Label(textStr) with DataHoldable { label =>
 
-  val labelRotation: DoubleProperty = DoubleProperty(0.0)
+  private val labelRotation: DoubleProperty = DoubleProperty(0.0)
 
   private def moveInsideArc(point: (Double, Double), rotationDegrees: Double): Unit = {
     val rads = math.toRadians(rotationDegrees)
@@ -73,4 +76,8 @@ class ArcLabel(arc: Arc,
   textOverrun = OverrunStyle.CenterEllipsis
   textFill = Color.Blue
   styleClass += "arc-label"
+
+  private val mDataHolder: ArcLabelDataHolder = new ArcLabelDataHolder(textFill, font, text)
+  override def dataHolder: ArcLabelDataHolder = mDataHolder
+  dataController.addArcLabelData(mDataHolder)
 }

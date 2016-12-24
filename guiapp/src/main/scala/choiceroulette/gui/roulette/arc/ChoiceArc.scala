@@ -16,31 +16,32 @@
 
 package choiceroulette.gui.roulette.arc
 
+import choiceroulette.gui.roulette.data.DataHolder.ArcDataHolder
+import choiceroulette.gui.roulette.data.{DataHoldable, RouletteDataController}
 import choiceroulette.gui.utils.CircleUtils
 import choiceroulette.gui.utils.Conversions._
 
 import scalafx.scene.Group
 import scalafx.scene.layout.StackPane
-import scalafx.scene.paint.PaintIncludes._
-import scalafx.scene.paint.{Color, Paint}
+import scalafx.scene.paint.Color
 import scalafx.scene.shape._
 
 /** Choice arc for the roulette.
   *
   * @author Alexey Kuzin <amkuzink@gmail.com>
   */
-class ChoiceArc(radius: Double,
+class ChoiceArc(dataController: RouletteDataController,
                 angleStart: Double,
-                angleLength: Double) extends StackPane {
+                angleLength: Double) extends StackPane with DataHoldable {
 
-  private lazy val mArc = new Arc() {
+  private class ArcHoldable extends Arc {
     `type` = ArcType.Round
-    radiusX = radius
-    radiusY = radius
+    radiusX = dataController.rouletteData.radius
+    radiusY = dataController.rouletteData.radius
     startAngle = angleStart
     length = angleLength
-    centerX = radius
-    centerY = radius
+    centerX = dataController.rouletteData.radius
+    centerY = dataController.rouletteData.radius
 
     strokeLineCap = StrokeLineCap.Butt
     strokeType = StrokeType.Inside
@@ -48,12 +49,18 @@ class ChoiceArc(radius: Double,
     strokeWidth = 2
     fill = Color.Aquamarine
     styleClass += "choice-arc"
+
+    val dataHolder: ArcDataHolder = new ArcDataHolder(fill, stroke, strokeWidth)
+    dataController.addArcData(dataHolder)
   }
 
-  private lazy val mBackRectangle = Rectangle(2 * radius, 2 * radius, Color.Transparent)
+  private lazy val mArc = new ArcHoldable
 
-  private lazy val mText = new ArcLabel(mArc, getTextStartPoint, "Enter choice") {
-    maxWidth = 0.6 * radius
+  private lazy val mBackRectangle = Rectangle(2 * dataController.rouletteData.radius,
+    2 * dataController.rouletteData.radius, Color.Transparent)
+
+  lazy val textLabel = new ArcLabel(dataController, mArc, getTextStartPoint, "Enter choice") {
+    maxWidth = 0.6 * dataController.rouletteData.radius
   }
 
   private lazy val getTextStartPoint: Arc => (Double, Double) = arc => {
@@ -71,22 +78,16 @@ class ChoiceArc(radius: Double,
     CircleUtils.getCirclePoint(arcCenter, arcRadius, arcStartAngleRad + acrLenAngleRad / 2)
   }
 
-  def text: String = mText.text.value
-
-  def text_=(text: String): Unit = {
-    if (!text.isEmpty)
-      mText.text = text
+  override def dataHolder: ArcDataHolder = mArc.dataHolder
+  def dataHolder_=(holder: ArcDataHolder): Unit = mArc.dataHolder.from(holder)
+  def removeDataHolder(): Unit = {
+    dataController.removeArcLabelData(textLabel.dataHolder)
+    dataController.removeArcData(dataHolder)
   }
 
-  def color: Paint = mArc.fill.value
-
-  def color_=(paint: Paint): Unit = {
-    mArc.fill = paint
-  }
-
-  children = new Group(mBackRectangle, mArc, mText)
+  children = new Group(mBackRectangle, mArc, textLabel)
   minHeight = 0
   minWidth = 0
-  maxHeight = 2 * radius
-  maxWidth = 2 * radius
+  maxHeight = 2 * dataController.rouletteData.radius
+  maxWidth = 2 * dataController.rouletteData.radius
 }

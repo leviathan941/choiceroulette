@@ -16,8 +16,11 @@
 
 package choiceroulette.gui.utils
 
+import javafx.scene.paint.Paint
+import javafx.scene.text.Font
+
 import scala.language.implicitConversions
-import scalafx.beans.property.DoubleProperty
+import scalafx.beans.property.{DoubleProperty, ObjectProperty, StringProperty}
 
 /** Various usable implicit conversions.
   *
@@ -26,4 +29,10 @@ import scalafx.beans.property.DoubleProperty
 object Conversions {
   implicit def double2DoubleProperty(number: Double): DoubleProperty = DoubleProperty(number)
   implicit def doubleProperty2Double(property: DoubleProperty): Double = property.value
+
+  implicit def jfxPaintProperty2Paint(property: ObjectProperty[Paint]): Paint = property.value
+
+  implicit def jfxFontProperty2Font(property: ObjectProperty[Font]): Font = property.value
+
+  implicit def stringProperty2String(property: StringProperty): String = property.value
 }

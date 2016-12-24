@@ -16,27 +16,28 @@
 
 package choiceroulette.gui.roulette.arc
 
+import javafx.scene.paint.Paint
+
+import choiceroulette.gui.roulette.data.RouletteDataController
 import choiceroulette.gui.roulette.{EditChoiceField, RouletteRotator}
 import choiceroulette.gui.utils.CircleUtils
 
 import scalafx.scene.layout.StackPane
-import scalafx.scene.paint.PaintIncludes._
-import scalafx.scene.paint.{Color, Paint}
 
 /** Pane containing choice arcs.
   *
   * @author Alexey Kuzin <amkuzink@gmail.com>
   */
-class ArcsPane(radius: Double) extends StackPane(new ArcsPaneJfxDelegate) {
+class ArcsPane(dataController: RouletteDataController) extends StackPane(new ArcsPaneJfxDelegate) {
 
   case class ArcData(startAngle: Double, endAngle: Double, arc: ChoiceArc)
   private var mArcsData: List[ArcData] = Nil
-  private val mArcColors: Array[Paint] = Array(Color.Lavender, Color.Aquamarine)
 
   def fillPane(number: Int): Unit = {
-    val texts = mArcsData.map(_.arc.text)
+    val holders = mArcsData.map(_.arc.dataHolder)
+    mArcsData.foreach(_.arc.removeDataHolder())
     mArcsData = createRouletteSectors(number)
-    mArcsData.zip(texts).foreach(tup => tup._1.arc.text = tup._2)
+    mArcsData.zip(holders).foreach(tup => tup._1.arc.dataHolder = tup._2)
     applyCurrentColors()
 
     resetArcs()
@@ -44,7 +45,7 @@ class ArcsPane(radius: Double) extends StackPane(new ArcsPaneJfxDelegate) {
 
   def createEditor(loc: (Double, Double), onHide: () => Unit): Option[EditChoiceField] = {
     getArc(loc) match {
-      case Some(arc) => Some(new EditChoiceField(arc, onHide, 50))
+      case Some(arc) => Some(new EditChoiceField(arc.textLabel.dataHolder, onHide, 50))
       case _ => None
     }
   }
@@ -61,18 +62,18 @@ class ArcsPane(radius: Double) extends StackPane(new ArcsPaneJfxDelegate) {
 
     val arcData = mArcsData(arcNumber)
     val angle = angleWithRotate(angleCalc(arcData.startAngle, arcData.endAngle, 5)) + turns * 360
-    val rotator = new RouletteRotator(this, pointAngle + angle, () => resultShower(arcData.arc.text))
+    val rotator = new RouletteRotator(this, pointAngle + angle,
+      () => resultShower(arcData.arc.textLabel.dataHolder.text))
     rotator.spinTheWheel()
   }
 
   private def setArcColor(number: Int): javafx.scene.paint.Paint => Unit = color => {
-    require(number >= 0 && number < mArcColors.length)
-    mArcColors(number) = color
+    dataController.rouletteData.fills(number) = color
     applyCurrentColors()
   }
 
   private def applyCurrentColors(): Unit = {
-    mArcsData.zip(arcColors(mArcsData.length)).foreach(data => data._1.arc.color = data._2)
+    mArcsData.zip(arcColors(mArcsData.length)).foreach(data => data._1.arc.dataHolder.fill = data._2)
   }
 
   private def resetArcs(): Unit = {
@@ -80,10 +81,10 @@ class ArcsPane(radius: Double) extends StackPane(new ArcsPaneJfxDelegate) {
   }
 
   private def getArc(loc: (Double, Double)): Option[ChoiceArc] = {
-    val center = (radius, radius)
+    val center = (dataController.rouletteData.radius, dataController.rouletteData.radius)
     val (r, phi) = CircleUtils.cartesianToPolar(loc, center)
 
-    if (r > radius)
+    if (r > dataController.rouletteData.radius)
       None
     else
       findArc(CircleUtils.fromMathTo0to2Pi(math.toDegrees(phi)))
@@ -108,7 +109,7 @@ class ArcsPane(radius: Double) extends StackPane(new ArcsPaneJfxDelegate) {
 
     angles.zip(angles.tail).map(initData => {
       ArcData(initData._1, initData._2,
-        new ChoiceArc(radius, initData._1, initData._2 - initData._1))
+        new ChoiceArc(dataController, initData._1, initData._2 - initData._1))
     }).toList
   }
 
@@ -129,7 +130,7 @@ class ArcsPane(radius: Double) extends StackPane(new ArcsPaneJfxDelegate) {
   }
 
   private def arcColors(number: Int): List[Paint] =
-    Stream.continually(mArcColors.toStream).take(number).flatten.toList
+    Stream.continually(dataController.rouletteData.fills.toStream).take(number).flatten.toList
 
   styleClass += "arcs-pane"
   initDelegate()

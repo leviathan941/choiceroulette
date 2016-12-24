@@ -16,6 +16,9 @@
 
 package choiceroulette.gui.roulette.arc
 
+import choiceroulette.gui.roulette.data.DataHolder.CursorArcDataHolder
+import choiceroulette.gui.roulette.data.RouletteDataController
+
 import scalafx.geometry.Pos
 import scalafx.scene.layout.FlowPane
 import scalafx.scene.paint.Color
@@ -25,21 +28,24 @@ import scalafx.scene.shape.{Arc, ArcType}
   *
   * @author Alexey Kuzin <amkuzink@gmail.com>
   */
-class CursorArcPane(radius: Double) extends FlowPane {
+class CursorArcPane(dataController: RouletteDataController) extends FlowPane {
 
   val positionAngle = 180
 
-  children = new Arc() {
+  private val mArc = new Arc() {
     `type` = ArcType.Round
-    radiusX = radius / 10
-    radiusY = radius / 2
+    radiusX = dataController.rouletteData.radius / 10
+    radiusY = dataController.rouletteData.radius / 2
     startAngle = 170
     length = 20
     fill = Color.Black
     styleClass += "wheel-cursor"
-  }
 
-  maxWidth = 2 * radius
-  maxHeight = 2 * radius
+    dataController.cursorArcData = Some(new CursorArcDataHolder(fill))
+  }
+  children = mArc
+
+  maxWidth = 2 * dataController.rouletteData.radius
+  maxHeight = 2 * dataController.rouletteData.radius
   alignment = Pos.CenterLeft
 }
