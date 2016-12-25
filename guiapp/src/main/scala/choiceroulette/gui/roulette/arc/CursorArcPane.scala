@@ -30,7 +30,7 @@ import scalafx.scene.shape.{Arc, ArcType}
   */
 class CursorArcPane(dataController: RouletteDataController) extends FlowPane {
 
-  val positionAngle = 180
+  val DEFAULT_POSITION_ANGLE = 180
 
   private val mArc = new Arc() {
     `type` = ArcType.Round

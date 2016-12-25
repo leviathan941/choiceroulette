@@ -34,18 +34,30 @@ lazy val commonSettings: Seq[Setting[_]] = Seq(
   )
 
 lazy val root: Project = (project in srcPath).
-  aggregate(guiApp).
+  aggregate(guiApp, core).
   settings(commonSettings: _*).
   settings(
     name := "choiceroulette",
     description := "Choice roulette application"
   )
 
+lazy val core: Project = (project in srcPath / "core").
+  settings(commonSettings: _*).
+  settings(
+    name := "choiceroulette-core",
+    description := "Core of Choice Roulette",
+    libraryDependencies ++= Seq(
+      scalaDi withJavadoc() withSources(),
+      typesafeConfigs withJavadoc() withSources()
+    )
+  )
+
 lazy val guiApp: Project = (project in srcPath / "guiapp").
+  dependsOn(core).
   settings(commonSettings: _*).
   settings(
     name := "choiceroulette-gui",
-    description := "GUI for choice roulette",
+    description := "GUI for Choice Roulette",
     libraryDependencies ++= Seq(
       scalaFx withJavadoc() withSources(),
       scalaDi withJavadoc() withSources()

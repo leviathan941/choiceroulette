@@ -15,10 +15,12 @@
  */
 
 package choiceroulette.gui
+import choiceroulette.configuration.{ConfigurationManager, ConfigurationModule}
 import choiceroulette.gui.menubar.{MenuActionListener, MenuBarController, MenuBarModule}
 import choiceroulette.gui.utils.FileUtils
 import scaldi.Injectable.inject
 
+import scalafx.Includes._
 import scalafx.application.JFXApp
 import scalafx.application.JFXApp.PrimaryStage
 import scalafx.scene.Scene
@@ -29,7 +31,14 @@ import scalafx.scene.paint.Color
   * @author Alexey Kuzin <amkuzink@gmail.com>
   */
 object GuiApplication extends JFXApp {
-  implicit val guiAppModule = new GuiModule :: MenuBarModule
+  implicit val guiAppModule = new GuiModule :: MenuBarModule :: ConfigurationModule
+
+  val guiConfigKeyPrefix: String = "gui-config"
+  val windowWidthConfigKey = guiConfigKeyPrefix + ".window-width"
+  val windowHeightConfigKey = guiConfigKeyPrefix + ".window-height"
+  val lastStylesheetConfigKey = guiConfigKeyPrefix + ".last-stylesheet"
+
+  private val configMgr = inject [ConfigurationManager]
 
   private val mMainScene = new Scene() {
     fill = Color.LightGrey
@@ -41,12 +50,21 @@ object GuiApplication extends JFXApp {
     scene = mMainScene
     minWidth = 840
     minHeight = 700
+    width = configMgr.getDouble(windowWidthConfigKey, minWidth)
+    height = configMgr.getDouble(windowHeightConfigKey, minHeight)
+
+    onCloseRequest = handle {
+      configMgr.setDouble(windowWidthConfigKey, width.value)
+      configMgr.setDouble(windowHeightConfigKey, height.value)
+      configMgr.onExit()
+    }
   }
 
   inject [MenuBarController].listenActions(new MenuActionListener {
     override def cssFileOpened(path: String): Unit = {
       mMainScene.stylesheets.clear()
       mMainScene.stylesheets.add(FileUtils.filePathToUrl(path))
+      inject[ConfigurationManager].setString(lastStylesheetConfigKey, path)
     }
   })
 }

@@ -96,7 +96,10 @@ class RoulettePane(prefController: PreferencesController,
     hoverPane()
 
     val arcNumber = Random.nextInt(mArcsPane.arcsCount)
-    mArcsPane.rotateArcToPoint(arcNumber, mCursorArcPane.positionAngle, 4, CircleUtils.randomAngleBetween, showResult)
+    mArcsPane.rotateArcToPoint(arcNumber,
+      mCursorArcPane.DEFAULT_POSITION_ANGLE, 4,
+      CircleUtils.randomAngleBetween,
+      showResult)
   }
 
   override def choiceCountChanged(count: Int): Unit = {

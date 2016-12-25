@@ -14,13 +14,14 @@
  * limitations under the License.
  */
 
-import sbt._
-import Keys._
+package choiceroulette.configuration
 
-object Dependencies {
-  lazy val scala212 = "2.12.1"
+import scaldi.Module
 
-  lazy val scalaDi = "org.scaldi" %% "scaldi" % "latest.integration";
-  lazy val scalaFx = "org.scalafx" %% "scalafx" % "8.0.102-R11"
-  lazy val typesafeConfigs = "com.github.kxbmap" %% "configs" % "latest.integration"
+/** Configuration package module.
+  *
+  * @author Alexey Kuzin <amkuzink@gmail.com>
+  */
+object ConfigurationModule extends Module {
+  binding to new ConfigurationManager
 }

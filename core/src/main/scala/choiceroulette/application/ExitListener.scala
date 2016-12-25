@@ -14,13 +14,12 @@
  * limitations under the License.
  */
 
-import sbt._
-import Keys._
+package choiceroulette.application
 
-object Dependencies {
-  lazy val scala212 = "2.12.1"
-
-  lazy val scalaDi = "org.scaldi" %% "scaldi" % "latest.integration";
-  lazy val scalaFx = "org.scalafx" %% "scalafx" % "8.0.102-R11"
-  lazy val typesafeConfigs = "com.github.kxbmap" %% "configs" % "latest.integration"
+/** Listener for application exit.
+  *
+  * @author Alexey Kuzin <amkuzink@gmail.com>
+  */
+trait ExitListener {
+  def onExit(): Unit
 }
