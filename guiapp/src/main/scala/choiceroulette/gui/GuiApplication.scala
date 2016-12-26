@@ -15,6 +15,8 @@
  */
 
 package choiceroulette.gui
+import java.io.File
+
 import choiceroulette.configuration.{ConfigurationManager, ConfigurationModule}
 import choiceroulette.gui.menubar.{MenuActionListener, MenuBarController, MenuBarModule}
 import choiceroulette.gui.utils.FileUtils
@@ -68,14 +70,14 @@ object GuiApplication extends JFXApp {
 
   private def applyLastStylesheet(): Unit = {
     val path = mConfigMgr.getString(lastStylesheetConfigKey)
-    if (!path.isEmpty) {
-      applyStylesheet(path)
-    }
+    applyStylesheet(path)
   }
 
   private def applyStylesheet(filePath: String): Unit = {
-    mMainScene.stylesheets.clear()
-    mMainScene.stylesheets.add(FileUtils.filePathToUrl(filePath))
-    mConfigMgr.setString(lastStylesheetConfigKey, filePath)
+    if (new File(filePath).exists()) {
+      mMainScene.stylesheets.clear()
+      mMainScene.stylesheets.add(FileUtils.filePathToUrl(filePath))
+      mConfigMgr.setString(lastStylesheetConfigKey, filePath)
+    }
   }
 }

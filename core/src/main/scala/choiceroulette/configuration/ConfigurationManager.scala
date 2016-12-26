@@ -98,7 +98,7 @@ class ConfigurationManager extends ExitListener {
 
   private def writeToFile(file: File): Unit = {
     try {
-      val writer = new PrintWriter(file)
+      val writer = new PrintWriter(file, "utf-8")
       try {
         writer.write(mConfig.root().render(
           ConfigRenderOptions.defaults().
