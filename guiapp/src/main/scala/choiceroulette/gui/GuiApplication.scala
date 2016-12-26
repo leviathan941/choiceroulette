@@ -38,7 +38,7 @@ object GuiApplication extends JFXApp {
   val windowHeightConfigKey = guiConfigKeyPrefix + ".window-height"
   val lastStylesheetConfigKey = guiConfigKeyPrefix + ".last-stylesheet"
 
-  private val configMgr = inject [ConfigurationManager]
+  private val mConfigMgr = inject [ConfigurationManager]
 
   private val mMainScene = new Scene() {
     fill = Color.LightGrey
@@ -50,21 +50,32 @@ object GuiApplication extends JFXApp {
     scene = mMainScene
     minWidth = 840
     minHeight = 700
-    width = configMgr.getDouble(windowWidthConfigKey, minWidth)
-    height = configMgr.getDouble(windowHeightConfigKey, minHeight)
+    width = mConfigMgr.getDouble(windowWidthConfigKey, minWidth)
+    height = mConfigMgr.getDouble(windowHeightConfigKey, minHeight)
 
     onCloseRequest = handle {
-      configMgr.setDouble(windowWidthConfigKey, width.value)
-      configMgr.setDouble(windowHeightConfigKey, height.value)
-      configMgr.onExit()
+      mConfigMgr.setDouble(windowWidthConfigKey, width.value)
+      mConfigMgr.setDouble(windowHeightConfigKey, height.value)
+      mConfigMgr.onExit()
     }
   }
 
   inject [MenuBarController].listenActions(new MenuActionListener {
-    override def cssFileOpened(path: String): Unit = {
-      mMainScene.stylesheets.clear()
-      mMainScene.stylesheets.add(FileUtils.filePathToUrl(path))
-      inject[ConfigurationManager].setString(lastStylesheetConfigKey, path)
-    }
+    override def cssFileOpened(path: String): Unit = applyStylesheet(path)
   })
+
+  applyLastStylesheet()
+
+  private def applyLastStylesheet(): Unit = {
+    val path = mConfigMgr.getString(lastStylesheetConfigKey)
+    if (!path.isEmpty) {
+      applyStylesheet(path)
+    }
+  }
+
+  private def applyStylesheet(filePath: String): Unit = {
+    mMainScene.stylesheets.clear()
+    mMainScene.stylesheets.add(FileUtils.filePathToUrl(filePath))
+    mConfigMgr.setString(lastStylesheetConfigKey, filePath)
+  }
 }
