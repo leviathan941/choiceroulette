@@ -36,12 +36,12 @@ class ChoiceArc(dataController: RouletteDataController,
 
   private class ArcHoldable extends Arc {
     `type` = ArcType.Round
-    radiusX = dataController.rouletteData.radius
-    radiusY = dataController.rouletteData.radius
+    radiusX = dataController.rouletteData.wheelRadius
+    radiusY = dataController.rouletteData.wheelRadius
     startAngle = angleStart
     length = angleLength
-    centerX = dataController.rouletteData.radius
-    centerY = dataController.rouletteData.radius
+    centerX = dataController.rouletteData.wheelRadius
+    centerY = dataController.rouletteData.wheelRadius
 
     strokeLineCap = StrokeLineCap.Butt
     strokeType = StrokeType.Inside
@@ -49,24 +49,22 @@ class ChoiceArc(dataController: RouletteDataController,
     strokeWidth = 2
     fill = Color.Aquamarine
     styleClass += "choice-arc"
-
-    val dataHolder: ArcDataHolder = new ArcDataHolder(fill, stroke, strokeWidth)
-    dataController.addArcData(dataHolder)
   }
 
   private lazy val mArc = new ArcHoldable
 
-  private lazy val mBackRectangle = Rectangle(2 * dataController.rouletteData.radius,
-    2 * dataController.rouletteData.radius, Color.Transparent)
+  private lazy val mBackRectangle = Rectangle(2 * dataController.rouletteData.wheelRadius,
+    2 * dataController.rouletteData.wheelRadius, Color.Transparent)
 
-  lazy val textLabel = new ArcLabel(dataController, mArc, getTextStartPoint, "Enter choice") {
-    maxWidth = 0.6 * dataController.rouletteData.radius
+  private lazy val mTextLabel: ArcLabel =
+      new ArcLabel(dataController, (angleStart, angleLength), () => getTextStartPoint, "Enter choice") {
+    maxWidth = 0.6 * dataController.rouletteData.wheelRadius
   }
 
-  private lazy val getTextStartPoint: Arc => (Double, Double) = arc => {
-    val arcCenter: (Double, Double) = (arc.centerX, arc.centerY)
+  private def getTextStartPoint: (Double, Double) = {
+    val arcCenter: (Double, Double) = (mArc.centerX, mArc.centerY)
 
-    CircleUtils.shiftPointAlongRadius(arcCenter, getChordCenterPoint(arc), -25)
+    CircleUtils.shiftPointAlongRadius(arcCenter, getChordCenterPoint(mArc), -25)
   }
 
   private def getChordCenterPoint(arc: Arc): (Double, Double) = {
@@ -78,16 +76,15 @@ class ChoiceArc(dataController: RouletteDataController,
     CircleUtils.getCirclePoint(arcCenter, arcRadius, arcStartAngleRad + acrLenAngleRad / 2)
   }
 
-  override def dataHolder: ArcDataHolder = mArc.dataHolder
-  def dataHolder_=(holder: ArcDataHolder): Unit = mArc.dataHolder.from(holder)
-  def removeDataHolder(): Unit = {
-    dataController.removeArcLabelData(textLabel.dataHolder)
-    dataController.removeArcData(dataHolder)
-  }
+  private val mDataHolder: ArcDataHolder =
+    new ArcDataHolder(mArc.fill, mArc.stroke, mArc.strokeWidth, mTextLabel.dataHolder)
 
-  children = new Group(mBackRectangle, mArc, textLabel)
+  override def dataHolder: ArcDataHolder = mDataHolder
+  def dataHolder_=(holder: ArcDataHolder): Unit = dataHolder.from(holder)
+
+  children = new Group(mBackRectangle, mArc, mTextLabel)
   minHeight = 0
   minWidth = 0
-  maxHeight = 2 * dataController.rouletteData.radius
-  maxWidth = 2 * dataController.rouletteData.radius
+  maxHeight = 2 * dataController.rouletteData.wheelRadius
+  maxWidth = 2 * dataController.rouletteData.wheelRadius
 }

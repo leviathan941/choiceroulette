@@ -16,6 +16,7 @@
 
 package choiceroulette.gui.roulette.data
 
+import choiceroulette.configuration.{ConfigurationManager, ConfigurationModule}
 import scaldi.Module
 
 /** Roulette data package module.
@@ -23,5 +24,7 @@ import scaldi.Module
   * @author Alexey Kuzin <amkuzink@gmail.com>
   */
 object RouletteDataModule extends Module {
-  binding to new RouletteDataController
+  override implicit val injector = ConfigurationModule
+
+  binding to injected [RouletteDataController]
 }

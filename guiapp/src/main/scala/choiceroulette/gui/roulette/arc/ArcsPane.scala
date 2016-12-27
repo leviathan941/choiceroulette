@@ -35,7 +35,7 @@ class ArcsPane(dataController: RouletteDataController) extends StackPane(new Arc
 
   def fillPane(number: Int): Unit = {
     val holders = mArcsData.map(_.arc.dataHolder)
-    mArcsData.foreach(_.arc.removeDataHolder())
+    mArcsData.foreach(data => dataController.removeArcData(data.arc.dataHolder))
     mArcsData = createRouletteSectors(number)
     mArcsData.zip(holders).foreach(tup => tup._1.arc.dataHolder = tup._2)
     applyCurrentColors()
@@ -45,7 +45,7 @@ class ArcsPane(dataController: RouletteDataController) extends StackPane(new Arc
 
   def createEditor(loc: (Double, Double), onHide: () => Unit): Option[EditChoiceField] = {
     getArc(loc) match {
-      case Some(arc) => Some(new EditChoiceField(arc.textLabel.dataHolder, onHide, 50))
+      case Some(arc) => Some(new EditChoiceField(arc.dataHolder.labelDataHolder, onHide, 50))
       case _ => None
     }
   }
@@ -63,12 +63,12 @@ class ArcsPane(dataController: RouletteDataController) extends StackPane(new Arc
     val arcData = mArcsData(arcNumber)
     val angle = angleWithRotate(angleCalc(arcData.startAngle, arcData.endAngle, 5)) + turns * 360
     val rotator = new RouletteRotator(this, pointAngle + angle,
-      () => resultShower(arcData.arc.textLabel.dataHolder.text))
+      () => resultShower(arcData.arc.dataHolder.labelDataHolder.text))
     rotator.spinTheWheel()
   }
 
   private def setArcColor(number: Int): javafx.scene.paint.Paint => Unit = color => {
-    dataController.rouletteData.fills(number) = color
+    dataController.arcFills(number) = color
     applyCurrentColors()
   }
 
@@ -81,10 +81,10 @@ class ArcsPane(dataController: RouletteDataController) extends StackPane(new Arc
   }
 
   private def getArc(loc: (Double, Double)): Option[ChoiceArc] = {
-    val center = (dataController.rouletteData.radius, dataController.rouletteData.radius)
+    val center = (dataController.rouletteData.wheelRadius, dataController.rouletteData.wheelRadius)
     val (r, phi) = CircleUtils.cartesianToPolar(loc, center)
 
-    if (r > dataController.rouletteData.radius)
+    if (r > dataController.rouletteData.wheelRadius)
       None
     else
       findArc(CircleUtils.fromMathTo0to2Pi(math.toDegrees(phi)))
@@ -130,7 +130,7 @@ class ArcsPane(dataController: RouletteDataController) extends StackPane(new Arc
   }
 
   private def arcColors(number: Int): List[Paint] =
-    Stream.continually(dataController.rouletteData.fills.toStream).take(number).flatten.toList
+    Stream.continually(dataController.arcFills.toStream).take(number).flatten.toList
 
   styleClass += "arcs-pane"
   initDelegate()

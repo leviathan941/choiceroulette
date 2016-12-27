@@ -18,8 +18,6 @@ package choiceroulette.gui.controls.preferences
 
 import scaldi.Injectable.inject
 
-import scala.collection.mutable
-
 /** Controls preferences changes.
   *
   * @author Alexey Kuzin <amkuzink@gmail.com>
@@ -27,15 +25,7 @@ import scala.collection.mutable
 class PreferencesController {
   implicit val injector = PreferencesModule
 
-  private lazy val mPrefChangeListeners = new mutable.HashSet[PreferencesChangeListener]()
   private lazy val mPrefPane = inject [PreferencesPane]
-
-  def listenPreferencesChange(listener: PreferencesChangeListener): Unit = mPrefChangeListeners += listener
-
-  def changeChoiceCount(count: Int): Unit = notifyListeners(_.choiceCountChanged(count))
-
-  private def notifyListeners(notifyMethod: PreferencesChangeListener => Unit): Unit =
-    mPrefChangeListeners.foreach(notifyMethod)
 
   def setPreferencesEnabled(enable: Boolean = true): Unit = mPrefPane.disable = !enable
 }

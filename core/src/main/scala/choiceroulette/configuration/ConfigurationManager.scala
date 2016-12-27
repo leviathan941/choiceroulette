@@ -21,7 +21,8 @@ import java.util.concurrent.ConcurrentHashMap
 
 import choiceroulette.application.ExitListener
 import com.typesafe.config._
-import configs.syntax._
+import net.ceedubs.ficus.Ficus._
+import net.ceedubs.ficus.readers.ValueReader
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.duration.Duration
@@ -33,17 +34,15 @@ import scala.concurrent.{Await, Future}
   */
 class ConfigurationManager extends ExitListener {
 
-  val DEFAULT_CONFIG_FILE_PATH: String = "choiceroulette.conf"
-
   @volatile private var mConfig: Config = ConfigFactory.parseResources(
     "application.conf", ConfigParseOptions.defaults())
-  @volatile private var mConfigFile: File = new File(DEFAULT_CONFIG_FILE_PATH)
+  @volatile private var mConfigFile: File = new File(ConfigurationManager.defaultConfigFilePath)
   private lazy val mConfigurables = ConcurrentHashMap.newKeySet[Syncable]()
 
   private var mWriteThread = new Thread(new SyncRunnable)
 
   def getDouble(key: String, default: Double = 0.0): Double = {
-    mConfig.get[Double](key).valueOrElse(default)
+    mConfig.getOrElse[Double](key, default)
   }
 
   def setDouble(key: String, value: Double): Unit = {
@@ -51,11 +50,19 @@ class ConfigurationManager extends ExitListener {
   }
 
   def getString(key: String, default: String = ""): String = {
-    mConfig.get[String](key).valueOrElse(default)
+    mConfig.getOrElse[String](key, default)
   }
 
   def setString(key: String, value: String): Unit = {
     mConfig = mConfig.withValue(key, ConfigValueFactory.fromAnyRef(value))
+  }
+
+  def get[T](key: String, default: T)(implicit reader: ValueReader[Option[T]]): T = {
+    mConfig.getOrElse[T](key, default)
+  }
+
+  def set[T <: Configurable](key: String, value: T): Unit = {
+    mConfig = mConfig.withoutPath(key).withFallback(value.toConfig)
   }
 
 
@@ -90,6 +97,7 @@ class ConfigurationManager extends ExitListener {
   private def createConfigFileIfNeeded(filePath: String): File = {
     val file = new File(filePath)
     if (!file.exists()) {
+      ConfigurationManager.createConfigDirectory()
       file.createNewFile()
       writeToFile(file)
     }
@@ -103,7 +111,8 @@ class ConfigurationManager extends ExitListener {
         writer.write(mConfig.root().render(
           ConfigRenderOptions.defaults().
             setComments(false).
-            setOriginComments(false))
+            setOriginComments(false).
+            setJson(false))
         )
       } finally writer.close()
     } catch {
@@ -147,4 +156,12 @@ class ConfigurationManager extends ExitListener {
 
   setConfigFile(mConfigFile.getAbsolutePath)
   mWriteThread.start()
+}
+
+object ConfigurationManager {
+  private val configDirectory: String =
+      System.getProperty("user.home") + File.separator + ".choiceroulette" + File.separator
+  val defaultConfigFilePath: String = configDirectory + "choiceroulette.state"
+
+  def createConfigDirectory(): Unit = new File(configDirectory).mkdirs()
 }

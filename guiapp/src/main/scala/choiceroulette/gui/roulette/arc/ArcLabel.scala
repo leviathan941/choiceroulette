@@ -18,13 +18,12 @@ package choiceroulette.gui.roulette.arc
 
 import choiceroulette.gui.controls.preferences.FontProvider
 import choiceroulette.gui.roulette.data.DataHolder.ArcLabelDataHolder
-import choiceroulette.gui.roulette.data.{DataHoldable, DataHolder, RouletteDataController}
+import choiceroulette.gui.roulette.data.{DataHoldable, RouletteDataController}
 import choiceroulette.gui.utils.Conversions._
 
 import scalafx.beans.property.DoubleProperty
 import scalafx.scene.control.{Label, OverrunStyle}
 import scalafx.scene.paint.Color
-import scalafx.scene.shape.Arc
 import scalafx.scene.text.Text
 import scalafx.scene.transform.Rotate
 
@@ -33,8 +32,8 @@ import scalafx.scene.transform.Rotate
   * @author Alexey Kuzin <amkuzink@gmail.com>
   */
 class ArcLabel(dataController: RouletteDataController,
-               arc: Arc,
-               startPoint: Arc => (Double, Double),
+               arcAngle: (Double, Double),
+               startPoint: () => (Double, Double),
                textStr: String) extends Label(textStr) with DataHoldable { label =>
 
   private val labelRotation: DoubleProperty = DoubleProperty(0.0)
@@ -46,8 +45,8 @@ class ArcLabel(dataController: RouletteDataController,
     relocate(point._1 + dx, point._2 - dy)
   }
 
-  private def rotateTextToArc(arc: Arc): Double = {
-    val angle = 180 - arc.startAngle.value - arc.length.value / 2
+  private def rotateTextToArc(): Double = {
+    val angle = 180 - arcAngle._1 - arcAngle._2 / 2
     transforms.add(new Rotate(angle, layoutBounds.value.getMinX, layoutBounds.value.getMinY))
     labelRotation.value = angle
     angle
@@ -64,20 +63,17 @@ class ArcLabel(dataController: RouletteDataController,
     }.layoutBounds.value.getHeight
   }
 
-  private def resetLabel(): Unit = moveInsideArc(startPoint(arc), labelRotation)
+  private def resetLabel(): Unit = moveInsideArc(startPoint(), labelRotation)
 
   font = FontProvider.boldRegularFont
 
-  moveInsideArc(startPoint(arc), rotateTextToArc(arc))
+  moveInsideArc(startPoint(), rotateTextToArc())
   font.onChange(resetLabel())
 
-  labelFor = arc
   wrapText = false
   textOverrun = OverrunStyle.CenterEllipsis
   textFill = Color.Blue
   styleClass += "arc-label"
 
-  private val mDataHolder: ArcLabelDataHolder = new ArcLabelDataHolder(textFill, font, text)
-  override def dataHolder: ArcLabelDataHolder = mDataHolder
-  dataController.addArcLabelData(mDataHolder)
+  override def dataHolder: ArcLabelDataHolder = new ArcLabelDataHolder(textFill, font, text)
 }

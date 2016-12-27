@@ -16,7 +16,11 @@
 
 package choiceroulette.gui.roulette.data
 
+import javafx.scene.paint.Paint
+
+import choiceroulette.configuration.{ConfigurationManager, Syncable}
 import choiceroulette.gui.roulette.data.DataHolder._
+import net.ceedubs.ficus.readers.AllValueReaderInstances._
 
 import scala.collection.mutable.ListBuffer
 import scalafx.scene.paint.Color
@@ -25,11 +29,9 @@ import scalafx.scene.paint.Color
   *
   * @author Alexey Kuzin <amkuzink@gmail.com>
   */
-class RouletteDataController {
+class RouletteDataController(configMgr: ConfigurationManager) extends Syncable {
 
   private lazy val mArcsData = new ListBuffer[ArcDataHolder]
-
-  private lazy val mArcLabelData = new ListBuffer[ArcLabelDataHolder]
 
   var cursorArcData: Option[CursorArcDataHolder] = None
 
@@ -37,13 +39,23 @@ class RouletteDataController {
 
   var centerCircleData: Option[CenterCircleDataHolder] = None
 
-  val rouletteData: RouletteDataHolder =
-    RouletteDataHolder(Array(Color.Lavender, Color.Aquamarine), 250)
+  val rouletteData: RouletteDataHolder = restoreRouletteData()
+
+  val arcFills: Array[Paint] = Array(Color.Lavender, Color.Aquamarine)
 
 
   def addArcData(data: ArcDataHolder): Unit = mArcsData += data
   def removeArcData(data: ArcDataHolder): Unit = mArcsData -= data
 
-  def addArcLabelData(data: ArcLabelDataHolder): Unit = mArcLabelData += data
-  def removeArcLabelData(data: ArcLabelDataHolder): Unit = mArcLabelData -= data
+  override def sync(configurationManager: ConfigurationManager): Unit = {
+    configurationManager.set[RouletteDataHolder](
+      DataHolder.rouletteConfigKeyPrefix,
+      rouletteData)
+  }
+
+  private def restoreRouletteData(): RouletteDataHolder = {
+    configMgr.get(DataHolder.rouletteConfigKeyPrefix, RouletteDataHolder())
+  }
+
+  configMgr.registerSyncable(this)
 }

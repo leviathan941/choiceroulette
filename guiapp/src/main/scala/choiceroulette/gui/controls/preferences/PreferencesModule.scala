@@ -16,13 +16,16 @@
 
 package choiceroulette.gui.controls.preferences
 
-import scaldi.Module
+import choiceroulette.gui.roulette.data.RouletteDataModule
+import scaldi.{Injector, Module}
 
 /** Preferences package module.
   *
   * @author Alexey Kuzin <amkuzink@gmail.com>
   */
 object PreferencesModule extends Module {
+  override implicit def injector: Injector = RouletteDataModule
+
   binding to new PreferencesController
   binding to injected [PreferencesPane]
 }

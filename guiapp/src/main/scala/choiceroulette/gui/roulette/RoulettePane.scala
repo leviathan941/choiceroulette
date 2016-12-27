@@ -17,9 +17,10 @@
 package choiceroulette.gui.roulette
 
 import choiceroulette.gui.controls.actions.{ActionController, ActionListener}
-import choiceroulette.gui.controls.preferences.{PreferencesChangeListener, PreferencesController}
+import choiceroulette.gui.controls.preferences.PreferencesController
 import choiceroulette.gui.roulette.arc.{ArcsPane, CursorArcPane}
-import choiceroulette.gui.roulette.data.DataHolder.{BackgroundCircleDataHolder, CenterCircleDataHolder}
+import choiceroulette.gui.roulette.data.DataHolder.{BackgroundCircleDataHolder,
+    CenterCircleDataHolder, RouletteDataHolder}
 import choiceroulette.gui.roulette.data.RouletteDataController
 import choiceroulette.gui.utils.CircleUtils
 
@@ -38,10 +39,10 @@ import scalafx.scene.shape._
 class RoulettePane(prefController: PreferencesController,
                    actionController: ActionController,
                    dataController: RouletteDataController)
-    extends Pane with PreferencesChangeListener with ActionListener { pane =>
+    extends Pane with ActionListener { pane =>
 
   private lazy val mBackgroundCircle = new Circle() {
-    radius = dataController.rouletteData.radius
+    radius = dataController.rouletteData.wheelRadius
     fill = Color.White
     strokeType = StrokeType.Outside
     stroke = Color.Black
@@ -57,7 +58,7 @@ class RoulettePane(prefController: PreferencesController,
   private lazy val mCursorArcPane = new CursorArcPane(dataController)
 
   private lazy val mCenterCircle = new Circle() {
-    radius = dataController.rouletteData.radius / 5
+    radius = dataController.rouletteData.centerCircleRadius
     fill = Color.DarkGray
     styleClass += "center-circle"
 
@@ -79,8 +80,8 @@ class RoulettePane(prefController: PreferencesController,
     }
 
     children = mBackgroundCircle :: mArcsPane :: mCenterCircle :: mCursorArcPane :: Nil
-    maxWidth = 2 * dataController.rouletteData.radius
-    maxHeight = 2 * dataController.rouletteData.radius
+    maxWidth = 2 * dataController.rouletteData.wheelRadius
+    maxHeight = 2 * dataController.rouletteData.wheelRadius
   }
 
   private def showEditor(editor: EditChoiceField, loc: (Double, Double)): Unit = {
@@ -102,9 +103,8 @@ class RoulettePane(prefController: PreferencesController,
       showResult)
   }
 
-  override def choiceCountChanged(count: Int): Unit = {
-    mArcsPane.fillPane(count)
-  }
+  private val choiceCountChanged: RouletteDataHolder => Unit =
+    holder => mArcsPane.fillPane(holder.arcsCount)
 
   private val showResult: String => Unit = (result: String) => {
     children += new SpinResultPane(result, width.value -> height.value, popupHider)
@@ -120,8 +120,8 @@ class RoulettePane(prefController: PreferencesController,
   }
 
   private def moveToPaneCenter(node: Node): Unit = {
-    node.relocate(pane.width.value / 2 - dataController.rouletteData.radius,
-      pane.height.value / 2 - dataController.rouletteData.radius)
+    node.relocate(pane.width.value / 2 - dataController.rouletteData.wheelRadius,
+      pane.height.value / 2 - dataController.rouletteData.wheelRadius)
   }
 
   private def setControlsEnabled(enabled: Boolean = true): Unit = {
@@ -132,12 +132,12 @@ class RoulettePane(prefController: PreferencesController,
   height.onChange(moveToPaneCenter(mRouletteStack))
   width.onChange(moveToPaneCenter(mRouletteStack))
 
-  prefController.listenPreferencesChange(this)
+  dataController.rouletteData.listen(choiceCountChanged)
   actionController.listenActions(this)
 
   children = mRouletteStack
   style = "-fx-border-width: 1px;" +
     "-fx-border-color: grey;"
 
-  mArcsPane.fillPane(2)
+  mArcsPane.fillPane(dataController.rouletteData.arcsCount)
 }

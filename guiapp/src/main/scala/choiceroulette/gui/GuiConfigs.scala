@@ -14,13 +14,15 @@
  * limitations under the License.
  */
 
-import sbt._
-import Keys._
+package choiceroulette.gui
 
-object Dependencies {
-  lazy val scala212 = "2.12.1"
-
-  lazy val scalaDi = "org.scaldi" %% "scaldi" % "latest.integration";
-  lazy val scalaFx = "org.scalafx" %% "scalafx" % "8.0.102-R11"
-  lazy val typesafeConfigs = "com.iheart" %% "ficus" % "latest.integration"
+/** Configuration keys for GUI.
+  *
+  * @author Alexey Kuzin <amkuzink@gmail.com>
+  */
+object GuiConfigs {
+  val guiConfigKeyPrefix: String = "gui-config"
+  val windowWidthConfigKey: String = guiConfigKeyPrefix + ".windowWidth"
+  val windowHeightConfigKey: String = guiConfigKeyPrefix + ".windowHeight"
+  val lastStylesheetConfigKey: String = guiConfigKeyPrefix + ".lastStylesheet"
 }

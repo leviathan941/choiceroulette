@@ -16,10 +16,14 @@
 
 package choiceroulette.gui.roulette.data
 
-import choiceroulette.gui.utils.Conversions._
-
 import javafx.scene.paint.Paint
 import javafx.scene.text.Font
+
+import choiceroulette.configuration.Configurable
+import choiceroulette.gui.GuiConfigs
+import choiceroulette.gui.utils.Conversions._
+import com.typesafe.config.{Config, ConfigFactory, ConfigValueFactory}
+import net.ceedubs.ficus.readers.ArbitraryTypeReader
 
 import scalafx.beans.property.{DoubleProperty, ObjectProperty, StringProperty}
 
@@ -27,13 +31,23 @@ import scalafx.beans.property.{DoubleProperty, ObjectProperty, StringProperty}
   *
   * @author Alexey Kuzin <amkuzink@gmail.com>
   */
-trait DataHolder
+sealed trait DataHolder
 
 object DataHolder {
 
+  val rouletteConfigKeyPrefix: String = GuiConfigs.guiConfigKeyPrefix + ".roulette-config"
+  val wheelRadiusConfigKey: String = rouletteConfigKeyPrefix + ".wheelRadius"
+  val centerCircleRadiusConfigKey: String = rouletteConfigKeyPrefix + ".centerCircleRadius"
+  val arcsCountConfigKey: String = rouletteConfigKeyPrefix + ".arcsCount"
+
+  /** Holds arc's data except label.
+    *
+    * @see [[ArcLabelDataHolder]]
+    */
   class ArcDataHolder(fillProp: ObjectProperty[Paint],
                       strokeProp: ObjectProperty[Paint],
-                      strokeWidthProp: DoubleProperty) extends DataHolder {
+                      strokeWidthProp: DoubleProperty,
+                      val labelDataHolder: ArcLabelDataHolder) extends DataHolder {
 
     private var fillValue: Paint = fillProp
     private var strokeValue: Paint = strokeProp
@@ -65,9 +79,14 @@ object DataHolder {
       fill = holder.fill
       stroke = holder.stroke
       strokeWidth = holder.strokeWidth
+      labelDataHolder.from(holder.labelDataHolder)
     }
   }
 
+  /** Holds arc's label data.
+    *
+    * @see [[ArcDataHolder]]
+    */
   class ArcLabelDataHolder(textFillProp: ObjectProperty[Paint],
                            fontProp: ObjectProperty[Font],
                            textProp: StringProperty) extends DataHolder {
@@ -97,8 +116,16 @@ object DataHolder {
       textProp.value = str
       textValue = str
     }
+
+    def from(holder: ArcLabelDataHolder): Unit = {
+      textFill = holder.textFill
+      font = holder.font
+      text = holder.text
+    }
   }
 
+  /** Holds arc cursor's data.
+    */
   class CursorArcDataHolder(fillProp: ObjectProperty[Paint]) extends DataHolder {
 
     private var fillValue: Paint = fillProp
@@ -112,6 +139,8 @@ object DataHolder {
     }
   }
 
+  /** Holds background circle's data.
+    */
   class BackgroundCircleDataHolder(fillProp: ObjectProperty[Paint],
                                    strokeProp: ObjectProperty[Paint],
                                    strokeWidthProp: DoubleProperty) extends DataHolder {
@@ -144,6 +173,8 @@ object DataHolder {
     }
   }
 
+  /** Holds center circle's data.
+    */
   class CenterCircleDataHolder(fillProp: ObjectProperty[Paint]) extends DataHolder {
 
     private var fillValue: Paint = fillProp
@@ -157,5 +188,43 @@ object DataHolder {
     }
   }
 
-  case class RouletteDataHolder(fills: Array[Paint], radius: Double) extends DataHolder
+  /** Holds data storable in configuration file.
+    */
+  class RouletteDataHolder(private var _wheelRadius: Double,
+                           private var _centerCircleRadius: Double,
+                           private var _arcsCount: Int) extends DataHolder
+      with ArbitraryTypeReader
+      with Configurable
+      with DataChangeListenable[RouletteDataHolder] {
+
+    def wheelRadius: Double = _wheelRadius
+    def wheelRadius_=(radius: Double): Unit = {
+      _wheelRadius = radius
+      notifyListeners(this)
+    }
+
+    def centerCircleRadius: Double = _centerCircleRadius
+    def centerCircleRadius_=(radius: Double): Unit = {
+      _centerCircleRadius = radius
+      notifyListeners(this)
+    }
+
+    def arcsCount: Int = _arcsCount
+    def arcsCount_=(count: Int): Unit = {
+      _arcsCount = count
+      notifyListeners(this)
+    }
+
+    override def toConfig: Config = {
+      ConfigFactory.empty().
+        withValue(wheelRadiusConfigKey, ConfigValueFactory.fromAnyRef(wheelRadius)).
+        withValue(centerCircleRadiusConfigKey, ConfigValueFactory.fromAnyRef(centerCircleRadius)).
+        withValue(arcsCountConfigKey, ConfigValueFactory.fromAnyRef(arcsCount))
+    }
+  }
+  object RouletteDataHolder {
+    def apply(wheelRadius: Double = 250, centerCircleRadius: Double = 50, arcsCount: Int = 2): RouletteDataHolder =
+      new RouletteDataHolder(wheelRadius, centerCircleRadius, arcsCount)
+  }
+
 }

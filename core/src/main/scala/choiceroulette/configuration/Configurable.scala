@@ -14,12 +14,14 @@
  * limitations under the License.
  */
 
-package choiceroulette.gui.controls.preferences
+package choiceroulette.configuration
 
-/** Listener for preferences changes.
+import com.typesafe.config.Config
+
+/** Implement to save custom class to configuration using [[ConfigurationManager.set()]].
   *
   * @author Alexey Kuzin <amkuzink@gmail.com>
   */
-trait PreferencesChangeListener {
-  def choiceCountChanged(count: Int): Unit
+trait Configurable {
+  def toConfig: Config
 }

@@ -16,6 +16,8 @@
 
 package choiceroulette.gui.controls.preferences
 
+import choiceroulette.gui.roulette.data.RouletteDataController
+
 import scalafx.geometry.{Insets, Pos}
 import scalafx.scene.control.{Label, Spinner}
 import scalafx.scene.layout.{HBox, VBox}
@@ -25,13 +27,13 @@ import scalafx.scene.text.FontWeight
   *
   * @author Alexey Kuzin <amkuzink@gmail.com>
   */
-class PreferencesPane(prefController: PreferencesController) extends VBox {
+class PreferencesPane(dataController: RouletteDataController) extends VBox {
 
-  private val mChoiceCountSpinner = new Spinner[Int](2, 16, 2) {
+  private val mChoiceCountSpinner = new Spinner[Int](2, 16, dataController.rouletteData.arcsCount) {
     editable = true
     prefWidth = 80
 
-    value.onChange(prefController.changeChoiceCount(value.value))
+    value.onChange(dataController.rouletteData.arcsCount = value.value)
 
     editor.value.textProperty().addListener((_, oldValue, newValue) => {
       if (!newValue.forall(_.isDigit) || newValue.length > 2) {

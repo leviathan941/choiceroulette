@@ -35,11 +35,6 @@ import scalafx.scene.paint.Color
 object GuiApplication extends JFXApp {
   implicit val guiAppModule = new GuiModule :: MenuBarModule :: ConfigurationModule
 
-  val guiConfigKeyPrefix: String = "gui-config"
-  val windowWidthConfigKey = guiConfigKeyPrefix + ".window-width"
-  val windowHeightConfigKey = guiConfigKeyPrefix + ".window-height"
-  val lastStylesheetConfigKey = guiConfigKeyPrefix + ".last-stylesheet"
-
   private val mConfigMgr = inject [ConfigurationManager]
 
   private val mMainScene = new Scene() {
@@ -52,12 +47,12 @@ object GuiApplication extends JFXApp {
     scene = mMainScene
     minWidth = 840
     minHeight = 700
-    width = mConfigMgr.getDouble(windowWidthConfigKey, minWidth)
-    height = mConfigMgr.getDouble(windowHeightConfigKey, minHeight)
+    width = mConfigMgr.getDouble(GuiConfigs.windowWidthConfigKey, minWidth)
+    height = mConfigMgr.getDouble(GuiConfigs.windowHeightConfigKey, minHeight)
 
     onCloseRequest = handle {
-      mConfigMgr.setDouble(windowWidthConfigKey, width.value)
-      mConfigMgr.setDouble(windowHeightConfigKey, height.value)
+      mConfigMgr.setDouble(GuiConfigs.windowWidthConfigKey, width.value)
+      mConfigMgr.setDouble(GuiConfigs.windowHeightConfigKey, height.value)
       mConfigMgr.onExit()
     }
   }
@@ -69,7 +64,7 @@ object GuiApplication extends JFXApp {
   applyLastStylesheet()
 
   private def applyLastStylesheet(): Unit = {
-    val path = mConfigMgr.getString(lastStylesheetConfigKey)
+    val path = mConfigMgr.getString(GuiConfigs.lastStylesheetConfigKey)
     applyStylesheet(path)
   }
 
@@ -77,7 +72,7 @@ object GuiApplication extends JFXApp {
     if (new File(filePath).exists()) {
       mMainScene.stylesheets.clear()
       mMainScene.stylesheets.add(FileUtils.filePathToUrl(filePath))
-      mConfigMgr.setString(lastStylesheetConfigKey, filePath)
+      mConfigMgr.setString(GuiConfigs.lastStylesheetConfigKey, filePath)
     }
   }
 }
