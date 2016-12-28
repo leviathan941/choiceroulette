@@ -159,8 +159,14 @@ class ConfigurationManager extends ExitListener {
 }
 
 object ConfigurationManager {
+  private def systemConfigDir: String =
+    if (System.getProperty("os.name").toLowerCase.contains("win"))
+      System.getenv("AppData")
+    else
+      System.getProperty("user.home")
+
   private val configDirectory: String =
-      System.getProperty("user.home") + File.separator + ".choiceroulette" + File.separator
+      systemConfigDir + File.separator + ".choiceroulette" + File.separator
   val defaultConfigFilePath: String = configDirectory + "choiceroulette.state"
 
   def createConfigDirectory(): Unit = new File(configDirectory).mkdirs()

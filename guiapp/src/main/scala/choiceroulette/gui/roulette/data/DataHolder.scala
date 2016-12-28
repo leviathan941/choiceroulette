@@ -211,7 +211,7 @@ object DataHolder {
 
     def arcsCount: Int = _arcsCount
     def arcsCount_=(count: Int): Unit = {
-      _arcsCount = count
+      _arcsCount = RouletteDataHolder.limitArcsCount(count)
       notifyListeners(this)
     }
 
@@ -223,8 +223,18 @@ object DataHolder {
     }
   }
   object RouletteDataHolder {
+    val arcsCountLimits: Range = 2 until 50
+
+    def limitArcsCount(count: Int): Int = {
+      count match {
+        case c if RouletteDataHolder.arcsCountLimits.contains(c) => count
+        case c if c < RouletteDataHolder.arcsCountLimits.start => RouletteDataHolder.arcsCountLimits.start
+        case c if c > RouletteDataHolder.arcsCountLimits.end => RouletteDataHolder.arcsCountLimits.end
+      }
+    }
+
     def apply(wheelRadius: Double = 250, centerCircleRadius: Double = 50, arcsCount: Int = 2): RouletteDataHolder =
-      new RouletteDataHolder(wheelRadius, centerCircleRadius, arcsCount)
+      new RouletteDataHolder(wheelRadius, centerCircleRadius, limitArcsCount(arcsCount))
   }
 
 }

@@ -16,6 +16,7 @@
 
 package choiceroulette.gui.controls.preferences
 
+import choiceroulette.gui.roulette.data.DataHolder.RouletteDataHolder
 import choiceroulette.gui.roulette.data.RouletteDataController
 
 import scalafx.geometry.{Insets, Pos}
@@ -29,7 +30,11 @@ import scalafx.scene.text.FontWeight
   */
 class PreferencesPane(dataController: RouletteDataController) extends VBox {
 
-  private val mChoiceCountSpinner = new Spinner[Int](2, 16, dataController.rouletteData.arcsCount) {
+  private val mChoiceCountSpinner = new Spinner[Int](
+      RouletteDataHolder.arcsCountLimits.start,
+      RouletteDataHolder.arcsCountLimits.end,
+      dataController.rouletteData.arcsCount) {
+
     editable = true
     prefWidth = 80
 
