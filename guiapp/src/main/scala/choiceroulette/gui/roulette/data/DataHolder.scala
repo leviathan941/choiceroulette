@@ -223,7 +223,7 @@ object DataHolder {
     }
   }
   object RouletteDataHolder {
-    val arcsCountLimits: Range = 2 until 50
+    val arcsCountLimits: Range = 2 to 50
 
     def limitArcsCount(count: Int): Int = {
       count match {
