@@ -140,4 +140,5 @@ class RoulettePane(prefController: PreferencesController,
     "-fx-border-color: grey;"
 
   mArcsPane.fillPane(dataController.rouletteData.arcsCount)
+  dataController.restoreArcsData()
 }

@@ -36,7 +36,10 @@ class ArcsPane(dataController: RouletteDataController) extends StackPane(new Arc
   def fillPane(number: Int): Unit = {
     val holders = mArcsData.map(_.arc.dataHolder)
     mArcsData.foreach(data => dataController.removeArcData(data.arc.dataHolder))
+
     mArcsData = createRouletteSectors(number)
+    mArcsData.foreach(data => dataController.addArcData(data.arc.dataHolder))
+
     mArcsData.zip(holders).foreach(tup => tup._1.arc.dataHolder = tup._2)
     applyCurrentColors()
 

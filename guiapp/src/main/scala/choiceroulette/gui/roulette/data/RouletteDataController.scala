@@ -49,12 +49,21 @@ class RouletteDataController(configMgr: ConfigurationManager) extends Syncable {
 
   override def sync(configurationManager: ConfigurationManager): Unit = {
     configurationManager.set[RouletteDataHolder](
-      DataHolder.rouletteConfigKeyPrefix,
+      RouletteDataHolder.configKeyPrefix,
       rouletteData)
+
+    configurationManager.setList(ArcDataHolder.labelsConfigKey, mArcsData.map(_.labelDataHolder.text).toList)
   }
 
   private def restoreRouletteData(): RouletteDataHolder = {
-    configMgr.get(DataHolder.rouletteConfigKeyPrefix, RouletteDataHolder())
+    configMgr.get(RouletteDataHolder.configKeyPrefix, RouletteDataHolder())
+  }
+
+  def restoreArcsData(): Unit = {
+    val labelTexts = configMgr.getList(ArcDataHolder.labelsConfigKey,
+      List(ArcDataHolder.labelDefaultText, ArcDataHolder.labelDefaultText))
+
+    mArcsData.zip(labelTexts).foreach(pair => pair._1.labelDataHolder.text = pair._2)
   }
 
   configMgr.registerSyncable(this)

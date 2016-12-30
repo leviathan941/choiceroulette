@@ -24,6 +24,7 @@ import com.typesafe.config._
 import net.ceedubs.ficus.Ficus._
 import net.ceedubs.ficus.readers.ValueReader
 
+import scala.collection.JavaConverters.asJavaCollectionConverter
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.duration.Duration
 import scala.concurrent.{Await, Future}
@@ -41,29 +42,22 @@ class ConfigurationManager extends ExitListener {
 
   private var mWriteThread = new Thread(new SyncRunnable)
 
-  def getDouble(key: String, default: Double = 0.0): Double = {
-    mConfig.getOrElse[Double](key, default)
-  }
-
-  def setDouble(key: String, value: Double): Unit = {
+  def getDouble(key: String, default: Double = 0.0): Double = mConfig.getOrElse[Double](key, default)
+  def setDouble(key: String, value: Double): Unit =
     mConfig = mConfig.withValue(key, ConfigValueFactory.fromAnyRef(value))
-  }
 
-  def getString(key: String, default: String = ""): String = {
-    mConfig.getOrElse[String](key, default)
-  }
-
-  def setString(key: String, value: String): Unit = {
+  def getString(key: String, default: String = ""): String = mConfig.getOrElse[String](key, default)
+  def setString(key: String, value: String): Unit =
     mConfig = mConfig.withValue(key, ConfigValueFactory.fromAnyRef(value))
-  }
 
-  def get[T](key: String, default: T)(implicit reader: ValueReader[Option[T]]): T = {
-    mConfig.getOrElse[T](key, default)
-  }
+  def getList[T](key: String, default: List[T] = Nil)(implicit reader: ValueReader[Option[List[T]]]): List[T] =
+    mConfig.getOrElse(key, default)
+  def setList[T](key: String, value: List[T]): Unit =
+    mConfig = mConfig.withValue(key, ConfigValueFactory.fromAnyRef(value.asJavaCollection))
 
-  def set[T <: Configurable](key: String, value: T): Unit = {
+  def get[T](key: String, default: T)(implicit reader: ValueReader[Option[T]]): T = mConfig.getOrElse[T](key, default)
+  def set[T <: Configurable](key: String, value: T): Unit =
     mConfig = mConfig.withoutPath(key).withFallback(value.toConfig)
-  }
 
 
   def registerSyncable(syncable: Syncable): Unit = {

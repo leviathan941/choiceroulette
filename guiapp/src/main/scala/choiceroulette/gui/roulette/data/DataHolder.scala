@@ -35,11 +35,6 @@ sealed trait DataHolder
 
 object DataHolder {
 
-  val rouletteConfigKeyPrefix: String = GuiConfigs.guiConfigKeyPrefix + ".roulette-config"
-  val wheelRadiusConfigKey: String = rouletteConfigKeyPrefix + ".wheelRadius"
-  val centerCircleRadiusConfigKey: String = rouletteConfigKeyPrefix + ".centerCircleRadius"
-  val arcsCountConfigKey: String = rouletteConfigKeyPrefix + ".arcsCount"
-
   /** Holds arc's data except label.
     *
     * @see [[ArcLabelDataHolder]]
@@ -81,6 +76,12 @@ object DataHolder {
       strokeWidth = holder.strokeWidth
       labelDataHolder.from(holder.labelDataHolder)
     }
+  }
+  object ArcDataHolder {
+    lazy val configKeyPrefix: String = GuiConfigs.configKeyPrefix + ".arcs-config"
+    lazy val labelsConfigKey: String = configKeyPrefix + ".arcLabels"
+
+    lazy val labelDefaultText: String = "Enter choice"
   }
 
   /** Holds arc's label data.
@@ -217,13 +218,18 @@ object DataHolder {
 
     override def toConfig: Config = {
       ConfigFactory.empty().
-        withValue(wheelRadiusConfigKey, ConfigValueFactory.fromAnyRef(wheelRadius)).
-        withValue(centerCircleRadiusConfigKey, ConfigValueFactory.fromAnyRef(centerCircleRadius)).
-        withValue(arcsCountConfigKey, ConfigValueFactory.fromAnyRef(arcsCount))
+        withValue(RouletteDataHolder.wheelRadiusConfigKey, ConfigValueFactory.fromAnyRef(wheelRadius)).
+        withValue(RouletteDataHolder.centerCircleRadiusConfigKey, ConfigValueFactory.fromAnyRef(centerCircleRadius)).
+        withValue(RouletteDataHolder.arcsCountConfigKey, ConfigValueFactory.fromAnyRef(arcsCount))
     }
   }
   object RouletteDataHolder {
-    val arcsCountLimits: Range = 2 to 50
+    lazy val configKeyPrefix: String = GuiConfigs.configKeyPrefix + ".roulette-config"
+    lazy val wheelRadiusConfigKey: String = configKeyPrefix + ".wheelRadius"
+    lazy val centerCircleRadiusConfigKey: String = configKeyPrefix + ".centerCircleRadius"
+    lazy val arcsCountConfigKey: String = configKeyPrefix + ".arcsCount"
+
+    lazy val arcsCountLimits: Range = 2 to 50
 
     def limitArcsCount(count: Int): Int = {
       count match {

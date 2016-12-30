@@ -21,8 +21,8 @@ package choiceroulette.gui
   * @author Alexey Kuzin <amkuzink@gmail.com>
   */
 object GuiConfigs {
-  val guiConfigKeyPrefix: String = "gui-config"
-  val windowWidthConfigKey: String = guiConfigKeyPrefix + ".windowWidth"
-  val windowHeightConfigKey: String = guiConfigKeyPrefix + ".windowHeight"
-  val lastStylesheetConfigKey: String = guiConfigKeyPrefix + ".lastStylesheet"
+  lazy val configKeyPrefix: String = "gui-config"
+  lazy val windowWidthConfigKey: String = configKeyPrefix + ".windowWidth"
+  lazy val windowHeightConfigKey: String = configKeyPrefix + ".windowHeight"
+  lazy val lastStylesheetConfigKey: String = configKeyPrefix + ".lastStylesheet"
 }
