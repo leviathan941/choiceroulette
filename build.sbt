@@ -47,7 +47,7 @@ lazy val core: Project = (project in srcPath / "core").
     name := "choiceroulette-core",
     description := "Core of Choice Roulette",
     libraryDependencies ++= Seq(
-      scalaDi withJavadoc() withSources(),
+      scalDi withJavadoc() withSources(),
       typesafeConfigs withJavadoc() withSources()
     )
   )
@@ -60,7 +60,7 @@ lazy val guiApp: Project = (project in srcPath / "guiapp").
     description := "GUI for Choice Roulette",
     libraryDependencies ++= Seq(
       scalaFx withJavadoc() withSources(),
-      scalaDi withJavadoc() withSources()
+      scalDi withJavadoc() withSources()
     ),
 
     mainClass in (Compile, run) := Some("choiceroulette.gui.GuiApplication"),

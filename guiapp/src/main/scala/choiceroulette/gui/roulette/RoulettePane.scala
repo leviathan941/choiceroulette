@@ -93,21 +93,23 @@ class RoulettePane(prefController: PreferencesController,
 
   override def onSpinAction(): Unit = {
     popupHider()
+    mArcsPane.clearHighlight()
     setControlsEnabled(enabled = false)
     hoverPane()
 
     val arcNumber = Random.nextInt(mArcsPane.arcsCount)
     mArcsPane.rotateArcToPoint(arcNumber,
-      mCursorArcPane.DEFAULT_POSITION_ANGLE, 4,
+      mCursorArcPane.DEFAULT_POSITION_ANGLE, 5,
       CircleUtils.randomAngleBetween,
-      showResult)
+      () => showResult(arcNumber))
   }
 
   private val choiceCountChanged: RouletteDataHolder => Unit =
     holder => mArcsPane.fillPane(holder.arcsCount)
 
-  private val showResult: String => Unit = (result: String) => {
-    children += new SpinResultPane(result, width.value -> height.value, popupHider)
+  private def showResult(arcNumber: Int): Unit = {
+    mArcsPane.highlight(arcNumber)
+    popupHider()
   }
 
   private def hoverPane(): Unit = {

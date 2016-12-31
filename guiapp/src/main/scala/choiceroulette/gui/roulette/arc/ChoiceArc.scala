@@ -82,6 +82,24 @@ class ChoiceArc(dataController: RouletteDataController,
   override def dataHolder: ArcDataHolder = mDataHolder
   def dataHolder_=(holder: ArcDataHolder): Unit = dataHolder.from(holder)
 
+  def lowlight(): Unit = {
+    val lowlightArc = new Arc {
+      `type` = ArcType.Round
+      radiusX = dataController.rouletteData.wheelRadius
+      radiusY = dataController.rouletteData.wheelRadius
+      startAngle = angleStart
+      length = angleLength
+      centerX = dataController.rouletteData.wheelRadius
+      centerY = dataController.rouletteData.wheelRadius
+
+      fill = Color.color(1, 1, 1, 0.65)
+    }
+
+    children = new Group(mBackRectangle, mArc, mTextLabel, lowlightArc)
+  }
+
+  def clearLowlight(): Unit = children = new Group(mBackRectangle, mArc, mTextLabel)
+
   children = new Group(mBackRectangle, mArc, mTextLabel)
   minHeight = 0
   minWidth = 0

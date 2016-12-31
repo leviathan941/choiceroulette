@@ -59,16 +59,25 @@ class ArcsPane(dataController: RouletteDataController) extends StackPane(new Arc
                        pointAngle: Double,
                        turns: Double,
                        angleCalc: (Double, Double, Double) => Double,
-                       resultShower: String => Unit): Unit = {
+                       resultShower: () => Unit): Unit = {
     require(arcNumber >= 0 && arcNumber < mArcsData.size, "Check arcs count first")
     require(turns >= 0)
 
     val arcData = mArcsData(arcNumber)
     val angle = angleWithRotate(angleCalc(arcData.startAngle, arcData.endAngle, 5)) + turns * 360
-    val rotator = new RouletteRotator(this, pointAngle + angle,
-      () => resultShower(arcData.arc.dataHolder.labelDataHolder.text))
+    val rotator = new RouletteRotator(this, pointAngle + angle, resultShower)
     rotator.spinTheWheel()
   }
+
+  def highlight(arcNumber: Int): Unit = {
+    require(arcNumber >= 0 && arcNumber < mArcsData.size, "Check arcs count first")
+
+    mArcsData.indices.foreach(idx => {
+      if (idx != arcNumber) mArcsData(idx).arc.lowlight()
+    })
+  }
+
+  def clearHighlight(): Unit = mArcsData.foreach(_.arc.clearLowlight())
 
   private def setArcColor(number: Int): javafx.scene.paint.Paint => Unit = color => {
     dataController.arcFills(number) = color
