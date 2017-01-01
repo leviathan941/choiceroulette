@@ -92,7 +92,8 @@ class ChoiceArc(dataController: RouletteDataController,
       centerX = dataController.rouletteData.wheelRadius
       centerY = dataController.rouletteData.wheelRadius
 
-      fill = Color.color(1, 1, 1, 0.65)
+      fill = Color.color(0, 0, 0, 0.65)
+      styleClass += "arc-shading"
     }
 
     children = new Group(mBackRectangle, mArc, mTextLabel, lowlightArc)
