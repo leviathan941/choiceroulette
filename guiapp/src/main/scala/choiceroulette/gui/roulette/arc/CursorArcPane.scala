@@ -22,7 +22,7 @@ import choiceroulette.gui.roulette.data.RouletteDataController
 import scalafx.geometry.Pos
 import scalafx.scene.layout.FlowPane
 import scalafx.scene.paint.Color
-import scalafx.scene.shape.{Arc, ArcType}
+import scalafx.scene.shape.{Arc, ArcType, StrokeType}
 
 /** Cursor to point to won roulette arc.
   *
@@ -39,6 +39,7 @@ class CursorArcPane(dataController: RouletteDataController) extends FlowPane {
     startAngle = 170
     length = 20
     fill = Color.Black
+    strokeType = StrokeType.Inside
     styleClass += "wheel-cursor"
 
     dataController.cursorArcData = Some(new CursorArcDataHolder(fill))

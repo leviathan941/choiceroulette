@@ -1,0 +1,124 @@
+/* Properties, applied for all arcs */
+.arcs-pane {
+  /* Two paints, applied to arcs alternatively. */
+  -arc-first-background-color: darkkhaki; /* <paint> */
+  -arc-second-background-color: #00ffff; /* <paint> */
+}
+
+/* Individual arc properties */
+.choice-arc {
+  /* Color of the line around arc */
+  -fx-stroke: lime; /* <paint> */
+  /* Width of the line around arc */
+  -fx-stroke-width: 25px; /* <size> */
+}
+
+/* Arc text label properties */
+.arc-label {
+  /* Text color */
+  -fx-text-fill: navy; /* <paint> */
+  /* Text font */
+  /* Font shorthand property. Use it or a few separate properties to specify font. */
+  -fx-font: bold 30 "Helvetica"; /* <font> */
+  /* Text font family */
+  -fx-font-family: "Helvetica"; /* <font-family> */
+  /* Text font size */
+  -fx-font-size: 30; /* <size> */
+  /* Text font style */
+  -fx-font-style: normal; /* <font-style> */
+  /* Text font weight */
+  -fx-font-weight: normal; /* <font-weight> */
+}
+
+/* Properties for shading all arcs except the won one after wheel spin */
+.arc-shading {
+  /* Shading paint */
+  -fx-fill: rgba(0, 0, 0, 0.5); /* <paint> */
+}
+
+/* Wheel background properties */
+.background-circle {
+  /* Background paint */
+  -fx-fill: black; /* <paint> */
+  /* Color of the line around the wheel */
+  -fx-stroke: black; /* <paint> */
+  /* Width of the line around the wheel */
+  -fx-stroke-width: 3px; /* <size> */
+}
+
+/* Properties of the circle in the center of the wheel */
+.center-circle {
+  /* Background paint */
+  -fx-fill: yellow; /* <paint> */
+  /* Color of the line around the circle */
+  -fx-stroke: black; /* <paint> */
+  /* Type of the line around the circle */
+  -fx-stroke-type: outside; /* <stroke-type> */
+  /* Width of the line around the circle */
+  -fx-stroke-width: 1px; /* <size> */
+}
+
+/* Wheel cursor properties */
+.wheel-cursor {
+  /* Cursor background paint */
+  -fx-fill: grey; /* <paint> */
+  /* Color of the line around the cusor */
+  -fx-stroke: black; /* <paint> */
+  /* Width of the line around the cursor */
+  -fx-stroke-width: 1px; /* <size> */
+}
+
+
+/*
+<paint> can be contain one of the following things:
+ - *Color* can have one of the following forms:
+     named color(for example: black, white, blue, darkcyan, etc.),
+     rgb color(for example: #f00, #ff0000, rgb(255,0,0), rgba(255,0,0,1))
+
+ - *Linear gradient*: linear-gradient( [ [from <point> to <point>] | [ to <side-or-corner>], ]? [ [ repeat | reflect ],
+   ]? <color-stop>[, <color-stop>]+) where <side-or-corner> = [left | right] || [top | bottom]
+     Examples: linear-gradient(to bottom right, red, black)
+               linear-gradient(from 0% 0% to 100% 100%, red 0%, black 100%)
+               linear-gradient(from 0px 0px to 0px 50px, gray, darkgray 50%, dimgray 99%, white)
+
+ - *Radial gradient*: radial-gradient([ focus-angle <angle>, ]? [ focus-distance <percentage>, ]? [ center <point>, ]?
+   radius [ <length> | <percentage> ] [ [ repeat | reflect ], ]? <color-stop>[, <color-stop>]+)
+     Examples: radial-gradient(radius 100%, red, darkgray, black)
+               radial-gradient(focus-angle 45deg, focus-distance 20%, center 25% 25%, radius 50%, reflect, gray,
+                 darkgray 75%, dimgray)
+
+ - *Image pattern*: image-pattern(<string>, [<size>, <size>, <size>, <size>[, <boolean>]?]?) where
+     <string> The URL of the image.
+     <size> The x origin of the anchor rectangle.
+     <size> The y origin of the anchor rectangle.
+     <size> The width of the anchor rectangle.
+     <size> The height of the anchor rectangle.
+     <boolean> The proportional flag which indicates whether start and end locations are proportional or absolute.
+   Examples: image-pattern("file:///C:/images/Duke.png")
+             image-pattern("file:///C:/images/Duke.png", 20%, 20%, 80%, 80%)
+             image-pattern("file:///C:/images/Duke.png", 20%, 20%, 80%, 80%, true)
+             image-pattern("file:///C:/images/Duke.png", 20, 20, 80, 80, false)
+
+
+<size> is a number with units suffix: <number>[ px | mm | cm | in | pt | pc | em | ex ]?
+       No whitespace is allowed between the number and units if provided. Some units are relative and others absolute.
+ - *Relative:*
+   px: pixels, relative to the viewing device
+   em: the 'font-size' of the relevant font
+   ex: the 'x-height' of the relevant font
+ - *Absolute:*
+   in: inches — 1 inch is equal to 2.54 centimeters.
+   cm: centimeters
+   mm: millimeters
+   pt: points — the points used by CSS 2.1 are equal to 1/72nd of an inch.
+   pc: picas — 1 pica is equal to 12 points.
+
+
+<font>:= [[ <font-style> || <font-weight> ]? <font-size> <font-family> ]
+<font-family> is name of the font family. Examples: "Times", "Helvetica", etc.
+<font-style>:= [ normal | italic | oblique ]
+<font-weight>:= [ normal | bold | bolder | lighter | 100 | 200 | 300 | 400 | 500 | 600 | 700 | 800 | 900 ]
+
+
+<stroke-type>:= [ inside | outside ]
+ */
