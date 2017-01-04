@@ -99,7 +99,8 @@ class RoulettePane(prefController: PreferencesController,
 
     val arcNumber = Random.nextInt(mArcsPane.arcsCount)
     mArcsPane.rotateArcToPoint(arcNumber,
-      mCursorArcPane.DEFAULT_POSITION_ANGLE, 7,
+      mCursorArcPane.DEFAULT_POSITION_ANGLE,
+      7,
       CircleUtils.randomAngleBetween,
       () => showResult(arcNumber))
   }
