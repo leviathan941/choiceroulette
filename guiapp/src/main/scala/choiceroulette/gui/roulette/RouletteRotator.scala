@@ -32,10 +32,9 @@ class RouletteRotator(wheel: Node, angle: Double, finished: () => Unit) {
   private class SpinInterpolator extends Interpolator {
 
     override def curve(t: Double): Double = {
-      clamp(if (t < 0.2) 3.125 * t * t
-            // TODO Slow down the end. Maybe some variation of -k(x - 1)^2 + 1 ???
-            else if (t > 0.8) -3.125 * t * t + 6.25 * t - 2.125
-            else 1.25 * t - 0.125
+      clamp(if (t < 0.3063) 1.2 * t * t
+            else if (t > 0.6937) -1.2 * (t - 1) * (t - 1) + 1
+            else 2 * t - 0.5
       )
     }
 
@@ -46,7 +45,7 @@ class RouletteRotator(wheel: Node, angle: Double, finished: () => Unit) {
     }
   }
 
-  private lazy val mRotation: RotateTransition = new RotateTransition(Duration(4000)) {
+  private lazy val mRotation: RotateTransition = new RotateTransition(Duration(10000)) {
     byAngle = angle
     node = wheel
     onFinished = handle(finished())

@@ -69,10 +69,10 @@ class RoulettePane(prefController: PreferencesController,
 
     onMouseClicked = (event: MouseEvent) => {
       if (event.clickCount == 2) {
-        popupHider()
+        reset()
 
         val location = event.x -> event.y
-        mArcsPane.createEditor(location, popupHider) match {
+        mArcsPane.createEditor(location, reset) match {
           case Some(editText) => showEditor(editText, location)
           case _ =>
         }
@@ -92,14 +92,14 @@ class RoulettePane(prefController: PreferencesController,
   }
 
   override def onSpinAction(): Unit = {
-    popupHider()
+    reset()
     mArcsPane.clearHighlight()
     setControlsEnabled(enabled = false)
     hoverPane()
 
     val arcNumber = Random.nextInt(mArcsPane.arcsCount)
     mArcsPane.rotateArcToPoint(arcNumber,
-      mCursorArcPane.DEFAULT_POSITION_ANGLE, 5,
+      mCursorArcPane.DEFAULT_POSITION_ANGLE, 7,
       CircleUtils.randomAngleBetween,
       () => showResult(arcNumber))
   }
@@ -109,14 +109,14 @@ class RoulettePane(prefController: PreferencesController,
 
   private def showResult(arcNumber: Int): Unit = {
     mArcsPane.highlight(arcNumber)
-    popupHider()
+    reset()
   }
 
   private def hoverPane(): Unit = {
     children += Rectangle(width.value, height.value, Color.Transparent)
   }
 
-  private lazy val popupHider = () => {
+  private lazy val reset = () => {
     setControlsEnabled()
     children = mRouletteStack
   }
