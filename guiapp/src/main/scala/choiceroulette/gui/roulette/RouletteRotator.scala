@@ -31,12 +31,9 @@ class RouletteRotator(wheel: Node, angle: Double, finished: () => Unit) {
 
   private class SpinInterpolator extends Interpolator {
 
-    override def curve(t: Double): Double = {
-      clamp(if (t < 0.3063) 1.2 * t * t
-            else if (t > 0.6937) -1.2 * (t - 1) * (t - 1) + 1
-            else 2 * t - 0.5
-      )
-    }
+    override def curve(t: Double): Double =
+      //clamp(0.3324 * math.atan(30 * t - 15) + 0.5)
+      clamp(0.355 * math.atan(12 * t - 6) + 0.5)
 
     private def clamp(t: Double): Double = {
       if (t < 0) 0.0

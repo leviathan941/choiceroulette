@@ -19,8 +19,8 @@ package choiceroulette.gui.roulette
 import choiceroulette.gui.controls.actions.{ActionController, ActionListener}
 import choiceroulette.gui.controls.preferences.PreferencesController
 import choiceroulette.gui.roulette.arc.{ArcsPane, CursorArcPane}
-import choiceroulette.gui.roulette.data.DataHolder.{BackgroundCircleDataHolder,
-    CenterCircleDataHolder, RouletteDataHolder}
+import choiceroulette.gui.roulette.data.DataHolder.{BackgroundCircleDataHolder, CenterCircleDataHolder,
+    RouletteDataHolder}
 import choiceroulette.gui.roulette.data.RouletteDataController
 import choiceroulette.gui.utils.CircleUtils
 
@@ -65,7 +65,7 @@ class RoulettePane(prefController: PreferencesController,
     dataController.centerCircleData = Some(new CenterCircleDataHolder(fill))
   }
 
-  private lazy val mRouletteStack: StackPane = new StackPane() {
+  private class RouletteStack extends StackPane {
 
     onMouseClicked = (event: MouseEvent) => {
       if (event.clickCount == 2) {
@@ -84,6 +84,8 @@ class RoulettePane(prefController: PreferencesController,
     maxHeight = 2 * dataController.rouletteData.wheelRadius
   }
 
+  private var mRouletteStack = new RouletteStack
+
   private def showEditor(editor: EditChoiceField, loc: (Double, Double)): Unit = {
     children += editor
 
@@ -100,13 +102,20 @@ class RoulettePane(prefController: PreferencesController,
     val arcNumber = Random.nextInt(mArcsPane.arcsCount)
     mArcsPane.rotateArcToPoint(arcNumber,
       mCursorArcPane.DEFAULT_POSITION_ANGLE,
-      7,
+      5,
       CircleUtils.randomAngleBetween,
       () => showResult(arcNumber))
   }
 
-  private val choiceCountChanged: RouletteDataHolder => Unit =
-    holder => mArcsPane.fillPane(holder.arcsCount)
+  private val rouletteDataChanged: RouletteDataHolder => Unit = holder => {
+    mBackgroundCircle.radius = holder.wheelRadius
+    mCenterCircle.radius = holder.centerCircleRadius
+    mCursorArcPane.updateRadius(holder.wheelRadius)
+    mArcsPane.fillPane(holder.arcsCount)
+
+    mRouletteStack = new RouletteStack
+    reset()
+  }
 
   private def showResult(arcNumber: Int): Unit = {
     mArcsPane.highlight(arcNumber)
@@ -120,6 +129,7 @@ class RoulettePane(prefController: PreferencesController,
   private lazy val reset = () => {
     setControlsEnabled()
     children = mRouletteStack
+    moveToPaneCenter(mRouletteStack)
   }
 
   private def moveToPaneCenter(node: Node): Unit = {
@@ -135,7 +145,7 @@ class RoulettePane(prefController: PreferencesController,
   height.onChange(moveToPaneCenter(mRouletteStack))
   width.onChange(moveToPaneCenter(mRouletteStack))
 
-  dataController.rouletteData.listen(choiceCountChanged)
+  dataController.rouletteData.listen(rouletteDataChanged)
   actionController.listenActions(this)
 
   children = mRouletteStack

@@ -34,8 +34,6 @@ class CursorArcPane(dataController: RouletteDataController) extends FlowPane {
 
   private val mArc = new Arc() {
     `type` = ArcType.Round
-    radiusX = dataController.rouletteData.wheelRadius / 10
-    radiusY = dataController.rouletteData.wheelRadius / 2
     startAngle = 170
     length = 20
     fill = Color.Black
@@ -44,9 +42,16 @@ class CursorArcPane(dataController: RouletteDataController) extends FlowPane {
 
     dataController.cursorArcData = Some(new CursorArcDataHolder(fill))
   }
-  children = mArc
 
-  maxWidth = 2 * dataController.rouletteData.wheelRadius
-  maxHeight = 2 * dataController.rouletteData.wheelRadius
+  def updateRadius(radius: Double): Unit = {
+    maxWidth = 2 * radius
+    maxHeight = 2 * radius
+    mArc.radiusX = radius / 10
+    mArc.radiusY = radius / 2
+  }
+
+  updateRadius(dataController.rouletteData.wheelRadius)
+
+  children = mArc
   alignment = Pos.CenterLeft
 }
