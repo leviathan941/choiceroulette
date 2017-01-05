@@ -23,6 +23,7 @@ import choiceroulette.gui.roulette.{EditChoiceField, RouletteRotator}
 import choiceroulette.gui.utils.CircleUtils
 
 import scalafx.scene.layout.StackPane
+import scalafx.Includes._
 
 /** Pane containing choice arcs.
   *
@@ -72,12 +73,11 @@ class ArcsPane(dataController: RouletteDataController) extends StackPane(new Arc
   def highlight(arcNumber: Int): Unit = {
     require(arcNumber >= 0 && arcNumber < mArcsData.size, "Check arcs count first")
 
-    mArcsData.indices.foreach(idx => {
-      if (idx != arcNumber) mArcsData(idx).arc.lowlight()
-    })
+    val arcData = mArcsData(arcNumber)
+    children += new ShadingArc(dataController.rouletteData.wheelRadius, (arcData.startAngle, arcData.endAngle))
   }
 
-  def clearHighlight(): Unit = mArcsData.foreach(_.arc.clearLowlight())
+  def clearHighlight(): Unit = resetArcs()
 
   private def setArcColor(number: Int): javafx.scene.paint.Paint => Unit = color => {
     dataController.arcFills(number) = color
