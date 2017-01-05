@@ -88,7 +88,9 @@
                  darkgray 75%, dimgray)
 
  - *Image pattern*: image-pattern(<string>, [<size>, <size>, <size>, <size>[, <boolean>]?]?) where
-     <string> The URL of the image.
+     <string> The URL of the image. Since this is URL all special characters must be encoded.
+              For example space character " " will be "%20".
+              If it's a local path, it must be started with "file://" and "/" separator must be used instead of "\".
      <size> The x origin of the anchor rectangle.
      <size> The y origin of the anchor rectangle.
      <size> The width of the anchor rectangle.
@@ -121,4 +123,4 @@
 
 
 <stroke-type>:= [ inside | outside ]
- */
+*/

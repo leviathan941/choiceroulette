@@ -70,6 +70,7 @@ class RoulettePane(prefController: PreferencesController,
     onMouseClicked = (event: MouseEvent) => {
       if (event.clickCount == 2) {
         reset()
+        mArcsPane.clearHighlight()
 
         val location = event.x -> event.y
         mArcsPane.createEditor(location, reset) match {
@@ -111,8 +112,7 @@ class RoulettePane(prefController: PreferencesController,
     mBackgroundCircle.radius = holder.wheelRadius
     mCenterCircle.radius = holder.centerCircleRadius
     mCursorArcPane.updateRadius(holder.wheelRadius)
-    if (mArcsPane.arcsCount != holder.arcsCount)
-      mArcsPane.fillPane(holder.arcsCount)
+    mArcsPane.fillPane(holder.arcsCount)
 
     // Recreate stack to update its size
     mRouletteStack = new RouletteStack
