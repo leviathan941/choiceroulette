@@ -19,7 +19,7 @@ package choiceroulette.gui.roulette
 import javafx.animation.Interpolator
 
 import scalafx.Includes.handle
-import scalafx.animation.RotateTransition
+import scalafx.animation.{PauseTransition, RotateTransition, SequentialTransition}
 import scalafx.scene.Node
 import scalafx.util.Duration
 
@@ -32,8 +32,7 @@ class RouletteRotator(wheel: Node, angle: Double, finished: () => Unit) {
   private class SpinInterpolator extends Interpolator {
 
     override def curve(t: Double): Double =
-      //clamp(0.3324 * math.atan(30 * t - 15) + 0.5)
-      clamp(0.355 * math.atan(12 * t - 6) + 0.5)
+      clamp(0.34567 * math.atan(16 * t - 8) + 0.5)
 
     private def clamp(t: Double): Double = {
       if (t < 0) 0.0
@@ -42,18 +41,22 @@ class RouletteRotator(wheel: Node, angle: Double, finished: () => Unit) {
     }
   }
 
-  private lazy val mRotation: RotateTransition = new RotateTransition(Duration(10000)) {
-    byAngle = angle
-    node = wheel
+  private lazy val mRotationWithDelayedFinish: SequentialTransition = new SequentialTransition(wheel, Seq(
+      new RotateTransition(Duration(10000)) {
+        byAngle = angle
+        interpolator = new SpinInterpolator
+      },
+      new PauseTransition(Duration(500)))) {
+
+    delay = Duration(400)
     onFinished = handle(finished())
-    interpolator = new SpinInterpolator
   }
 
   def spinTheWheel(): Unit = {
-    mRotation.playFromStart()
+    mRotationWithDelayedFinish.playFromStart()
   }
 
   def stopTheWheel(): Unit = {
-    mRotation.stop()
+    mRotationWithDelayedFinish.stop()
   }
 }
