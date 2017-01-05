@@ -111,8 +111,10 @@ class RoulettePane(prefController: PreferencesController,
     mBackgroundCircle.radius = holder.wheelRadius
     mCenterCircle.radius = holder.centerCircleRadius
     mCursorArcPane.updateRadius(holder.wheelRadius)
-    mArcsPane.fillPane(holder.arcsCount)
+    if (mArcsPane.arcsCount != holder.arcsCount)
+      mArcsPane.fillPane(holder.arcsCount)
 
+    // Recreate stack to update its size
     mRouletteStack = new RouletteStack
     reset()
   }

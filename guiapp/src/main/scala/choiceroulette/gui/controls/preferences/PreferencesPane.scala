@@ -23,6 +23,7 @@ import choiceroulette.gui.roulette.data.DataHolder.RouletteDataHolder
 import choiceroulette.gui.roulette.data.RouletteDataController
 
 import scalafx.geometry.{Insets, Pos}
+import scalafx.scene.Node
 import scalafx.scene.control.{Label, Spinner}
 import scalafx.scene.layout.{HBox, VBox}
 import scalafx.scene.text.FontWeight
@@ -40,6 +41,17 @@ class PreferencesPane(dataController: RouletteDataController) extends VBox {
         }
     }
   }
+
+  private class PrefLabel(text: String) extends Label(text) {
+    font = FontProvider.regularFont(FontWeight.Normal, 15)
+  }
+
+  private class PrefLineLayout(labelText: String, node: Node) extends
+      HBox(30, new PrefLabel(labelText), node) {
+
+    alignment = Pos.BaselineRight
+  }
+
 
   private val mChoiceCountSpinner = new Spinner[Int](
       RouletteDataHolder.arcsCountLimits.start,
@@ -61,19 +73,19 @@ class PreferencesPane(dataController: RouletteDataController) extends VBox {
     editor.value.textProperty().addListener(new DigitSpinnerChecker(3, editor.value))
   }
 
-  private class PrefLabel(text: String) extends Label(text) {
-    font = FontProvider.regularFont(FontWeight.Normal, 15)
+  private val mCenterCircleRadiusSpinner = new Spinner[Double](50, dataController.rouletteData.wheelRadius,
+      dataController.rouletteData.centerCircleRadius) {
+
+    editable = true
+    prefWidth = 80
+
+    value.onChange(dataController.rouletteData.centerCircleRadius = value.value)
+    editor.value.textProperty().addListener(new DigitSpinnerChecker(3, editor.value))
   }
 
-  private val mCountSpinnerLayout = new HBox(30, new PrefLabel("Count:"), mChoiceCountSpinner) {
-    alignment = Pos.BaselineRight
-  }
-
-  private val mWheelRadiusSpinnerLayout = new HBox(30, new PrefLabel("Radius:"), mWheelRadiusSpinner) {
-    alignment = Pos.BaselineRight
-  }
-
-  children = List(mCountSpinnerLayout, mWheelRadiusSpinnerLayout)
+  children = List(new PrefLineLayout("Count:", mChoiceCountSpinner),
+    new PrefLineLayout("Radius:", mWheelRadiusSpinner),
+    new PrefLineLayout("Center:", mCenterCircleRadiusSpinner))
   minWidth = 200
   spacing = 30
   alignment = Pos.TopCenter
