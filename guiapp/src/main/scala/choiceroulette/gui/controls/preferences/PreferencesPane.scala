@@ -22,9 +22,9 @@ import javafx.scene.control.TextField
 import choiceroulette.gui.roulette.data.DataHolder.RouletteDataHolder
 import choiceroulette.gui.roulette.data.RouletteDataController
 
-import scalafx.geometry.{Insets, Pos}
+import scalafx.geometry.{Insets, Orientation, Pos}
 import scalafx.scene.Node
-import scalafx.scene.control.{Label, Spinner}
+import scalafx.scene.control.{Label, Slider, Spinner}
 import scalafx.scene.layout.{HBox, VBox}
 import scalafx.scene.text.FontWeight
 
@@ -65,27 +65,25 @@ class PreferencesPane(dataController: RouletteDataController) extends VBox {
     editor.value.textProperty().addListener(new DigitSpinnerChecker(2, editor.value))
   }
 
-  private val mWheelRadiusSpinner = new Spinner[Double](250, 500, dataController.rouletteData.wheelRadius) {
-    editable = true
+  private val mWheelRadiusSlider = new Slider(250, 500, dataController.rouletteData.wheelRadius) {
     prefWidth = 80
+    valueChanging = true
+    orientation = Orientation.Horizontal
 
     value.onChange(dataController.rouletteData.wheelRadius = value.value)
-    editor.value.textProperty().addListener(new DigitSpinnerChecker(3, editor.value))
   }
 
-  private val mCenterCircleRadiusSpinner = new Spinner[Double](50, dataController.rouletteData.wheelRadius,
-      dataController.rouletteData.centerCircleRadius) {
-
-    editable = true
+  private val mCenterCircleRadiusSlider = new Slider(50, 250, dataController.rouletteData.centerCircleRadius) {
     prefWidth = 80
+    valueChanging = true
+    orientation = Orientation.Horizontal
 
     value.onChange(dataController.rouletteData.centerCircleRadius = value.value)
-    editor.value.textProperty().addListener(new DigitSpinnerChecker(3, editor.value))
   }
 
   children = List(new PrefLineLayout("Count:", mChoiceCountSpinner),
-    new PrefLineLayout("Radius:", mWheelRadiusSpinner),
-    new PrefLineLayout("Center:", mCenterCircleRadiusSpinner))
+    new PrefLineLayout("Radius:", mWheelRadiusSlider),
+    new PrefLineLayout("Center:", mCenterCircleRadiusSlider))
   minWidth = 200
   spacing = 30
   alignment = Pos.TopCenter
