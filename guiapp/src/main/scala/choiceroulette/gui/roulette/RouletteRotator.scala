@@ -18,10 +18,9 @@ package choiceroulette.gui.roulette
 
 import javafx.animation.Interpolator
 
-import scalafx.Includes.handle
+import scalafx.Includes._
 import scalafx.animation.{PauseTransition, RotateTransition, SequentialTransition}
 import scalafx.scene.Node
-import scalafx.util.Duration
 
 /** Rotates the wheel and stops at the specified angle if start position is 0 degrees.
   *
@@ -42,13 +41,13 @@ class RouletteRotator(wheel: Node, angle: Double, finished: () => Unit) {
   }
 
   private lazy val mRotationWithDelayedFinish: SequentialTransition = new SequentialTransition(wheel, Seq(
-      new RotateTransition(Duration(10000)) {
+      new RotateTransition(10.s) {
         byAngle = angle
         interpolator = new SpinInterpolator
       },
-      new PauseTransition(Duration(500)))) {
+      new PauseTransition(0.5.s))) {
 
-    delay = Duration(400)
+    delay = 0.4.s
     onFinished = handle(finished())
   }
 

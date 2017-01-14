@@ -133,6 +133,7 @@ class ConfigurationManager extends ExitListener {
 
   private def startNewThread(): Unit = {
     mWriteThread = new Thread(new SyncRunnable)
+    mWriteThread.setDaemon(true)
     mWriteThread.start()
   }
 

@@ -23,10 +23,10 @@ import choiceroulette.gui.utils.FileUtils
 import scaldi.Injectable.inject
 
 import scalafx.Includes._
-import scalafx.application.JFXApp
-import scalafx.application.JFXApp.PrimaryStage
+import scalafx.application.{JFXApp, Platform}
 import scalafx.scene.Scene
 import scalafx.scene.paint.Color
+import scalafx.stage.{Stage, StageStyle}
 
 /** Main GUI application class.
   *
@@ -35,44 +35,62 @@ import scalafx.scene.paint.Color
 object GuiApplication extends JFXApp {
   implicit val guiAppModule = new GuiModule :: MenuBarModule :: ConfigurationModule
 
-  private val mConfigMgr = inject [ConfigurationManager]
+  private lazy val mConfigMgr = inject [ConfigurationManager]
 
-  private val mMainScene = new Scene() {
-    fill = Color.LightGrey
-    root = inject [MainPane]
-  }
+  private val mSplashStage = new Splash(() => showMainPane())
 
-  stage = new PrimaryStage {
+  private lazy val mMainStage: Stage = new Stage {
+    private val mMainScene = new Scene {
+      fill = Color.LightGrey
+      root = inject [MainPane]
+    }
+
+    initStyle(StageStyle.Decorated)
     title = "Choice Roulette"
-    scene = mMainScene
     minWidth = 840
     minHeight = 700
     width = mConfigMgr.getDouble(GuiConfigs.windowWidthConfigKey, minWidth)
     height = mConfigMgr.getDouble(GuiConfigs.windowHeightConfigKey, minHeight)
+    scene = mMainScene
 
     onCloseRequest = handle {
       mConfigMgr.setDouble(GuiConfigs.windowWidthConfigKey, width.value)
       mConfigMgr.setDouble(GuiConfigs.windowHeightConfigKey, height.value)
       mConfigMgr.onExit()
     }
-  }
 
-  inject [MenuBarController].listenActions(new MenuActionListener {
-    override def cssFileOpened(path: String): Unit = applyStylesheet(path)
-  })
+    onShown = handle(
+      mSplashStage.close()
+    )
 
-  applyLastStylesheet()
+    //noinspection ConvertExpressionToSAM
+    inject [MenuBarController].listenActions(new MenuActionListener {
+      override def cssFileOpened(path: String): Unit = applyStylesheet(path)
+    })
 
-  private def applyLastStylesheet(): Unit = {
-    val path = mConfigMgr.getString(GuiConfigs.lastStylesheetConfigKey)
-    applyStylesheet(path)
-  }
+    // Apply last stylesheet on creating
+    applyLastStylesheet()
 
-  private def applyStylesheet(filePath: String): Unit = {
-    if (new File(filePath).exists()) {
-      mMainScene.stylesheets.clear()
-      mMainScene.stylesheets.add(FileUtils.filePathToUrl(filePath))
-      mConfigMgr.setString(GuiConfigs.lastStylesheetConfigKey, filePath)
+    private def applyLastStylesheet(): Unit = {
+      val path = mConfigMgr.getString(GuiConfigs.lastStylesheetConfigKey)
+      applyStylesheet(path)
     }
+
+    private def applyStylesheet(filePath: String): Unit = {
+      if (new File(filePath).exists()) {
+        mMainScene.stylesheets.clear()
+        mMainScene.stylesheets.add(FileUtils.filePathToUrl(filePath))
+        mConfigMgr.setString(GuiConfigs.lastStylesheetConfigKey, filePath)
+      }
+    }
+  }
+
+  private def showMainPane(): Unit = {
+    val thread = new Thread(() => {
+      // create config manager in background thread and show main stage
+      mConfigMgr
+      Platform.runLater(mMainStage.show())
+    })
+    thread.start()
   }
 }

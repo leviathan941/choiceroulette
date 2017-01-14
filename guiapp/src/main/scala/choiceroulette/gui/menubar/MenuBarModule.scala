@@ -25,7 +25,6 @@ import scaldi.Module
   */
 object MenuBarModule extends Module {
 
-  binding toProvider new AboutStage(GuiApplication.stage)
   binding to injected [AppMenuBar]
   binding to new MenuBarController
 }

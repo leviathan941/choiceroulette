@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Alexey Kuzin <amkuzink@gmail.com>
+ * Copyright 2017 Alexey Kuzin <amkuzink@gmail.com>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,54 +14,51 @@
  * limitations under the License.
  */
 
-package choiceroulette.gui.menubar
+package choiceroulette.gui
 
 import choiceroulette.gui.controls.preferences.FontProvider
 
+import scalafx.Includes._
+import scalafx.application.JFXApp.PrimaryStage
 import scalafx.geometry.{Insets, Pos}
 import scalafx.scene.Scene
-import scalafx.scene.control.{Label, TextArea}
+import scalafx.scene.control.Label
 import scalafx.scene.layout.VBox
 import scalafx.scene.paint.Color
 import scalafx.scene.text.FontWeight
-import scalafx.stage.{Stage, StageStyle, Window}
+import scalafx.stage.StageStyle
 
-/** About stage contains information about creators.
+/** Splash screen stage.
   *
   * @author Alexey Kuzin <amkuzink@gmail.com>
   */
-class AboutStage(owner: Window) extends Stage { about =>
+class Splash(onFinished: () => Unit) extends PrimaryStage {
+
   private val mAppNameLabel = new Label("Choice Roulette") {
     alignment = Pos.BaselineLeft
-    padding = Insets(10)
-    font = FontProvider.regularFont(FontWeight.Bold, 24)
+    font = FontProvider.regularFont(FontWeight.Bold, 48)
   }
 
-  private val mCreatorsTextArea = new TextArea {
-    editable = false
-    maxWidth = 340
-    maxHeight = 165
-    text = "Copyright (C) 2016. All rights reserved.\n" +
-      "Licensed under Apache 2.0.\n\n" +
-      "Creator: Alexey Kuzin (amkuzink@gmail.com)"
+  private val mLoadingLabel = new Label("Loading...") {
+    font = FontProvider.regularFont
   }
 
-  initOwner(owner)
   initStyle(StageStyle.Undecorated)
-  title = "About Choice Roulette"
+  alwaysOnTop = true
   resizable = false
-  minWidth = 340
-  minHeight = 215
+  minWidth = 300
+  minHeight = 110
+
   scene = new Scene {
     fill = Color.Azure
-      content = new VBox {
-        alignmentInParent = Pos.TopLeft
-        style = "-fx-border-color: black;" +
-              "-fx-border-width: 2px;"
-        children = List(mAppNameLabel, mCreatorsTextArea)
-      }
+    content = new VBox(mAppNameLabel, mLoadingLabel) {
+      padding = Insets(10)
+      spacing = 10
+      alignment = Pos.TopCenter
+      style = "-fx-border-color: black;" +
+        "-fx-border-width: 2px;"
+    }
   }
-  focused.onChange((_, _, newValue) => {
-    if (!newValue) about.close()
-  })
+
+  onShown = handle(onFinished())
 }
