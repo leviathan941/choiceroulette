@@ -16,9 +16,9 @@
 
 package choiceroulette.gui.roulette
 
-import choiceroulette.gui.controls.actions.{ActionController, ActionModule}
-import choiceroulette.gui.controls.preferences.{PreferencesController, PreferencesModule}
-import choiceroulette.gui.roulette.data.{RouletteDataController, RouletteDataModule}
+import choiceroulette.gui.controls.actions.ActionModule
+import choiceroulette.gui.controls.preferences.PreferencesModule
+import choiceroulette.gui.roulette.data.RouletteDataModule
 import scaldi.{Module, MutableInjectorAggregation}
 
 /** Roulette package module.
@@ -29,9 +29,5 @@ object RouletteModule extends Module {
   override implicit val injector: MutableInjectorAggregation =
     PreferencesModule :: ActionModule :: RouletteDataModule
 
-  binding to new RoulettePane(
-    prefController = inject [PreferencesController],
-    actionController = inject [ActionController],
-    dataController = inject [RouletteDataController]
-  )
+  binding to injected [RoulettePane]
 }

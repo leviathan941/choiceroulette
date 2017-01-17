@@ -17,8 +17,11 @@
 package choiceroulette.gui.menubar
 
 import java.io.File
+import java.nio.file.Paths
 
-import choiceroulette.gui.GuiApplication
+import choiceroulette.configuration.{ConfigurationManager, ConfigurationModule}
+import choiceroulette.gui.{GuiApplication, GuiConfigs}
+import scaldi.Injectable.inject
 
 import scala.collection.mutable
 import scalafx.stage.FileChooser
@@ -29,6 +32,7 @@ import scalafx.stage.FileChooser.ExtensionFilter
   * @author Alexey Kuzin <amkuzink@gmail.com>
   */
 class MenuBarController {
+  implicit val injector = ConfigurationModule
 
   private lazy val mMenuActionListeners = new mutable.HashSet[MenuActionListener]()
 
@@ -39,8 +43,23 @@ class MenuBarController {
       title = "Choose CSS file"
       initialDirectory = new File(".")
       extensionFilters.add(new ExtensionFilter("CSS Files", "*.css"))
-    }.showOpenDialog(GuiApplication.stage) match {
+    }.showOpenDialog(GuiApplication.mainStage) match {
       case file: File => notifyListeners(_.cssFileOpened(file.getAbsolutePath))
+      case _ =>
+    }
+  }
+
+  def chooseSaveFile(): Unit = {
+    val initialPath = Paths.get(inject [ConfigurationManager]
+      .getString(GuiConfigs.lastSaveResultFileConfigKey, "./result.txt"))
+
+    new FileChooser {
+      title = "Choose file for saving spin result"
+      initialDirectory = initialPath.getParent.toFile
+      initialFileName = initialPath.getFileName.toString
+      extensionFilters.add(new ExtensionFilter("TXT Files", "*.txt"))
+    }.showSaveDialog(GuiApplication.mainStage) match {
+      case file: File => notifyListeners(_.saveFileChosen(file.getAbsolutePath))
       case _ =>
     }
   }

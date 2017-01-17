@@ -46,6 +46,10 @@ class RouletteDataController(configMgr: ConfigurationManager) extends Syncable {
 
   def addArcData(data: ArcDataHolder): Unit = mArcsData += data
   def removeArcData(data: ArcDataHolder): Unit = mArcsData -= data
+  def arcData(number: Int): ArcDataHolder = {
+    require(number >= 0 && number < mArcsData.size, "Check arcs count first")
+    mArcsData(number)
+  }
 
   override def sync(configurationManager: ConfigurationManager): Unit = {
     configurationManager.set[RouletteDataHolder](

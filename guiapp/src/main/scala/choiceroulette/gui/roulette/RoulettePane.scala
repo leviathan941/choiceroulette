@@ -23,6 +23,7 @@ import choiceroulette.gui.roulette.data.DataHolder.{BackgroundCircleDataHolder, 
     RouletteDataHolder}
 import choiceroulette.gui.roulette.data.RouletteDataController
 import choiceroulette.gui.utils.CircleUtils
+import scaldi.Injectable.inject
 
 import scala.util.Random
 import scalafx.Includes._
@@ -40,6 +41,8 @@ class RoulettePane(prefController: PreferencesController,
                    actionController: ActionController,
                    dataController: RouletteDataController)
     extends Pane with ActionListener { pane =>
+
+  implicit val injector = new RouletteInjector
 
   private lazy val mBackgroundCircle = new Circle() {
     radius = dataController.rouletteData.wheelRadius
@@ -120,6 +123,7 @@ class RoulettePane(prefController: PreferencesController,
   }
 
   private def showResult(arcNumber: Int): Unit = {
+    inject [ResultSaver].save(dataController.arcData(arcNumber).labelDataHolder.text)
     mArcsPane.highlight(arcNumber)
     reset()
   }

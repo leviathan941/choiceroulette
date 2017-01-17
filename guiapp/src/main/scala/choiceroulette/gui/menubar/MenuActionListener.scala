@@ -22,4 +22,5 @@ package choiceroulette.gui.menubar
   */
 trait MenuActionListener {
   def cssFileOpened(path: String)
+  def saveFileChosen(path: String)
 }

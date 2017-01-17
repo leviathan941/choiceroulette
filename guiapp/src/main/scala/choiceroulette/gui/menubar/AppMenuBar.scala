@@ -30,7 +30,7 @@ class AppMenuBar(menuBarController: MenuBarController) extends MenuBar {
 
   private val mHelpMenu = new Menu("Help") {
 
-    private lazy val mAboutItem = new MenuItem("About") {
+    private val mAboutItem = new MenuItem("About") {
       onAction = handle(mAboutStage.show())
     }
 
@@ -41,11 +41,15 @@ class AppMenuBar(menuBarController: MenuBarController) extends MenuBar {
 
   private val mFileMenu = new Menu("File") {
 
-    private lazy val mApplyCss = new MenuItem("Apply style from CSS") {
+    private val mApplyCss = new MenuItem("Apply style from...") {
       onAction = handle(menuBarController.openCssFile())
     }
 
-    items = List(mApplyCss)
+    private val mSaveResult = new MenuItem("Save result to...") {
+      onAction = handle(menuBarController.chooseSaveFile())
+    }
+
+    items = List(mApplyCss, mSaveResult)
   }
 
   useSystemMenuBar = true

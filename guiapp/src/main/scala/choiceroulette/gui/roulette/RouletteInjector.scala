@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Alexey Kuzin <amkuzink@gmail.com>
+ * Copyright 2017 Alexey Kuzin <amkuzink@gmail.com>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,16 +14,17 @@
  * limitations under the License.
  */
 
-package choiceroulette.gui
+package choiceroulette.gui.roulette
 
-/** Configuration keys for GUI.
+import choiceroulette.configuration.ConfigurationModule
+import scaldi.Module
+
+/** Local package injector.
   *
   * @author Alexey Kuzin <amkuzink@gmail.com>
   */
-object GuiConfigs {
-  lazy val configKeyPrefix: String = "gui-config"
-  lazy val windowWidthConfigKey: String = configKeyPrefix + ".windowWidth"
-  lazy val windowHeightConfigKey: String = configKeyPrefix + ".windowHeight"
-  lazy val lastStylesheetConfigKey: String = configKeyPrefix + ".lastStylesheet"
-  lazy val lastSaveResultFileConfigKey: String = configKeyPrefix + ".lastSaveResultFile"
+class RouletteInjector extends Module {
+  override implicit val injector = ConfigurationModule
+
+  binding to injected [ResultSaver]
 }

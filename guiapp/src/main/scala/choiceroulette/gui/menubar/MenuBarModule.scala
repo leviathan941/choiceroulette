@@ -16,7 +16,6 @@
 
 package choiceroulette.gui.menubar
 
-import choiceroulette.gui.GuiApplication
 import scaldi.Module
 
 /** Menu bar package module.
