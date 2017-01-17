@@ -16,22 +16,33 @@
 
 package choiceroulette.gui.roulette.arc
 
+import scalafx.scene.Group
+import scalafx.scene.layout.StackPane
 import scalafx.scene.paint.Color
-import scalafx.scene.shape.{Arc, ArcType}
+import scalafx.scene.shape.{Arc, ArcType, Rectangle}
 
 /** Arc for shading the wheel except the passed angle.
   *
   * @author Alexey Kuzin <amkuzink@gmail.com>
   */
-class ShadingArc(radius: Double, highlightAngle: (Double, Double)) extends Arc {
-  `type` = ArcType.Round
-  radiusX = radius
-  radiusY = radius
-  startAngle = highlightAngle._2
-  length = 360 - highlightAngle._2 + highlightAngle._1
-  centerX = radius
-  centerY = radius
+class ShadingArc(radius: Double, highlightAngle: (Double, Double)) extends StackPane {
 
-  fill = Color.color(0, 0, 0, 0.65)
-  styleClass += "arc-shading"
+  private val mBackRectangle = Rectangle(2 * radius, 2 * radius, Color.Transparent)
+
+  private val mArc = new Arc {
+    `type` = ArcType.Round
+    radiusX = radius
+    radiusY = radius
+    startAngle = highlightAngle._2
+    length = 360 - highlightAngle._2 + highlightAngle._1
+    centerX = radius
+    centerY = radius
+
+    fill = Color.color(0, 0, 0, 0.65)
+    styleClass += "arc-shading"
+  }
+
+  children = new Group(mBackRectangle, mArc)
+  maxHeight = radius
+  maxWidth = radius
 }
