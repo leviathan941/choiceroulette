@@ -69,8 +69,10 @@ class MainStage(splash: Splash, configManager: ConfigurationManager) extends Sta
   applyLastStylesheet()
 
   private def applyLastStylesheet(): Unit = {
-    val path = configManager.getString(GuiConfigs.lastStylesheetConfigKey)
-    applyStylesheet(path)
+    configManager.getString(GuiConfigs.lastStylesheetConfigKey) match {
+      case path: String if path.nonEmpty => applyStylesheet(path)
+      case _ =>
+    }
   }
 
   private def applyStylesheet(filePath: String): Unit = {
