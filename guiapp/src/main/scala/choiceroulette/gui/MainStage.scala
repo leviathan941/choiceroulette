@@ -26,7 +26,6 @@ import scaldi.MutableInjectorAggregation
 
 import scalafx.Includes.handle
 import scalafx.scene.Scene
-import scalafx.scene.paint.Color
 import scalafx.stage.{Stage, StageStyle}
 
 /** Main stage containing application UI.
@@ -37,7 +36,6 @@ class MainStage(splash: Splash, configManager: ConfigurationManager) extends Sta
   implicit val guiAppModule: MutableInjectorAggregation = new GuiModule :: MenuBarModule
 
   private val mMainScene = new Scene {
-    fill = Color.LightGrey
     root = inject [MainPane]
   }
 

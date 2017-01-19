@@ -1,3 +1,9 @@
+/* Root window properties */
+.root {
+  /* Main window background */
+  -fx-background-color: white; /* <paint> */
+}
+
 /* Properties, applied for all arcs */
 .arcs-pane {
   /* Two paints, applied to arcs alternatively. */
