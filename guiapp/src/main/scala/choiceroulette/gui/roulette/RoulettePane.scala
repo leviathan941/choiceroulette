@@ -139,8 +139,8 @@ class RoulettePane(prefController: PreferencesController,
   }
 
   private def moveToPaneCenter(node: Node): Unit = {
-    node.relocate(pane.width.value / 2 - dataController.rouletteData.wheelRadius,
-      pane.height.value / 2 - dataController.rouletteData.wheelRadius)
+    val fullRadius = dataController.rouletteData.wheelRadius + mBackgroundCircle.strokeWidth.value
+    node.relocate(pane.width.value / 2 - fullRadius, pane.height.value / 2 - fullRadius)
   }
 
   private def setControlsEnabled(enabled: Boolean = true): Unit = {
