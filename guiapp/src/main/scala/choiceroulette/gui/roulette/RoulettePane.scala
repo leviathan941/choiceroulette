@@ -54,6 +54,8 @@ class RoulettePane(prefController: PreferencesController,
 
     dataController.backgroundCircleData = Some(new BackgroundCircleDataHolder(
       fill, stroke, strokeWidth))
+
+    strokeWidth.onChange(moveToPaneCenter(mRouletteStack))
   }
 
   private lazy val mArcsPane = new ArcsPane(dataController)
