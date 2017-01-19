@@ -61,11 +61,22 @@ class RoulettePane(prefController: PreferencesController,
   private lazy val mCursorArcPane = new CursorArcPane(dataController)
 
   private lazy val mCenterCircle = new Circle() {
+
+    private lazy val mPressOffset: Double = 4
+
     radius = dataController.rouletteData.centerCircleRadius
     fill = Color.DarkGray
     styleClass += "center-circle"
 
     dataController.centerCircleData = Some(new CenterCircleDataHolder(fill))
+
+    onMousePressed = handle {
+      radius = radius.value - mPressOffset
+    }
+    onMouseReleased = handle {
+      radius = radius.value + mPressOffset
+      onSpinAction()
+    }
   }
 
   private class RouletteStack extends StackPane {
@@ -83,7 +94,7 @@ class RoulettePane(prefController: PreferencesController,
       }
     }
 
-    children = mBackgroundCircle :: mArcsPane :: mCenterCircle :: mCursorArcPane :: Nil
+    children = mBackgroundCircle :: mArcsPane :: mCursorArcPane :: mCenterCircle :: Nil
     maxWidth = 2 * dataController.rouletteData.wheelRadius
     maxHeight = 2 * dataController.rouletteData.wheelRadius
   }
