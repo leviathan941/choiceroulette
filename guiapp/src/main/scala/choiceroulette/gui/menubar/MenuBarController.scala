@@ -17,7 +17,7 @@
 package choiceroulette.gui.menubar
 
 import java.io.File
-import java.nio.file.Paths
+import java.nio.file.{Path, Paths}
 
 import choiceroulette.configuration.{ConfigurationManager, ConfigurationModule}
 import choiceroulette.gui.{GuiApplication, GuiConfigs}
@@ -50,13 +50,20 @@ class MenuBarController {
   }
 
   def chooseSaveFile(): Unit = {
-    val initialPath = Paths.get(inject [ConfigurationManager]
-      .getString(GuiConfigs.lastSaveResultFileConfigKey, "./result.txt"))
+    val initialPath = Paths.get(inject [ConfigurationManager].getString(GuiConfigs.lastSaveResultFileConfigKey))
+    val initDir = initialPath.getParent match {
+      case dir: Path => dir.toFile
+      case _ => new File(".")
+    }
+    val initFileName = initialPath.getFileName match {
+      case name: Path if name.toString.nonEmpty => name.toString
+      case _ => "result.txt"
+    }
 
     new FileChooser {
       title = "Choose file for saving spin result"
-      initialDirectory = initialPath.getParent.toFile
-      initialFileName = initialPath.getFileName.toString
+      initialDirectory = initDir
+      initialFileName = initFileName
       extensionFilters.add(new ExtensionFilter("TXT Files", "*.txt"))
     }.showSaveDialog(GuiApplication.mainStage) match {
       case file: File => notifyListeners(_.saveFileChosen(file.getAbsolutePath))
