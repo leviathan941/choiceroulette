@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Alexey Kuzin <amkuzink@gmail.com>
+ * Copyright 2017 Alexey Kuzin <amkuzink@gmail.com>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,29 +16,18 @@
 
 package choiceroulette.gui
 
-import scalafx.geometry.Insets
-import scalafx.scene.Node
-import scalafx.scene.layout.BorderPane
+import choiceroulette.configuration.ConfigurationManager
+import scaldi.Injector
+import scaldi.Injectable._
 
-/** Main pane containing top-level GUI components.
+import scalafx.stage.StageStyle
+
+/** Full application stage.
   *
   * @author Alexey Kuzin <amkuzink@gmail.com>
   */
-class MainPane(topPane: Option[Node],
-               centerPane: Node,
-               rightPane: Option[Node],
-               bottomPane: Option[Node]) extends BorderPane {
+class FullStage(splash: Option[Splash], configManager: ConfigurationManager)(implicit val injector: Injector) extends
+    ApplicationStage(splash, configManager, inject [MainPane]('FullMainPane)) {
 
-  def this(centerPane: Node) {
-    this(None, centerPane, None, None)
-  }
-
-  center = centerPane
-  top = topPane.orNull
-  right = rightPane.orNull
-  bottom = bottomPane.orNull
-
-  maxWidth = Double.MaxValue
-  maxHeight = Double.MaxValue
-  margin = Insets(0)
+  initStyle(StageStyle.Decorated)
 }

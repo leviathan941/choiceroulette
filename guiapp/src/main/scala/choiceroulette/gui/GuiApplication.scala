@@ -19,28 +19,34 @@ import choiceroulette.configuration.{ConfigurationManager, ConfigurationModule}
 import scaldi.Injectable.inject
 
 import scalafx.application.{JFXApp, Platform}
+import scalafx.stage.Stage
 
 /** Main GUI application class.
   *
   * @author Alexey Kuzin <amkuzink@gmail.com>
   */
 object GuiApplication extends JFXApp {
-  implicit val injector = ConfigurationModule
+  implicit val injector = ConfigurationModule :: new GuiModule
 
   private lazy val mConfigManager = inject [ConfigurationManager]
 
-  private val mSplashStage = new Splash(() => showMainPane())
+  private var mMainStage: Option[Stage] = None
 
-  lazy val mainStage = new MainStage(mSplashStage, mConfigManager)
+  private val mSplashStage: Splash = new Splash(() => {
+    mainStage = new FullStage(Some(mSplashStage), mConfigManager)
+  })
 
-  private def showMainPane(): Unit = {
+  def mainStage: Option[Stage] = mMainStage
+  def mainStage_=(stage: Stage): Unit = {
     val thread = new Thread(() => {
       // create config manager in background thread and show main stage
       mConfigManager
       Platform.runLater {
-        mainStage.show()
+        mMainStage = Some(stage)
+        stage.show()
       }
     })
     thread.start()
   }
+
 }

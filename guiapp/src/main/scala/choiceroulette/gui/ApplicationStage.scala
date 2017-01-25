@@ -21,25 +21,25 @@ import java.nio.file.{Files, Paths}
 import choiceroulette.configuration.ConfigurationManager
 import choiceroulette.gui.menubar.{MenuActionListener, MenuBarController, MenuBarModule}
 import choiceroulette.gui.utils.FileUtils
-import scaldi.Injectable.inject
-import scaldi.MutableInjectorAggregation
+import scaldi.Injectable._
 
 import scalafx.Includes.handle
 import scalafx.scene.Scene
-import scalafx.stage.{Stage, StageStyle}
+import scalafx.scene.paint.Color
+import scalafx.stage.Stage
 
 /** Main stage containing application UI.
   *
   * @author Alexey Kuzin <amkuzink@gmail.com>
   */
-class MainStage(splash: Splash, configManager: ConfigurationManager) extends Stage {
-  implicit val guiAppModule: MutableInjectorAggregation = new GuiModule :: MenuBarModule
+class ApplicationStage(splash: Option[Splash], configManager: ConfigurationManager, mainPane: MainPane) extends Stage {
+  implicit val guiAppModule = MenuBarModule
 
   private val mMainScene = new Scene {
-    root = inject [MainPane]
+    root = mainPane
+    fill = Color.Transparent
   }
 
-  initStyle(StageStyle.Decorated)
   title = "Choice Roulette"
   minWidth = 840
   minHeight = 700
@@ -54,7 +54,10 @@ class MainStage(splash: Splash, configManager: ConfigurationManager) extends Sta
   }
 
   onShown = handle(
-    splash.close()
+    splash match {
+      case Some(stage) => stage.close()
+      case _ =>
+    }
   )
 
   inject [MenuBarController].listenActions(new MenuActionListener {

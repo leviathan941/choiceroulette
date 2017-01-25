@@ -43,7 +43,7 @@ class MenuBarController {
       title = "Choose CSS file"
       initialDirectory = new File(".")
       extensionFilters.add(new ExtensionFilter("CSS Files", "*.css"))
-    }.showOpenDialog(GuiApplication.mainStage) match {
+    }.showOpenDialog(GuiApplication.mainStage.orNull) match {
       case file: File => notifyListeners(_.cssFileOpened(file.getAbsolutePath))
       case _ =>
     }
@@ -65,7 +65,7 @@ class MenuBarController {
       initialDirectory = initDir
       initialFileName = initFileName
       extensionFilters.add(new ExtensionFilter("TXT Files", "*.txt"))
-    }.showSaveDialog(GuiApplication.mainStage) match {
+    }.showSaveDialog(GuiApplication.mainStage.orNull) match {
       case file: File => notifyListeners(_.saveFileChosen(file.getAbsolutePath))
       case _ =>
     }
