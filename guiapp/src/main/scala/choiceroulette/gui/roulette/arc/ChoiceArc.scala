@@ -58,13 +58,14 @@ class ChoiceArc(dataController: RouletteDataController,
 
   private lazy val mTextLabel: ArcLabel =
       new ArcLabel(dataController, (angleStart, angleLength), () => getTextStartPoint, "Enter choice") {
-    maxWidth = 0.55 * dataController.rouletteData.wheelRadius
+    maxWidth = 0.6 * dataController.rouletteData.wheelRadius
   }
 
   private def getTextStartPoint: (Double, Double) = {
     val arcCenter: (Double, Double) = (mArc.centerX, mArc.centerY)
 
-    CircleUtils.shiftPointAlongRadius(arcCenter, getChordCenterPoint(mArc), -35)
+    CircleUtils.shiftPointAlongRadius(arcCenter, getChordCenterPoint(mArc),
+      -dataController.rouletteData.wheelRadius / 12)
   }
 
   private def getChordCenterPoint(arc: Arc): (Double, Double) = {
