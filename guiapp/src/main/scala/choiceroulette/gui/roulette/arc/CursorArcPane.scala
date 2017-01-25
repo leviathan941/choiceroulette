@@ -44,10 +44,10 @@ class CursorArcPane(dataController: RouletteDataController) extends FlowPane {
   }
 
   def updateRadius(radius: Double): Unit = {
-    maxWidth = 2 * radius
+    maxWidth = 2 * radius + 2 // workaround to remove hollow between the wheel and the cursor
     maxHeight = 2 * radius
-    mArc.radiusX = radius / 10
-    mArc.radiusY = radius / 2
+    mArc.radiusX = radius / 13
+    mArc.radiusY = radius / 2.5
   }
 
   updateRadius(dataController.rouletteData.wheelRadius)
