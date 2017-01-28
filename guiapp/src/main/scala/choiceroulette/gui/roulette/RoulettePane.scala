@@ -168,8 +168,6 @@ class RoulettePane(prefController: PreferencesController,
   actionController.listenActions(this)
 
   children = mRouletteStack
-  style = "-fx-border-width: 1px;" +
-    "-fx-border-color: grey;"
 
   mArcsPane.fillPane(dataController.rouletteData.arcsCount)
   dataController.restoreArcsData()

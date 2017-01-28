@@ -19,9 +19,10 @@ package choiceroulette.gui
 import java.nio.file.{Files, Paths}
 
 import choiceroulette.configuration.ConfigurationManager
-import choiceroulette.gui.menubar.{MenuActionListener, MenuBarController, MenuBarModule}
+import choiceroulette.gui.menubar.{MenuActionListener, MenuBarController}
 import choiceroulette.gui.utils.FileUtils
 import scaldi.Injectable._
+import scaldi.Injector
 
 import scalafx.Includes.handle
 import scalafx.scene.Scene
@@ -32,8 +33,8 @@ import scalafx.stage.Stage
   *
   * @author Alexey Kuzin <amkuzink@gmail.com>
   */
-class ApplicationStage(splash: Option[Splash], configManager: ConfigurationManager, mainPane: MainPane) extends Stage {
-  implicit val guiAppModule = MenuBarModule
+class ApplicationStage(splash: Option[Splash], configManager: ConfigurationManager, mainPane: MainPane)
+    (implicit val injector: Injector) extends Stage {
 
   private val mMainScene = new Scene {
     root = mainPane
@@ -41,24 +42,14 @@ class ApplicationStage(splash: Option[Splash], configManager: ConfigurationManag
   }
 
   title = "Choice Roulette"
-  minWidth = 840
-  minHeight = 700
-  width = configManager.getDouble(GuiConfigs.windowWidthConfigKey, minWidth)
-  height = configManager.getDouble(GuiConfigs.windowHeightConfigKey, minHeight)
   scene = mMainScene
 
-  onCloseRequest = handle {
-    configManager.setDouble(GuiConfigs.windowWidthConfigKey, width.value)
-    configManager.setDouble(GuiConfigs.windowHeightConfigKey, height.value)
-    configManager.onExit()
-  }
-
-  onShown = handle(
+  onShown = handle {
     splash match {
       case Some(stage) => stage.close()
       case _ =>
     }
-  )
+  }
 
   inject [MenuBarController].listenActions(new MenuActionListener {
     override def cssFileOpened(path: String): Unit = applyStylesheet(path)

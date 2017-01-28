@@ -16,6 +16,7 @@
 
 package choiceroulette.gui
 import choiceroulette.configuration.{ConfigurationManager, ConfigurationModule}
+import choiceroulette.gui.menubar.MenuBarModule
 import scaldi.Injectable.inject
 
 import scalafx.application.{JFXApp, Platform}
@@ -26,7 +27,7 @@ import scalafx.stage.Stage
   * @author Alexey Kuzin <amkuzink@gmail.com>
   */
 object GuiApplication extends JFXApp {
-  implicit val injector = ConfigurationModule :: new GuiModule
+  implicit val injector = ConfigurationModule :: new GuiModule :: MenuBarModule
 
   private lazy val mConfigManager = inject [ConfigurationManager]
 

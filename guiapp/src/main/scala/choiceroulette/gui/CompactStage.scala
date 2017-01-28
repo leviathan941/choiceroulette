@@ -17,29 +17,24 @@
 package choiceroulette.gui
 
 import choiceroulette.configuration.ConfigurationManager
+import choiceroulette.gui.utils.FxUtils
 import scaldi.Injectable._
 import scaldi.Injector
 
 import scalafx.Includes.handle
+import scalafx.scene.paint.Color
 import scalafx.stage.StageStyle
 
-/** Full application stage showing FullMainPane.
+/** Compact application stage showing CompactMainPane.
   *
   * @author Alexey Kuzin <amkuzink@gmail.com>
   */
-class FullStage(splash: Option[Splash], configManager: ConfigurationManager)
-               (override implicit val injector: Injector) extends
-               ApplicationStage(splash, configManager, inject [MainPane]('FullMainPane)) {
+class CompactStage(splash: Option[Splash], configManager: ConfigurationManager)
+                  (override implicit val injector: Injector)
+                  extends ApplicationStage(splash, configManager, inject [MainPane]('CompactMainPane)) {
 
-  initStyle(StageStyle.Decorated)
-  minWidth = 840
-  minHeight = 700
-  width = configManager.getDouble(GuiConfigs.windowWidthConfigKey, minWidth)
-  height = configManager.getDouble(GuiConfigs.windowHeightConfigKey, minHeight)
+  initStyle(StageStyle.Transparent)
+  inject [MainPane]('CompactMainPane).background = FxUtils.backgroundColor(Color.Transparent)
 
-  onCloseRequest = handle {
-    configManager.setDouble(GuiConfigs.windowWidthConfigKey, width.value)
-    configManager.setDouble(GuiConfigs.windowHeightConfigKey, height.value)
-    configManager.onExit()
-  }
+  onCloseRequest = handle(configManager.onExit())
 }

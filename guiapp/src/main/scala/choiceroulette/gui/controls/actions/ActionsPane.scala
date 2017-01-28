@@ -17,6 +17,7 @@
 package choiceroulette.gui.controls.actions
 
 import choiceroulette.gui.controls.preferences.FontProvider
+import choiceroulette.gui.utils.FxUtils
 
 import scalafx.Includes.handle
 import scalafx.geometry.{Insets, Pos}
@@ -36,27 +37,24 @@ class ActionsPane(actionController: ActionController) extends VBox {
     private lazy val mHoverColor = Color.web("#4dad30")
     private lazy val mPressedColor: Color = Color.web("#32701f")
 
-    private def backgroundColor(color: Color) = new Background(Array(
-      new BackgroundFill(color, new CornerRadii(CornerRadii.Empty), Insets(0))))
-
     onAction = handle(actionController.spinRoulette())
     onMousePressed = handle {
-      background = backgroundColor(mPressedColor)
+      background = FxUtils.backgroundColor(mPressedColor)
     }
     onMouseEntered = handle {
-      background = backgroundColor(mHoverColor)
+      background = FxUtils.backgroundColor(mHoverColor)
     }
     onMouseExited = handle {
-      background = backgroundColor(mColor)
+      background = FxUtils.backgroundColor(mColor)
     }
     onMouseReleased = handle {
-      background = backgroundColor(mColor)
+      background = FxUtils.backgroundColor(mColor)
     }
 
     prefWidth = 100
     font = FontProvider.boldRegularFont
     textFill = Color.White
-    background = backgroundColor(mColor)
+    background = FxUtils.backgroundColor(mColor)
   }
 
   children = mSpinButton

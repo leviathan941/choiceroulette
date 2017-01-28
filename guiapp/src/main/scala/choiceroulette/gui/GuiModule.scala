@@ -31,10 +31,10 @@ class GuiModule extends Module {
     PreferencesModule :: ActionModule :: RouletteModule :: MenuBarModule
 
   bind [MainPane] identifiedBy required('FullMainPane) to new MainPane(
-    topPane = Some(inject [AppMenuBar]),
+    topPane = inject [AppMenuBar],
     centerPane = inject [RoulettePane],
-    rightPane = Some(inject [PreferencesPane]),
-    bottomPane = Some(inject [ActionsPane])
+    rightPane = inject [PreferencesPane],
+    bottomPane = inject [ActionsPane]
   )
 
   bind [MainPane] identifiedBy required('CompactMainPane) to new MainPane(inject [RoulettePane])

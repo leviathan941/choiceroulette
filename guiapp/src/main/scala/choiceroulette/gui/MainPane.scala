@@ -16,21 +16,34 @@
 
 package choiceroulette.gui
 
+import javafx.scene.layout.{Border => JfxBorder, BorderStroke => JfxBorderStroke}
+
+import scalafx.Includes._
 import scalafx.geometry.Insets
-import scalafx.scene.Node
-import scalafx.scene.layout.BorderPane
+import scalafx.scene.layout._
+import scalafx.scene.paint.Color
 
 /** Main pane containing top-level GUI components.
   *
   * @author Alexey Kuzin <amkuzink@gmail.com>
   */
-class MainPane(topPane: Option[Node],
-               centerPane: Node,
-               rightPane: Option[Node],
-               bottomPane: Option[Node]) extends BorderPane {
+class MainPane(topPane: Option[Region],
+               centerPane: Region,
+               rightPane: Option[Region],
+               bottomPane: Option[Region]) extends BorderPane {
 
-  def this(centerPane: Node) {
+  def this(centerPane: Region) {
     this(None, centerPane, None, None)
+    centerPane.border = JfxBorder.EMPTY
+  }
+
+  def this(topPane: Region,
+           centerPane: Region,
+           rightPane: Region,
+           bottomPane: Region) {
+    this(Some(topPane), centerPane, Some(rightPane), Some(bottomPane))
+    centerPane.border = new JfxBorder(new JfxBorderStroke(Color.Grey, BorderStrokeStyle.Solid, CornerRadii.Empty,
+      BorderWidths.Default))
   }
 
   center = centerPane
