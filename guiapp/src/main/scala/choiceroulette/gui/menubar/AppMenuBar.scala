@@ -21,6 +21,7 @@ import choiceroulette.gui.GuiApplication
 import scalafx.Includes.handle
 import scalafx.geometry.Insets
 import scalafx.scene.control.{Menu, MenuBar, MenuItem}
+import scalafx.scene.input.{KeyCode, KeyCodeCombination, KeyCombination}
 
 /** Application menu bar.
   *
@@ -41,11 +42,13 @@ class AppMenuBar(menuBarController: MenuBarController) extends MenuBar {
 
   private val mFileMenu = new Menu("File") {
 
-    private val mApplyCss = new MenuItem("Apply style from...") {
+    private val mApplyCss = new MenuItem("Apply Style From...") {
+      accelerator = new KeyCodeCombination(KeyCode.A, KeyCombination.ShortcutDown, KeyCombination.ShiftDown)
       onAction = handle(menuBarController.openCssFile())
     }
 
-    private val mSaveResult = new MenuItem("Save result to...") {
+    private val mSaveResult = new MenuItem("Save Result To...") {
+      accelerator = new KeyCodeCombination(KeyCode.S, KeyCombination.ShortcutDown)
       onAction = handle(menuBarController.chooseSaveFile())
     }
 
