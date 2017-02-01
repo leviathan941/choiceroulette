@@ -28,8 +28,8 @@ import scalafx.stage.StageStyle
   * @author Alexey Kuzin <amkuzink@gmail.com>
   */
 class FullStage(splash: Option[Splash], configManager: ConfigurationManager)
-               (override implicit val injector: Injector) extends
-               ApplicationStage(splash, configManager, inject [MainPane]('FullMainPane)) {
+               (override implicit val injector: Injector)
+               extends ApplicationStage(splash, configManager, inject [MainPane]('FullMainPane)) {
 
   initStyle(StageStyle.Decorated)
   minWidth = 840

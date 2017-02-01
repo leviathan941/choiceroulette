@@ -23,11 +23,13 @@ import choiceroulette.application.ExitListener
 import com.typesafe.config._
 import net.ceedubs.ficus.Ficus._
 import net.ceedubs.ficus.readers.ValueReader
+import net.ceedubs.ficus.readers.EnumerationReader._
 
 import scala.collection.JavaConverters.asJavaCollectionConverter
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.duration.Duration
 import scala.concurrent.{Await, Future}
+import scala.reflect.ClassTag
 
 /** Manages writing/reading configuration.
   *
@@ -54,6 +56,11 @@ class ConfigurationManager extends ExitListener {
     mConfig.getOrElse(key, default)
   def setList[T](key: String, value: List[T]): Unit =
     mConfig = mConfig.withValue(key, ConfigValueFactory.fromAnyRef(value.asJavaCollection))
+
+  def getEnum[T <: Enumeration : ClassTag](key: String, default: T#Value): T#Value =
+    mConfig.getOrElse(key, default)
+  def setEnum[T <: Enumeration : ClassTag](key: String, value: T#Value): Unit =
+    mConfig = mConfig.withValue(key, ConfigValueFactory.fromAnyRef(value.toString))
 
   def get[T](key: String, default: T)(implicit reader: ValueReader[Option[T]]): T = mConfig.getOrElse[T](key, default)
   def set[T <: Configurable](key: String, value: T): Unit =

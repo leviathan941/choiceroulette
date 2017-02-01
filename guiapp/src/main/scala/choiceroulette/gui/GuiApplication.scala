@@ -16,11 +16,10 @@
 
 package choiceroulette.gui
 import choiceroulette.configuration.{ConfigurationManager, ConfigurationModule}
-import choiceroulette.gui.menubar.MenuBarModule
+import choiceroulette.gui.menubar.{MenuActionListener, MenuBarController, MenuBarModule}
 import scaldi.Injectable.inject
 
 import scalafx.application.{JFXApp, Platform}
-import scalafx.stage.Stage
 
 /** Main GUI application class.
   *
@@ -30,19 +29,18 @@ object GuiApplication extends JFXApp {
   implicit val injector = ConfigurationModule :: new GuiModule :: MenuBarModule
 
   private lazy val mConfigManager = inject [ConfigurationManager]
-
-  private var mMainStage: Option[Stage] = None
-
+  private var mMainStage: Option[ApplicationStage] = None
   private val mSplashStage: Splash = new Splash(() => {
-    mainStage = new FullStage(Some(mSplashStage), mConfigManager)
+    setViewType(Some(mSplashStage), inject [MenuBarController].viewType)
   })
 
-  def mainStage: Option[Stage] = mMainStage
-  def mainStage_=(stage: Stage): Unit = {
+  def mainStage: Option[ApplicationStage] = mMainStage
+  def mainStage_=(stage: ApplicationStage): Unit = {
     val thread = new Thread(() => {
       // create config manager in background thread and show main stage
       mConfigManager
       Platform.runLater {
+        doForMainStage(_.close())
         mMainStage = Some(stage)
         stage.show()
       }
@@ -50,4 +48,33 @@ object GuiApplication extends JFXApp {
     thread.start()
   }
 
+  inject [MenuBarController].listenActions(new MenuActionListener {
+    override def cssFileOpened(path: String): Unit = applyStylesheet(path)
+
+    override def saveFileChosen(path: String): Unit = setSaveResultFile(path)
+
+    override def viewTypeChanged(viewType: ViewType.Value): Unit = setViewType(None, viewType)
+  })
+
+  private def applyStylesheet(filePath: String): Unit = {
+    doForMainStage(_.applyStylesheet(filePath))
+  }
+
+  private def doForMainStage(doForStage: ApplicationStage => Unit): Unit = {
+    mainStage match {
+      case Some(m) => doForStage(m)
+      case _ =>
+    }
+  }
+
+  private def setSaveResultFile(filePath: String): Unit = {
+    mConfigManager.setString(GuiConfigs.lastSaveResultFileConfigKey, filePath)
+  }
+
+  private def setViewType(splash: Option[Splash], viewType: ViewType.Value): Unit = {
+    mainStage = viewType match {
+      case ViewType.Normal => new FullStage(splash, mConfigManager)
+      case ViewType.Compact => new CompactStage(splash, mConfigManager)
+    }
+  }
 }

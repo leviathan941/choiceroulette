@@ -24,6 +24,6 @@ import scaldi.Module
   */
 object MenuBarModule extends Module {
 
-  binding to injected [AppMenuBar]
+  binding toProvider injected [AppMenuBar]
   binding to new MenuBarController
 }

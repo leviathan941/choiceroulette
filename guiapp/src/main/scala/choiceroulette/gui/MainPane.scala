@@ -27,13 +27,13 @@ import scalafx.scene.paint.Color
   *
   * @author Alexey Kuzin <amkuzink@gmail.com>
   */
-class MainPane(topPane: Option[Region],
+class MainPane(topPane: Region,
                centerPane: Region,
                rightPane: Option[Region],
                bottomPane: Option[Region]) extends BorderPane {
 
-  def this(centerPane: Region) {
-    this(None, centerPane, None, None)
+  def this(topPane: Region, centerPane: Region) {
+    this(topPane, centerPane, None, None)
     centerPane.border = JfxBorder.EMPTY
   }
 
@@ -41,13 +41,13 @@ class MainPane(topPane: Option[Region],
            centerPane: Region,
            rightPane: Region,
            bottomPane: Region) {
-    this(Some(topPane), centerPane, Some(rightPane), Some(bottomPane))
+    this(topPane, centerPane, Some(rightPane), Some(bottomPane))
     centerPane.border = new JfxBorder(new JfxBorderStroke(Color.Grey, BorderStrokeStyle.Solid, CornerRadii.Empty,
       BorderWidths.Default))
   }
 
   center = centerPane
-  top = topPane.orNull
+  top = topPane
   right = rightPane.orNull
   bottom = bottomPane.orNull
 

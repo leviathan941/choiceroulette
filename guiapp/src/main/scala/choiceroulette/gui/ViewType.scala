@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Alexey Kuzin <amkuzink@gmail.com>
+ * Copyright 2017 Alexey Kuzin <amkuzink@gmail.com>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,16 +14,13 @@
  * limitations under the License.
  */
 
-package choiceroulette.gui.menubar
+package choiceroulette.gui
 
-import choiceroulette.gui.ViewType
-
-/** Listener for menu bar actions.
+/** Application view types enumeration.
   *
   * @author Alexey Kuzin <amkuzink@gmail.com>
   */
-trait MenuActionListener {
-  def cssFileOpened(path: String)
-  def saveFileChosen(path: String)
-  def viewTypeChanged(viewType: ViewType.Value)
+object ViewType extends Enumeration {
+  val Normal = Value("Normal")
+  val Compact = Value("Compact")
 }

@@ -19,9 +19,7 @@ package choiceroulette.gui
 import java.nio.file.{Files, Paths}
 
 import choiceroulette.configuration.ConfigurationManager
-import choiceroulette.gui.menubar.{MenuActionListener, MenuBarController}
 import choiceroulette.gui.utils.FileUtils
-import scaldi.Injectable._
 import scaldi.Injector
 
 import scalafx.Includes.handle
@@ -33,7 +31,7 @@ import scalafx.stage.Stage
   *
   * @author Alexey Kuzin <amkuzink@gmail.com>
   */
-class ApplicationStage(splash: Option[Splash], configManager: ConfigurationManager, mainPane: MainPane)
+class ApplicationStage(splash: Option[Splash], configManager: ConfigurationManager, protected val mainPane: MainPane)
     (implicit val injector: Injector) extends Stage {
 
   private val mMainScene = new Scene {
@@ -51,14 +49,9 @@ class ApplicationStage(splash: Option[Splash], configManager: ConfigurationManag
     }
   }
 
-  inject [MenuBarController].listenActions(new MenuActionListener {
-    override def cssFileOpened(path: String): Unit = applyStylesheet(path)
-
-    override def saveFileChosen(path: String): Unit = setSaveResultFile(path)
-  })
-
-  // Apply last stylesheet on creating
-  applyLastStylesheet()
+  override def close(): Unit = {
+    super.close()
+  }
 
   private def applyLastStylesheet(): Unit = {
     configManager.getString(GuiConfigs.lastStylesheetConfigKey) match {
@@ -67,7 +60,7 @@ class ApplicationStage(splash: Option[Splash], configManager: ConfigurationManag
     }
   }
 
-  private def applyStylesheet(filePath: String): Unit = {
+  def applyStylesheet(filePath: String): Unit = {
     if (Files.exists(Paths.get(filePath))) {
       mMainScene.stylesheets.clear()
       mMainScene.stylesheets.add(FileUtils.filePathToUrl(filePath))
@@ -75,7 +68,6 @@ class ApplicationStage(splash: Option[Splash], configManager: ConfigurationManag
     }
   }
 
-  private def setSaveResultFile(filePath: String): Unit = {
-    configManager.setString(GuiConfigs.lastSaveResultFileConfigKey, filePath)
-  }
+  // Apply last stylesheet on creating
+  applyLastStylesheet()
 }

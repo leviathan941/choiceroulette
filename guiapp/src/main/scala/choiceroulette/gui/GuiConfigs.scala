@@ -26,4 +26,5 @@ object GuiConfigs {
   lazy val windowHeightConfigKey: String = configKeyPrefix + ".windowHeight"
   lazy val lastStylesheetConfigKey: String = configKeyPrefix + ".lastStylesheet"
   lazy val lastSaveResultFileConfigKey: String = configKeyPrefix + ".lastSaveResultFile"
+  lazy val viewTypeConfigKey: String = configKeyPrefix + ".viewType"
 }

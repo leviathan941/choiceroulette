@@ -30,12 +30,15 @@ class GuiModule extends Module {
   override implicit val injector: MutableInjectorAggregation =
     PreferencesModule :: ActionModule :: RouletteModule :: MenuBarModule
 
-  bind [MainPane] identifiedBy required('FullMainPane) to new MainPane(
+  bind [MainPane] identifiedBy required('FullMainPane) toProvider new MainPane(
     topPane = inject [AppMenuBar],
     centerPane = inject [RoulettePane],
     rightPane = inject [PreferencesPane],
     bottomPane = inject [ActionsPane]
   )
 
-  bind [MainPane] identifiedBy required('CompactMainPane) to new MainPane(inject [RoulettePane])
+  bind [MainPane] identifiedBy required('CompactMainPane) toProvider new MainPane(
+    topPane = inject [AppMenuBar],
+    centerPane = inject [RoulettePane]
+  )
 }

@@ -16,7 +16,8 @@
 
 package choiceroulette.gui.menubar
 
-import choiceroulette.gui.GuiApplication
+import choiceroulette.gui.{GuiApplication, ViewType}
+import scaldi.Injector
 
 import scalafx.Includes.handle
 import scalafx.geometry.Insets
@@ -27,7 +28,7 @@ import scalafx.scene.input.{KeyCode, KeyCodeCombination, KeyCombination}
   *
   * @author Alexey Kuzin <amkuzink@gmail.com>
   */
-class AppMenuBar(menuBarController: MenuBarController) extends MenuBar {
+class AppMenuBar(menuBarController: MenuBarController)(implicit val injector: Injector) extends MenuBar {
 
   private val mHelpMenu = new Menu("Help") {
 
@@ -55,10 +56,32 @@ class AppMenuBar(menuBarController: MenuBarController) extends MenuBar {
     items = List(mApplyCss, mSaveResult)
   }
 
+  private val mViewMenu = new Menu("View") {
+
+    private def changeViewTitle: String = neededViewType.toString + " View"
+
+    private def neededViewType: ViewType.Value = {
+       menuBarController.viewType match {
+        case ViewType.Normal => ViewType.Compact
+        case ViewType.Compact => ViewType.Normal
+      }
+    }
+
+    private val mChangeView = new MenuItem(changeViewTitle) {
+      accelerator = new KeyCodeCombination(KeyCode.C, KeyCombination.ShortcutDown, KeyCombination.ShiftDown)
+      onAction = handle {
+        menuBarController.viewType = neededViewType
+        text = changeViewTitle
+      }
+    }
+
+    items = List(mChangeView)
+  }
+
   useSystemMenuBar = true
   padding = Insets(0)
   style = "-fx-border-style: solid;" +
     "-fx-border-color: grey;" +
     "-fx-border-width: 0 1px 1px 0;"
-  menus = List(mFileMenu, mHelpMenu)
+  menus = List(mFileMenu, mViewMenu, mHelpMenu)
 }

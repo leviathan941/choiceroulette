@@ -34,7 +34,8 @@ class CompactStage(splash: Option[Splash], configManager: ConfigurationManager)
                   extends ApplicationStage(splash, configManager, inject [MainPane]('CompactMainPane)) {
 
   initStyle(StageStyle.Transparent)
-  inject [MainPane]('CompactMainPane).background = FxUtils.backgroundColor(Color.Transparent)
+  mainPane.background = FxUtils.backgroundColor(Color.Transparent)
+  mainPane.top.value.setVisible(false)
 
   onCloseRequest = handle(configManager.onExit())
 }

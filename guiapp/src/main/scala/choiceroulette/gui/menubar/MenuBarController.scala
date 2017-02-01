@@ -19,8 +19,8 @@ package choiceroulette.gui.menubar
 import java.io.File
 import java.nio.file.{Path, Paths}
 
-import choiceroulette.configuration.{ConfigurationManager, ConfigurationModule}
-import choiceroulette.gui.{GuiApplication, GuiConfigs}
+import choiceroulette.configuration.{ConfigurationManager, ConfigurationModule, Syncable}
+import choiceroulette.gui.{GuiApplication, GuiConfigs, ViewType}
 import scaldi.Injectable.inject
 
 import scala.collection.mutable
@@ -31,10 +31,11 @@ import scalafx.stage.FileChooser.ExtensionFilter
   *
   * @author Alexey Kuzin <amkuzink@gmail.com>
   */
-class MenuBarController {
+class MenuBarController extends Syncable {
   implicit val injector = ConfigurationModule
 
   private lazy val mMenuActionListeners = new mutable.HashSet[MenuActionListener]()
+  private var mViewType = inject [ConfigurationManager].getEnum(GuiConfigs.viewTypeConfigKey, ViewType.Normal)
 
   def listenActions(listener: MenuActionListener): Unit = mMenuActionListeners += listener
 
@@ -71,7 +72,19 @@ class MenuBarController {
     }
   }
 
+  def viewType_=(viewType: ViewType.Value): Unit = {
+    mViewType = viewType
+    notifyListeners(_.viewTypeChanged(viewType))
+  }
+  def viewType: ViewType.Value = mViewType
+
   private def notifyListeners(notifyMethod: MenuActionListener => Unit): Unit = {
     mMenuActionListeners.foreach(notifyMethod)
   }
+
+  override def sync(configurationManager: ConfigurationManager): Unit = {
+    configurationManager.setEnum(GuiConfigs.viewTypeConfigKey, viewType)
+  }
+
+  inject [ConfigurationManager].registerSyncable(this)
 }
