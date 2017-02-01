@@ -26,6 +26,7 @@ import scalafx.scene.control.{Label, OverrunStyle}
 import scalafx.scene.paint.Color
 import scalafx.scene.text.Text
 import scalafx.scene.transform.Rotate
+import scalafx.scene.text.TextIncludes.jfxFont2sfxFont
 
 /** Text label to be placed in an arc.
   *
@@ -68,7 +69,10 @@ class ArcLabel(dataController: RouletteDataController,
   font = FontProvider.boldRegularFont
 
   moveInsideArc(startPoint(), rotateTextToArc())
-  font.onChange(resetLabel())
+  font.onChange {
+    font = FontProvider.fixFontSize(font.value)
+    resetLabel()
+  }
 
   wrapText = false
   textOverrun = OverrunStyle.CenterEllipsis
