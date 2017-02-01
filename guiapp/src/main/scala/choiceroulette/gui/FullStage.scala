@@ -37,9 +37,8 @@ class FullStage(splash: Option[Splash], configManager: ConfigurationManager)
   width = configManager.getDouble(GuiConfigs.windowWidthConfigKey, minWidth)
   height = configManager.getDouble(GuiConfigs.windowHeightConfigKey, minHeight)
 
-  onCloseRequest = handle {
-    configManager.setDouble(GuiConfigs.windowWidthConfigKey, width.value)
-    configManager.setDouble(GuiConfigs.windowHeightConfigKey, height.value)
-    configManager.onExit()
-  }
+  width.onChange(configManager.setDouble(GuiConfigs.windowWidthConfigKey, width.value))
+  height.onChange(configManager.setDouble(GuiConfigs.windowHeightConfigKey, height.value))
+
+  onCloseRequest = handle(configManager.onExit())
 }

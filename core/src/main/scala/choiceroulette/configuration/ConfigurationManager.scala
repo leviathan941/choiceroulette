@@ -129,7 +129,7 @@ class ConfigurationManager extends ExitListener {
   private def writeTask: Future[Unit] = Future {
     syncAll()
     writeToFile(mConfigFile)
-    Thread.sleep(30000)
+    Thread.sleep(60000)
   }
 
   override def onExit(): Unit = {
