@@ -59,7 +59,7 @@ object CircleUtils {
   }
 
   def randomAngleBetween(start: Double, end: Double, offset: Double): Double = {
-    offset + start + Random.nextDouble() * (end - start - offset)
+    offset + start + Random.nextDouble() * (end - start - 2 * offset)
   }
 
   def simplifyAngle(degrees: Double): Double = {

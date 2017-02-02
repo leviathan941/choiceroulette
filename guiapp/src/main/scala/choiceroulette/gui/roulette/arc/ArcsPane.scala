@@ -65,7 +65,7 @@ class ArcsPane(dataController: RouletteDataController) extends StackPane(new Arc
     require(turns >= 0)
 
     val arcData = mArcsData(arcNumber)
-    val angle = angleWithRotate(angleCalc(arcData.startAngle, arcData.endAngle, 3)) + turns * 360
+    val angle = angleWithRotate(angleCalc(arcData.startAngle, arcData.endAngle, 2)) + turns * 360
     val rotator = new RouletteRotator(this, pointAngle + angle, resultShower)
     rotator.spinTheWheel()
   }
