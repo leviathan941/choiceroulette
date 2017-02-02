@@ -54,4 +54,5 @@ class CursorArcPane(dataController: RouletteDataController) extends FlowPane {
 
   children = mArc
   alignment = Pos.CenterLeft
+  pickOnBounds = false
 }

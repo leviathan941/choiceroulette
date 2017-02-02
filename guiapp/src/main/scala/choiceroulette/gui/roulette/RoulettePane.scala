@@ -50,6 +50,7 @@ class RoulettePane(prefController: PreferencesController,
     strokeType = StrokeType.Outside
     stroke = Color.Black
     strokeWidth = 3
+    pickOnBounds = false
     styleClass += "background-circle"
 
     dataController.backgroundCircleData = Some(new BackgroundCircleDataHolder(
@@ -99,6 +100,7 @@ class RoulettePane(prefController: PreferencesController,
     children = mBackgroundCircle :: mArcsPane :: mCursorArcPane :: mCenterCircle :: Nil
     maxWidth = 2 * dataController.rouletteData.wheelRadius
     maxHeight = 2 * dataController.rouletteData.wheelRadius
+    pickOnBounds = false
   }
 
   private var mRouletteStack = new RouletteStack

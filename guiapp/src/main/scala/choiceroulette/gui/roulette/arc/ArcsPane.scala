@@ -146,4 +146,5 @@ class ArcsPane(dataController: RouletteDataController) extends StackPane(new Arc
 
   styleClass += "arcs-pane"
   initDelegate()
+  pickOnBounds = false
 }

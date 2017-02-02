@@ -88,4 +88,5 @@ class ChoiceArc(dataController: RouletteDataController,
   minWidth = 0
   maxHeight = 2 * dataController.rouletteData.wheelRadius
   maxWidth = 2 * dataController.rouletteData.wheelRadius
+  pickOnBounds = false
 }

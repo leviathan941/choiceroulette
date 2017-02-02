@@ -20,6 +20,7 @@ import javafx.scene.layout.{Border => JfxBorder, BorderStroke => JfxBorderStroke
 
 import scalafx.Includes._
 import scalafx.geometry.Insets
+import scalafx.scene.input.MouseEvent
 import scalafx.scene.layout._
 import scalafx.scene.paint.Color
 
@@ -54,4 +55,22 @@ class MainPane(topPane: Region,
   maxWidth = Double.MaxValue
   maxHeight = Double.MaxValue
   margin = Insets(0)
+
+
+  private var mMousePressedLoc: (Double, Double) = _
+
+  onMousePressed = (event: MouseEvent) => {
+    mMousePressedLoc = event.screenX -> event.screenY
+  }
+
+  onMouseDragged = (event: MouseEvent) => {
+    val dragX = event.screenX - mMousePressedLoc._1
+    val dragY = event.screenY - mMousePressedLoc._2
+
+    val window = scene.value.getWindow
+    window.x = window.getX + dragX
+    window.y = window.getY + dragY
+
+    mMousePressedLoc = event.screenX -> event.screenY
+  }
 }
