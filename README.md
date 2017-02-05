@@ -20,7 +20,7 @@ You need to have the following to compile the project:
 
 License
 -------
-Copyright (C) 2016 Alexey Kuzin. All rights reserved.
+Copyright (C) 2016, 2017 Alexey Kuzin. All rights reserved.
 
 This project is governed by the Apache 2.0 license. For details see the file
 titled LICENSE in the project root folder.
