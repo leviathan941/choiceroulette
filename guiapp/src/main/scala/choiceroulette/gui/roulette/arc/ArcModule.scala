@@ -1,5 +1,5 @@
 /*
- * Copyright 2016, 2017 Alexey Kuzin <amkuzink@gmail.com>
+ * Copyright 2017 Alexey Kuzin <amkuzink@gmail.com>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,21 +14,18 @@
  * limitations under the License.
  */
 
-package choiceroulette.gui.roulette
+package choiceroulette.gui.roulette.arc
 
-import choiceroulette.gui.controls.actions.ActionModule
-import choiceroulette.gui.controls.preferences.PreferencesModule
-import choiceroulette.gui.roulette.arc.ArcModule
-import choiceroulette.gui.roulette.data.RouletteDataModule
-import scaldi.{Module, MutableInjectorAggregation}
+import choiceroulette.gui.roulette.data.{RouletteDataController, RouletteDataModule}
+import scaldi.Module
 
-/** Roulette package module.
+/** Module providing arcs management entities.
   *
   * @author Alexey Kuzin <amkuzink@gmail.com>
   */
-object RouletteModule extends Module {
-  override implicit val injector: MutableInjectorAggregation =
-    PreferencesModule :: ActionModule :: RouletteDataModule :: ArcModule
+object ArcModule extends Module {
+  override implicit val injector = RouletteDataModule
 
-  binding to injected [RoulettePane]
+  bind [ArcsController] to new ArcsController(inject [RouletteDataController])(this)
+  bind [ArcsPane] to new ArcsPane(inject [RouletteDataController])(this)
 }

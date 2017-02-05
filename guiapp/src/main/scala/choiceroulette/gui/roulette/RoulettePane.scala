@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Alexey Kuzin <amkuzink@gmail.com>
+ * Copyright 2016, 2017 Alexey Kuzin <amkuzink@gmail.com>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,9 +18,8 @@ package choiceroulette.gui.roulette
 
 import choiceroulette.gui.controls.actions.{ActionController, ActionListener}
 import choiceroulette.gui.controls.preferences.PreferencesController
-import choiceroulette.gui.roulette.arc.{ArcsPane, CursorArcPane}
-import choiceroulette.gui.roulette.data.DataHolder.{BackgroundCircleDataHolder, CenterCircleDataHolder,
-    RouletteDataHolder}
+import choiceroulette.gui.roulette.arc.{ArcsController, ArcsPane, CursorArcPane}
+import choiceroulette.gui.roulette.data.DataHolder._
 import choiceroulette.gui.roulette.data.RouletteDataController
 import choiceroulette.gui.utils.CircleUtils
 import scaldi.Injectable.inject
@@ -39,7 +38,9 @@ import scalafx.scene.shape._
   */
 class RoulettePane(prefController: PreferencesController,
                    actionController: ActionController,
-                   dataController: RouletteDataController)
+                   dataController: RouletteDataController,
+                   arcsController: ArcsController,
+                   arcsPane: ArcsPane)
     extends Pane with ActionListener { pane =>
 
   implicit val injector = new RouletteInjector
@@ -59,7 +60,7 @@ class RoulettePane(prefController: PreferencesController,
     strokeWidth.onChange(moveToPaneCenter(mRouletteStack))
   }
 
-  private lazy val mArcsPane = new ArcsPane(dataController)
+  private lazy val mArcsPane = arcsPane
 
   private lazy val mCursorArcPane = new CursorArcPane(dataController)
 
@@ -87,10 +88,10 @@ class RoulettePane(prefController: PreferencesController,
     onMouseClicked = (event: MouseEvent) => {
       if (event.clickCount == 2) {
         reset()
-        mArcsPane.clearHighlight()
+        arcsController.clearHighlight()
 
         val location = event.x -> event.y
-        mArcsPane.createEditor(location, reset) match {
+        arcsController.createEditor(location, reset) match {
           case Some(editText) => showEditor(editText, location)
           case _ =>
         }
@@ -114,12 +115,12 @@ class RoulettePane(prefController: PreferencesController,
 
   override def onSpinAction(): Unit = {
     reset()
-    mArcsPane.clearHighlight()
+    arcsController.clearHighlight()
     setControlsEnabled(enabled = false)
     hoverPane()
 
-    val arcNumber = Random.nextInt(mArcsPane.arcsCount)
-    mArcsPane.rotateArcToPoint(arcNumber,
+    val arcNumber = Random.nextInt(arcsController.count)
+    arcsController.rotateArcToPoint(arcNumber,
       mCursorArcPane.DEFAULT_POSITION_ANGLE,
       5,
       CircleUtils.randomAngleBetween,
@@ -130,7 +131,7 @@ class RoulettePane(prefController: PreferencesController,
     mBackgroundCircle.radius = holder.wheelRadius
     mCenterCircle.radius = holder.centerCircleRadius
     mCursorArcPane.updateRadius(holder.wheelRadius)
-    mArcsPane.fillPane(holder.arcsCount)
+    arcsController.fillPane(holder.arcsCount)
 
     // Recreate stack to update its size
     mRouletteStack = new RouletteStack
@@ -139,7 +140,7 @@ class RoulettePane(prefController: PreferencesController,
 
   private def showResult(arcNumber: Int): Unit = {
     inject [ResultSaver].save(dataController.arcData(arcNumber).labelDataHolder.text)
-    mArcsPane.highlight(arcNumber)
+    arcsController.highlight(arcNumber)
     reset()
   }
 
@@ -171,6 +172,6 @@ class RoulettePane(prefController: PreferencesController,
 
   children = mRouletteStack
 
-  mArcsPane.fillPane(dataController.rouletteData.arcsCount)
+  arcsController.fillPane(dataController.rouletteData.arcsCount)
   dataController.restoreArcsData()
 }
