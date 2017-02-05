@@ -26,6 +26,6 @@ import scaldi.{Injector, Module}
 object PreferencesModule extends Module {
   override implicit def injector: Injector = RouletteDataModule
 
-  binding to new PreferencesController
+  binding to injected [PreferencesController]
   binding to injected [PreferencesPane]
 }

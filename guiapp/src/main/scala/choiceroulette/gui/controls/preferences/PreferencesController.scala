@@ -16,16 +16,23 @@
 
 package choiceroulette.gui.controls.preferences
 
+import choiceroulette.gui.roulette.data.DataHolder.RouletteDataHolder
+import choiceroulette.gui.roulette.data.RouletteDataController
 import scaldi.Injectable.inject
 
 /** Controls preferences changes.
   *
   * @author Alexey Kuzin <amkuzink@gmail.com>
   */
-class PreferencesController {
+class PreferencesController(dataController: RouletteDataController) {
   implicit val injector = PreferencesModule
 
   private lazy val mPrefPane = inject [PreferencesPane]
+
+  private val updatePreferencesPane: RouletteDataHolder => Unit = _ =>
+    mPrefPane.update()
+
+  dataController.rouletteData.listen(updatePreferencesPane)
 
   def setPreferencesEnabled(enable: Boolean = true): Unit = mPrefPane.disable = !enable
 }

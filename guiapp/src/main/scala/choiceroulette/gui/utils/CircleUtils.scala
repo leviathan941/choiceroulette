@@ -39,7 +39,7 @@ object CircleUtils {
       center._2 - radius * math.sin(angle))
   }
 
-  def splitCircleToSectors(number: Int): NumericRange[Double] = {
+  def splitCircleToArcs(number: Int): NumericRange[Double] = {
     val angleStep = math.floor(360.0 / number * 100000) / 100000
 
     Range.Double.inclusive(0, 360, angleStep)

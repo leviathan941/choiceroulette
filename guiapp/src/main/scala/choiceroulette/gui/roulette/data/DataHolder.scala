@@ -193,7 +193,8 @@ object DataHolder {
     */
   class RouletteDataHolder(private var _wheelRadius: Double,
                            private var _centerCircleRadius: Double,
-                           private var _arcsCount: Int) extends DataHolder
+                           private var _arcsCount: Int,
+                           private var _removeWonArc: Boolean) extends DataHolder
       with ArbitraryTypeReader
       with Configurable
       with DataChangeListenable[RouletteDataHolder] {
@@ -216,11 +217,18 @@ object DataHolder {
       notifyListeners(this)
     }
 
+    def wonArcRemovable: Boolean = _removeWonArc
+    def wonArcRemovable_=(removable: Boolean): Unit = {
+      _removeWonArc = removable
+      notifyListeners(this)
+    }
+
     override def toConfig: Config = {
       ConfigFactory.empty().
         withValue(RouletteDataHolder.wheelRadiusConfigKey, ConfigValueFactory.fromAnyRef(wheelRadius)).
         withValue(RouletteDataHolder.centerCircleRadiusConfigKey, ConfigValueFactory.fromAnyRef(centerCircleRadius)).
-        withValue(RouletteDataHolder.arcsCountConfigKey, ConfigValueFactory.fromAnyRef(arcsCount))
+        withValue(RouletteDataHolder.arcsCountConfigKey, ConfigValueFactory.fromAnyRef(arcsCount)).
+        withValue(RouletteDataHolder.removeWonArcConfigKey, ConfigValueFactory.fromAnyRef(wonArcRemovable))
     }
   }
   object RouletteDataHolder {
@@ -228,6 +236,7 @@ object DataHolder {
     lazy val wheelRadiusConfigKey: String = configKeyPrefix + ".wheelRadius"
     lazy val centerCircleRadiusConfigKey: String = configKeyPrefix + ".centerCircleRadius"
     lazy val arcsCountConfigKey: String = configKeyPrefix + ".arcsCount"
+    lazy val removeWonArcConfigKey: String = configKeyPrefix + ".removeWonArc"
 
     lazy val arcsCountLimits: Range = 2 to 50
 
@@ -239,8 +248,11 @@ object DataHolder {
       }
     }
 
-    def apply(wheelRadius: Double = 250, centerCircleRadius: Double = 50, arcsCount: Int = 2): RouletteDataHolder =
-      new RouletteDataHolder(wheelRadius, centerCircleRadius, limitArcsCount(arcsCount))
+    def apply(wheelRadius: Double = 250,
+              centerCircleRadius: Double = 50,
+              arcsCount: Int = 2,
+              removeWonArc: Boolean = false): RouletteDataHolder =
+      new RouletteDataHolder(wheelRadius, centerCircleRadius, limitArcsCount(arcsCount), removeWonArc)
   }
 
 }

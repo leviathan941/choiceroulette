@@ -45,7 +45,7 @@ class ArcsController(dataController: RouletteDataController)(implicit val inject
     val holders = mArcsData.map(_.arc.dataHolder)
     mArcsData.foreach(data => dataController.removeArcData(data.arc.dataHolder))
 
-    mArcsData = createRouletteSectors(number)
+    mArcsData = createRouletteArcs(number)
     mArcsData.foreach(data => dataController.addArcData(data.arc.dataHolder))
 
     mArcsData.zip(holders).foreach(tup => tup._1.arc.dataHolder = tup._2)
@@ -85,6 +85,15 @@ class ArcsController(dataController: RouletteDataController)(implicit val inject
   def applyColors(): Unit =
     mArcsData.zip(arcColors(mArcsData.length)).foreach(data => data._1.arc.dataHolder.fill = data._2)
 
+  def removeArc(arcNumber: Int): Unit = {
+    require(arcNumber >= 0 && arcNumber < mArcsData.size, "Check arcs count first")
+
+    val arcData = mArcsData(arcNumber)
+    dataController.removeArcData(arcData.arc.dataHolder)
+    mArcsData = mArcsData.filter(_ != arcData)
+    dataController.rouletteData.arcsCount = count
+  }
+
   private def findArc(degrees: Double): Option[ChoiceArc] = {
     val simplified = mArcsPane.simplifiedRotate()
 
@@ -109,8 +118,8 @@ class ArcsController(dataController: RouletteDataController)(implicit val inject
       findArc(CircleUtils.fromMathTo0to2Pi(math.toDegrees(phi)))
   }
 
-  private def createRouletteSectors(number: Int): List[ArcData] = {
-    val angles = CircleUtils.splitCircleToSectors(number)
+  private def createRouletteArcs(number: Int): List[ArcData] = {
+    val angles = CircleUtils.splitCircleToArcs(number)
 
     angles.zip(angles.tail).map(initData => {
       ArcData(initData._1, initData._2,

@@ -24,7 +24,7 @@ import choiceroulette.gui.roulette.data.RouletteDataController
 
 import scalafx.geometry.{Insets, Orientation, Pos}
 import scalafx.scene.Node
-import scalafx.scene.control.{Label, Slider, Spinner}
+import scalafx.scene.control.{CheckBox, Label, Slider, Spinner}
 import scalafx.scene.layout.{HBox, VBox}
 import scalafx.scene.text.FontWeight
 
@@ -46,10 +46,10 @@ class PreferencesPane(dataController: RouletteDataController) extends VBox {
     font = FontProvider.regularFont(FontWeight.Normal, 15)
   }
 
-  private class PrefLineLayout(labelText: String, node: Node) extends
-      HBox(30, new PrefLabel(labelText), node) {
+  private class PrefLineLayout(labelText: String, node: Node, spacing: Double = 50) extends
+      HBox(spacing, new PrefLabel(labelText), node) {
 
-    alignment = Pos.BaselineRight
+    alignment = Pos.CenterLeft
   }
 
 
@@ -61,29 +61,54 @@ class PreferencesPane(dataController: RouletteDataController) extends VBox {
     editable = true
     prefWidth = 80
 
-    value.onChange(dataController.rouletteData.arcsCount = value.value)
+    value.onChange((_, _, newValue) => {
+      if (dataController.rouletteData.arcsCount != newValue)
+        dataController.rouletteData.arcsCount = newValue
+    })
     editor.value.textProperty().addListener(new DigitSpinnerChecker(2, editor.value))
   }
 
   private val mWheelRadiusSlider = new Slider(250, 500, dataController.rouletteData.wheelRadius) {
     prefWidth = 80
-    valueChanging = true
     orientation = Orientation.Horizontal
 
-    value.onChange(dataController.rouletteData.wheelRadius = value.value)
+    value.onChange((_, _, newValue) => {
+      if (dataController.rouletteData.wheelRadius != newValue.doubleValue())
+        dataController.rouletteData.wheelRadius = newValue.doubleValue()
+    })
   }
 
   private val mCenterCircleRadiusSlider = new Slider(50, 250, dataController.rouletteData.centerCircleRadius) {
     prefWidth = 80
-    valueChanging = true
     orientation = Orientation.Horizontal
 
-    value.onChange(dataController.rouletteData.centerCircleRadius = value.value)
+    value.onChange((_, _, newValue) => {
+      if (dataController.rouletteData.centerCircleRadius != newValue.doubleValue())
+        dataController.rouletteData.centerCircleRadius = newValue.doubleValue()
+    })
+  }
+
+  private val mRemoveWonArcCheckbox = new CheckBox {
+    selected = dataController.rouletteData.wonArcRemovable
+    indeterminate = false
+
+    selected.onChange((_, _, newValue) => {
+      if (dataController.rouletteData.wonArcRemovable != newValue)
+        dataController.rouletteData.wonArcRemovable = newValue
+    })
+  }
+
+  def update(): Unit = {
+    mChoiceCountSpinner.valueFactory().setValue(dataController.rouletteData.arcsCount)
+    mWheelRadiusSlider.value = dataController.rouletteData.wheelRadius
+    mCenterCircleRadiusSlider.value = dataController.rouletteData.centerCircleRadius
+    mRemoveWonArcCheckbox.selected = dataController.rouletteData.wonArcRemovable
   }
 
   children = List(new PrefLineLayout("Count:", mChoiceCountSpinner),
     new PrefLineLayout("Radius:", mWheelRadiusSlider),
-    new PrefLineLayout("Center:", mCenterCircleRadiusSlider))
+    new PrefLineLayout("Center:", mCenterCircleRadiusSlider),
+    new PrefLineLayout("Remove Won Arc:", mRemoveWonArcCheckbox, 30))
   minWidth = 200
   spacing = 30
   alignment = Pos.TopCenter
