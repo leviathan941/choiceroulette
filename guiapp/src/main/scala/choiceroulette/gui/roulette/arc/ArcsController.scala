@@ -88,10 +88,23 @@ class ArcsController(dataController: RouletteDataController)(implicit val inject
   def removeArc(arcNumber: Int): Unit = {
     require(arcNumber >= 0 && arcNumber < mArcsData.size, "Check arcs count first")
 
+    removeArcInternal(arcNumber)()
+  }
+
+  def removeArcAnimated(arcNumber: Int, onRemoved: () => Unit): Unit = {
+    require(arcNumber >= 0 && arcNumber < mArcsData.size, "Check arcs count first")
+
+    val arcData = mArcsData(arcNumber)
+    new ArcFader(arcData.arc, removeArcInternal(arcNumber, onRemoved)).fade()
+  }
+
+  private def removeArcInternal(arcNumber: Int, onRemoved: () => Unit = () => {}): () => Unit =
+      () => {
     val arcData = mArcsData(arcNumber)
     dataController.removeArcData(arcData.arc.dataHolder)
     mArcsData = mArcsData.filter(_ != arcData)
     dataController.rouletteData.arcsCount = count
+    onRemoved()
   }
 
   private def findArc(degrees: Double): Option[ChoiceArc] = {

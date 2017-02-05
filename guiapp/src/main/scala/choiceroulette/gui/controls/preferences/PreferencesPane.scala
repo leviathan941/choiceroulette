@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Alexey Kuzin <amkuzink@gmail.com>
+ * Copyright 2016, 2017 Alexey Kuzin <amkuzink@gmail.com>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -46,7 +46,7 @@ class PreferencesPane(dataController: RouletteDataController) extends VBox {
     font = FontProvider.regularFont(FontWeight.Normal, 15)
   }
 
-  private class PrefLineLayout(labelText: String, node: Node, spacing: Double = 50) extends
+  private class PrefLineLayout(labelText: String, node: Node, spacing: Double = 30) extends
       HBox(spacing, new PrefLabel(labelText), node) {
 
     alignment = Pos.CenterLeft
@@ -69,7 +69,7 @@ class PreferencesPane(dataController: RouletteDataController) extends VBox {
   }
 
   private val mWheelRadiusSlider = new Slider(250, 500, dataController.rouletteData.wheelRadius) {
-    prefWidth = 80
+    prefWidth = 100
     orientation = Orientation.Horizontal
 
     value.onChange((_, _, newValue) => {
@@ -78,8 +78,8 @@ class PreferencesPane(dataController: RouletteDataController) extends VBox {
     })
   }
 
-  private val mCenterCircleRadiusSlider = new Slider(30, 250, dataController.rouletteData.centerCircleRadius) {
-    prefWidth = 80
+  private val mCenterCircleRadiusSlider = new Slider(20, 250, dataController.rouletteData.centerCircleRadius) {
+    prefWidth = 100
     orientation = Orientation.Horizontal
 
     value.onChange((_, _, newValue) => {
@@ -105,10 +105,10 @@ class PreferencesPane(dataController: RouletteDataController) extends VBox {
     mRemoveWonArcCheckbox.selected = dataController.rouletteData.wonArcRemovable
   }
 
-  children = List(new PrefLineLayout("Count:", mChoiceCountSpinner),
+  children = List(new PrefLineLayout("Count:", mChoiceCountSpinner, 50),
     new PrefLineLayout("Radius:", mWheelRadiusSlider),
     new PrefLineLayout("Center:", mCenterCircleRadiusSlider),
-    new PrefLineLayout("Remove Won Arc:", mRemoveWonArcCheckbox, 30))
+    new PrefLineLayout("Remove Won Arc:", mRemoveWonArcCheckbox))
   minWidth = 200
   spacing = 30
   alignment = Pos.TopCenter

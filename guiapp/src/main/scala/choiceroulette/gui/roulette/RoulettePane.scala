@@ -115,18 +115,22 @@ class RoulettePane(prefController: PreferencesController,
   }
 
   override def onSpinAction(): Unit = {
-    reset()
-    removeWonArc()
-    arcsController.clearHighlight()
     setControlsEnabled(enabled = false)
     hoverPane()
 
-    val arcNumber = Random.nextInt(arcsController.count)
-    arcsController.rotateArcToPoint(arcNumber,
-      mCursorArcPane.DEFAULT_POSITION_ANGLE,
-      5,
-      CircleUtils.randomAngleBetween,
-      () => showResult(arcNumber))
+    doSpin(() => {
+      reset()
+      arcsController.clearHighlight()
+      setControlsEnabled(enabled = false)
+      hoverPane()
+
+      val arcNumber = Random.nextInt(arcsController.count)
+      arcsController.rotateArcToPoint(arcNumber,
+        mCursorArcPane.DEFAULT_POSITION_ANGLE,
+        5,
+        CircleUtils.randomAngleBetween,
+        () => showResult(arcNumber))
+    })
   }
 
   private val rouletteDataChanged: RouletteDataHolder => Unit = holder => {
@@ -168,9 +172,11 @@ class RoulettePane(prefController: PreferencesController,
     actionController.setActionsEnabled(enable = enabled)
   }
 
-  private def removeWonArc(): Unit = {
+  private def doSpin(spin: () => Unit): Unit = {
     if (dataController.rouletteData.wonArcRemovable && mWonArcNumber >= 0)
-      arcsController.removeArc(mWonArcNumber)
+      arcsController.removeArcAnimated(mWonArcNumber, spin)
+    else
+      spin()
   }
 
   height.onChange(moveToPaneCenter(mRouletteStack))
