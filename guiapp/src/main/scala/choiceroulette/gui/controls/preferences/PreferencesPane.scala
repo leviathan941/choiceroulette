@@ -78,7 +78,7 @@ class PreferencesPane(dataController: RouletteDataController) extends VBox {
     })
   }
 
-  private val mCenterCircleRadiusSlider = new Slider(50, 250, dataController.rouletteData.centerCircleRadius) {
+  private val mCenterCircleRadiusSlider = new Slider(30, 250, dataController.rouletteData.centerCircleRadius) {
     prefWidth = 80
     orientation = Orientation.Horizontal
 

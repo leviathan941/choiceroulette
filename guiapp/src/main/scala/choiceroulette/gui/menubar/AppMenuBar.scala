@@ -43,7 +43,7 @@ class AppMenuBar(menuBarController: MenuBarController)(implicit val injector: In
 
   private val mFileMenu = new Menu("File") {
 
-    private val mApplyCss = new MenuItem("Apply Style From...") {
+    private val mApplyCss = new MenuItem("Apply Theme") {
       accelerator = new KeyCodeCombination(KeyCode.A, KeyCombination.ShortcutDown, KeyCombination.ShiftDown)
       onAction = handle(menuBarController.openCssFile())
     }
