@@ -35,6 +35,12 @@ class CompactStage(splash: Option[Splash], configManager: ConfigurationManager)
 
   initStyle(StageStyle.Transparent)
   mainPane.background = FxUtils.backgroundColor(Color.Transparent)
+  mainPane.background.onChange((_, _, newValue) => {
+    // Prevent changing background in Compact View
+    val transparent = FxUtils.backgroundColor(Color.Transparent)
+    if (newValue != transparent.delegate)
+      mainPane.background = transparent
+  })
   mainPane.top.value.setVisible(false)
 
   onCloseRequest = handle(configManager.onExit())
