@@ -108,7 +108,7 @@ class PreferencesPane(dataController: RouletteDataController) extends VBox {
   children = List(new PrefLineLayout("Count:", mChoiceCountSpinner, 50),
     new PrefLineLayout("Radius:", mWheelRadiusSlider),
     new PrefLineLayout("Center:", mCenterCircleRadiusSlider),
-    new PrefLineLayout("Remove Won Arc:", mRemoveWonArcCheckbox))
+    new PrefLineLayout("Remove Won Arc:", mRemoveWonArcCheckbox, 35))
   minWidth = 200
   spacing = 30
   alignment = Pos.TopCenter
