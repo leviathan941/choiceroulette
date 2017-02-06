@@ -26,6 +26,7 @@ import scalafx.geometry.{Insets, Orientation, Pos}
 import scalafx.scene.Node
 import scalafx.scene.control.{CheckBox, Label, Slider, Spinner}
 import scalafx.scene.layout.{HBox, VBox}
+import scalafx.scene.paint.Color
 import scalafx.scene.text.FontWeight
 
 /** Pane for roulette preferences.
@@ -44,6 +45,7 @@ class PreferencesPane(dataController: RouletteDataController) extends VBox {
 
   private class PrefLabel(text: String) extends Label(text) {
     font = FontProvider.regularFont(FontWeight.Normal, 15)
+    textFill = Color.White
   }
 
   private class PrefLineLayout(labelText: String, node: Node, spacing: Double = 30) extends

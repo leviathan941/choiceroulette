@@ -25,8 +25,8 @@ import scalafx.beans.property.DoubleProperty
 import scalafx.scene.control.{Label, OverrunStyle}
 import scalafx.scene.paint.Color
 import scalafx.scene.text.Text
-import scalafx.scene.transform.Rotate
 import scalafx.scene.text.TextIncludes.jfxFont2sfxFont
+import scalafx.scene.transform.Rotate
 
 /** Text label to be placed in an arc.
   *
@@ -76,7 +76,7 @@ class ArcLabel(dataController: RouletteDataController,
 
   wrapText = false
   textOverrun = OverrunStyle.CenterEllipsis
-  textFill = Color.Blue
+  textFill = Color.White
   styleClass += "arc-label"
 
   override def dataHolder: ArcLabelDataHolder = new ArcLabelDataHolder(textFill, font, text)

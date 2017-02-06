@@ -36,7 +36,7 @@ class CursorArcPane(dataController: RouletteDataController) extends FlowPane {
     `type` = ArcType.Round
     startAngle = 170
     length = 20
-    fill = Color.Black
+    fill = Color.web("#CCCCCC")
     strokeType = StrokeType.Inside
     styleClass += "wheel-cursor"
 

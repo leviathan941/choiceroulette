@@ -38,7 +38,7 @@ class ShadingArc(radius: Double, highlightAngle: (Double, Double)) extends Stack
     centerX = radius
     centerY = radius
 
-    fill = Color.color(0, 0, 0, 0.65)
+    fill = Color.color(0, 0, 0, 0.9)
     styleClass += "arc-shading"
   }
 

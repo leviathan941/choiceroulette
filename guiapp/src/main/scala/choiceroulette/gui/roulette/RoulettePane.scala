@@ -48,9 +48,9 @@ class RoulettePane(prefController: PreferencesController,
 
   private lazy val mBackgroundCircle = new Circle() {
     radius = dataController.rouletteData.wheelRadius
-    fill = Color.White
+    fill = Color.web("#212323")
     strokeType = StrokeType.Outside
-    stroke = Color.Black
+    stroke = Color.web("#CCCCCC")
     strokeWidth = 3
     pickOnBounds = false
     styleClass += "background-circle"
@@ -66,11 +66,13 @@ class RoulettePane(prefController: PreferencesController,
   private lazy val mCursorArcPane = new CursorArcPane(dataController)
 
   private lazy val mCenterCircle = new Circle() {
-
     private lazy val mPressOffset: Double = 4
 
     radius = dataController.rouletteData.centerCircleRadius
-    fill = Color.DarkGray
+    fill = Color.web("#36434C")
+    stroke = Color.web("#919191")
+    strokeType = StrokeType.Outside
+    strokeWidth = 3
     styleClass += "center-circle"
 
     dataController.centerCircleData = Some(new CenterCircleDataHolder(fill))

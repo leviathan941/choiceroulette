@@ -17,10 +17,12 @@
 package choiceroulette.gui
 
 import choiceroulette.configuration.ConfigurationManager
+import choiceroulette.gui.utils.FxUtils
 import scaldi.Injectable._
 import scaldi.Injector
 
 import scalafx.Includes.handle
+import scalafx.scene.paint.Color
 import scalafx.stage.StageStyle
 
 /** Full application stage showing FullMainPane.
@@ -34,6 +36,7 @@ class FullStage(splash: Option[Splash], configManager: ConfigurationManager)
   initStyle(StageStyle.Decorated)
   minWidth = 840
   minHeight = 700
+  mainPane.background = FxUtils.backgroundColor(Color.web("#212323"))
   width = configManager.getDouble(GuiConfigs.windowWidthConfigKey, minWidth)
   height = configManager.getDouble(GuiConfigs.windowHeightConfigKey, minHeight)
 

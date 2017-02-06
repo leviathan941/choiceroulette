@@ -41,7 +41,7 @@ class RouletteDataController(configMgr: ConfigurationManager) extends Syncable {
 
   val rouletteData: RouletteDataHolder = restoreRouletteData()
 
-  val arcFills: Array[Paint] = Array(Color.Lavender, Color.Aquamarine)
+  val arcFills: Array[Paint] = Array(Color.web("#36434C"), Color.web("#6B0000"))
 
 
   def addArcData(data: ArcDataHolder): Unit = mArcsData += data
