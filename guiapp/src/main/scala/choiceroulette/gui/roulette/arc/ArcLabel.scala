@@ -20,11 +20,12 @@ import choiceroulette.gui.controls.preferences.FontProvider
 import choiceroulette.gui.roulette.data.DataHolder.ArcLabelDataHolder
 import choiceroulette.gui.roulette.data.{DataHoldable, RouletteDataController}
 import choiceroulette.gui.utils.Conversions._
+import com.sun.javafx.tk.{FontLoader, Toolkit}
 
 import scalafx.beans.property.DoubleProperty
+import scalafx.geometry.Insets
 import scalafx.scene.control.{Label, OverrunStyle}
 import scalafx.scene.paint.Color
-import scalafx.scene.text.Text
 import scalafx.scene.text.TextIncludes.jfxFont2sfxFont
 import scalafx.scene.transform.Rotate
 
@@ -37,40 +38,43 @@ class ArcLabel(dataController: RouletteDataController,
                startPoint: () => (Double, Double),
                textStr: String) extends Label(textStr) with DataHoldable { label =>
 
+  private val fontLoader: FontLoader = Toolkit.getToolkit.getFontLoader
   private val labelRotation: DoubleProperty = DoubleProperty(0.0)
 
   private def moveInsideArc(point: (Double, Double), rotationDegrees: Double): Unit = {
     val rads = math.toRadians(rotationDegrees)
     val (dx, dy) = shiftTextCenterWidth(rads)
-
     relocate(point._1 + dx, point._2 - dy)
   }
 
   private def rotateTextToArc(): Double = {
     val angle = 180 - arcAngle._1 - arcAngle._2 / 2
-    transforms.add(new Rotate(angle, layoutBounds.value.getMinX, layoutBounds.value.getMinY))
+    val pivotX = layoutBounds.value.getMinX
+    val pivotY = layoutBounds.value.getMinY
+    transforms.add(new Rotate(angle, pivotX, pivotY))
     labelRotation.value = angle
     angle
   }
 
   private def shiftTextCenterWidth(rotationAngle: Double): (Double, Double) = {
-    val shift = getTextHeight / 2
+    val shift = lineHeight / 2
     (shift * math.sin(rotationAngle), shift * math.cos(rotationAngle))
   }
 
-  private def getTextHeight: Double = {
-    new Text(text) {
-      delegate.setFont(label.font.value)
-    }.layoutBounds.value.getHeight
+  private def lineHeight: Double = fontLoader.getFontMetrics(font).getLineHeight
+  private def fontDescent: Double = fontLoader.getFontMetrics(font).getDescent
+
+  private def resetLabel(): Unit = {
+    padding = Insets(-fontDescent, 0, 0, 0)
+    moveInsideArc(startPoint(), labelRotation)
   }
 
-  private def resetLabel(): Unit = moveInsideArc(startPoint(), labelRotation)
-
   font = FontProvider.boldRegularFont
+  padding = Insets(-fontDescent, 0, 0, 0)
 
   moveInsideArc(startPoint(), rotateTextToArc())
   font.onChange {
-    font = FontProvider.fixFontSize(font.value)
+    font = FontProvider.limitFontSize(font.value)
     resetLabel()
   }
 

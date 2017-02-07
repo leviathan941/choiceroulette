@@ -65,7 +65,7 @@ class ChoiceArc(dataController: RouletteDataController,
     val arcCenter: (Double, Double) = (mArc.centerX, mArc.centerY)
 
     CircleUtils.shiftPointAlongRadius(arcCenter, getChordCenterPoint(mArc),
-      -dataController.rouletteData.wheelRadius / 12)
+        -dataController.rouletteData.wheelRadius / 12)
   }
 
   private def getChordCenterPoint(arc: Arc): (Double, Double) = {
