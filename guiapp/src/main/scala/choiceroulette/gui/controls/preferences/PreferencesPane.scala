@@ -46,6 +46,7 @@ class PreferencesPane(dataController: RouletteDataController) extends VBox {
   private class PrefLabel(text: String) extends Label(text) {
     font = FontProvider.regularFont(FontWeight.Normal, 15)
     textFill = Color.White
+    styleClass += "preference-label"
   }
 
   private class PrefLineLayout(labelText: String, node: Node, spacing: Double = 30) extends

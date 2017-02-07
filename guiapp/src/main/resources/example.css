@@ -23,9 +23,12 @@
 .arc-label {
   /* Text color */
   -fx-text-fill: navy; /* <paint> */
+
   /* Text font */
-  /* Font shorthand property. Use it or a few separate properties to specify font. */
+  /* Font shorthand property.
+     NOTE: Use this single property or a few separate ones listed below to specify font. */
   -fx-font: bold 30 "Helvetica"; /* <font> */
+
   /* Text font family */
   -fx-font-family: "Helvetica"; /* <font-family> */
   /* Text font size */
@@ -72,6 +75,12 @@
   -fx-stroke: black; /* <paint> */
   /* Width of the line around the cursor */
   -fx-stroke-width: 1px; /* <size> */
+}
+
+/* Preference label text properties */
+.preference-label {
+  /* Text color */
+  -fx-text-fill: white; /* <paint> */
 }
 
 
