@@ -36,8 +36,8 @@ object FontProvider {
 
   def regularFont(weight: FontWeight, size: Double): Font = Font.font(mDefaultFontFamily, weight, size)
 
-  def limitFontSize(font: Font): Font = {
-    if (font.size > 100) new Font(font.name, 100)
+  def limitFontSize(font: Font, limit: Int): Font = {
+    if (font.size > limit) new Font(font.name, limit)
     else font
   }
 }

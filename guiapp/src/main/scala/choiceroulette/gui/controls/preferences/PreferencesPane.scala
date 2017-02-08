@@ -24,10 +24,11 @@ import choiceroulette.gui.roulette.data.RouletteDataController
 
 import scalafx.geometry.{Insets, Orientation, Pos}
 import scalafx.scene.Node
-import scalafx.scene.control.{CheckBox, Label, Slider, Spinner}
+import scalafx.scene.control._
 import scalafx.scene.layout.{HBox, VBox}
 import scalafx.scene.paint.Color
 import scalafx.scene.text.FontWeight
+import scalafx.Includes._
 
 /** Pane for roulette preferences.
   *
@@ -46,10 +47,16 @@ class PreferencesPane(dataController: RouletteDataController) extends VBox {
   private class PrefLabel(text: String) extends Label(text) {
     font = FontProvider.regularFont(FontWeight.Normal, 15)
     textFill = Color.White
+    wrapText = false
+    textOverrun = OverrunStyle.CenterEllipsis
     styleClass += "preference-label"
+
+    font.onChange((_, _, newValue) => {
+      font = FontProvider.limitFontSize(newValue, 15)
+    })
   }
 
-  private class PrefLineLayout(labelText: String, node: Node, spacing: Double = 30) extends
+  private class PrefLineLayout(labelText: String, node: Node, spacing: Double) extends
       HBox(spacing, new PrefLabel(labelText), node) {
 
     alignment = Pos.CenterLeft
@@ -109,10 +116,11 @@ class PreferencesPane(dataController: RouletteDataController) extends VBox {
   }
 
   children = List(new PrefLineLayout("Count:", mChoiceCountSpinner, 50),
-    new PrefLineLayout("Radius:", mWheelRadiusSlider),
-    new PrefLineLayout("Center:", mCenterCircleRadiusSlider),
-    new PrefLineLayout("Remove Won Arc:", mRemoveWonArcCheckbox, 35))
+    new PrefLineLayout("Radius:", mWheelRadiusSlider, 25),
+    new PrefLineLayout("Center:", mCenterCircleRadiusSlider, 25),
+    new PrefLineLayout("Remove Won Arc:", mRemoveWonArcCheckbox, 28))
   minWidth = 200
+  maxWidth = 200
   spacing = 30
   alignment = Pos.TopCenter
   padding = Insets(10)

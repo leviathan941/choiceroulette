@@ -74,7 +74,7 @@ class ArcLabel(dataController: RouletteDataController,
 
   moveInsideArc(startPoint(), rotateTextToArc())
   font.onChange {
-    font = FontProvider.limitFontSize(font.value)
+    font = FontProvider.limitFontSize(font.value, 100)
     resetLabel()
   }
 
