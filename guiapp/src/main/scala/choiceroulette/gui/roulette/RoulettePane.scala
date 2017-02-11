@@ -156,8 +156,14 @@ class RoulettePane(prefController: PreferencesController,
   }
 
   private lazy val reset = () => {
-    setControlsEnabled()
     children = mRouletteStack
+    if (arcsController.count < 2) {
+      actionController.setActionsEnabled(enable = false)
+      hoverPane()
+    } else {
+      setControlsEnabled()
+    }
+
     moveToPaneCenter(mRouletteStack)
   }
 
@@ -190,8 +196,8 @@ class RoulettePane(prefController: PreferencesController,
   dataController.rouletteData.listen(rouletteDataChanged)
   actionController.listenActions(this)
 
-  children = mRouletteStack
-
   arcsController.fillPane(dataController.rouletteData.arcsCount)
+  reset()
+
   dataController.restoreArcsData()
 }

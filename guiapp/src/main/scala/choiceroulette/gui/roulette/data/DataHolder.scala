@@ -238,7 +238,7 @@ object DataHolder {
     lazy val arcsCountConfigKey: String = configKeyPrefix + ".arcsCount"
     lazy val removeWonArcConfigKey: String = configKeyPrefix + ".removeWonArc"
 
-    lazy val arcsCountLimits: Range = 2 to 50
+    lazy val arcsCountLimits: Range = 0 to 50
 
     def limitArcsCount(count: Int): Int = {
       count match {

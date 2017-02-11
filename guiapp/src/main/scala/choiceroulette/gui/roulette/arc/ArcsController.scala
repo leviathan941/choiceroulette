@@ -45,11 +45,14 @@ class ArcsController(dataController: RouletteDataController)(implicit val inject
     val holders = mArcsData.map(_.arc.dataHolder)
     mArcsData.foreach(data => dataController.removeArcData(data.arc.dataHolder))
 
-    mArcsData = createRouletteArcs(number)
-    mArcsData.foreach(data => dataController.addArcData(data.arc.dataHolder))
-
-    mArcsData.zip(holders).foreach(tup => tup._1.arc.dataHolder = tup._2)
-    applyColors()
+    if (number >= 2) {
+      mArcsData = createRouletteArcs(number)
+      mArcsData.foreach(data => dataController.addArcData(data.arc.dataHolder))
+      mArcsData.zip(holders).foreach(tup => tup._1.arc.dataHolder = tup._2)
+      applyColors()
+    } else {
+      mArcsData = Nil
+    }
 
     mArcsPane.resetPane(mArcsData)
   }
