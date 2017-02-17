@@ -123,7 +123,7 @@ class RoulettePane(prefController: PreferencesController,
       arcsController.clearHighlight()
       disableControls()
 
-      val arcNumber = Random.nextInt(arcsController.count)
+      val arcNumber = Random.nextInt(dataController.rouletteData.arcsCount)
       arcsController.rotateArcToPoint(arcNumber,
         mCursorArcPane.DEFAULT_POSITION_ANGLE,
         5,
@@ -157,7 +157,7 @@ class RoulettePane(prefController: PreferencesController,
 
   private lazy val reset = () => {
     children = mRouletteStack
-    if (arcsController.count < 2) {
+    if (dataController.rouletteData.arcsCount < 2) {
       actionController.setActionsEnabled(enable = false)
       hoverPane()
     } else {
@@ -178,7 +178,8 @@ class RoulettePane(prefController: PreferencesController,
   }
 
   private def doSpin(spin: () => Unit): Unit = {
-    if (dataController.rouletteData.wonArcRemovable && mWonArcNumber >= 0) {
+    if (dataController.rouletteData.wonArcRemovable && mWonArcNumber >= 0 &&
+        dataController.rouletteData.arcsCount > 2) {
       disableControls()
       arcsController.removeArcAnimated(mWonArcNumber, spin)
     }

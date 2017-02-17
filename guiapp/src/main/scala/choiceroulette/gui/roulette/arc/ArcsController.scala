@@ -34,8 +34,6 @@ class ArcsController(dataController: RouletteDataController)(implicit val inject
   private var mArcsData: List[ArcData] = Nil
   private lazy val mArcsPane: ArcsPane = inject [ArcsPane]
 
-  def count: Int = mArcsData.size
-
   def data(number: Int): ArcData = {
     require(number >= 0 && number < mArcsData.size, "Check arcs count first")
     mArcsData(number)
@@ -53,9 +51,8 @@ class ArcsController(dataController: RouletteDataController)(implicit val inject
     val holders = mArcsData.map(_.arc.dataHolder)
     mArcsData.foreach(data => dataController.removeArcData(data.arc.dataHolder))
 
-    if (texts.size >= 2) mArcsData = createArcsData(texts, holders)
-    else mArcsData = Nil
-    dataController.rouletteData.arcsCount = count
+    mArcsData = if (texts.nonEmpty) createArcsData(texts, holders) else Nil
+    dataController.rouletteData.arcsCount = texts.size
 
     mArcsPane.resetPane(mArcsData)
   }
@@ -102,6 +99,8 @@ class ArcsController(dataController: RouletteDataController)(implicit val inject
     val arcData = mArcsData(arcNumber)
     new ArcFader(arcData.arc, removeArcInternal(arcNumber, onRemoved)).fade()
   }
+
+  private def count: Int = mArcsData.size
 
   private def createArcsData(textData: List[String], holders: List[DataHolder.ArcDataHolder]): List[ArcData] = {
     val arcsData = createRouletteArcs(textData)

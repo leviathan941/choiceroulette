@@ -34,7 +34,7 @@ class ArcsPane(dataController: RouletteDataController)(implicit val injector: In
     extends StackPane(new ArcsPaneJfxDelegate) {
 
   def resetPane(arcsData: List[ArcData]): Unit = {
-    children = arcsData.map(_.arc)
+    children = if (arcsData.size >= 2) arcsData.map(_.arc) else Nil
   }
 
   private[arc] def rotateArcToPoint(arcData: ArcData,

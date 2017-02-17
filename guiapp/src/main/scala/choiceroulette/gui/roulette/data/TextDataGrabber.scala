@@ -66,8 +66,8 @@ class TextDataGrabber(arcsController: ArcsController) {
 
   private def removeFirstOccurrences[A](list: List[A], toRemove: List[A]): List[A] = {
     if (toRemove.nonEmpty){
-      val (prefix, _ :: suffix) = list.span(_ != toRemove.head)
-      removeFirstOccurrences(prefix ++ suffix, toRemove.tail)
+      val (prefix, suffix) = list.span(_ != toRemove.head)
+      removeFirstOccurrences(prefix ++ suffix.drop(1), toRemove.tail)
     } else {
       list
     }

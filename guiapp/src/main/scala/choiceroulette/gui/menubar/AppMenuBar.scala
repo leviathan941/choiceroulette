@@ -94,7 +94,7 @@ class AppMenuBar(menuBarController: MenuBarController) extends MenuBar {
 
     private def grabbingTitle: String = {
       if (menuBarController.isGrabbingEnabled)
-        "Disable Grabbing"
+        "Stop Grabbing"
       else
         "Start Grabbing"
     }
