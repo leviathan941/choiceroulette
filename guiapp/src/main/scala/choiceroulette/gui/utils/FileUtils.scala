@@ -17,13 +17,26 @@
 package choiceroulette.gui.utils
 
 import java.net.URLEncoder
+import java.nio.file.Path
+
+import scala.io.Source
 
 /** Utility methods for working with files.
   *
   * @author Alexey Kuzin <amkuzink@gmail.com>
   */
 object FileUtils {
+  val defaultEncoding: String = "utf-8"
+
   def filePathToUrl(path: String): String = {
-    "file:///" + URLEncoder.encode(path, "utf-8").replace("+", "%20")
+    "file:///" + URLEncoder.encode(path, defaultEncoding).replace("+", "%20")
+  }
+
+  def fileTextLines(path: Path): List[String] = {
+    Control.using(Source.fromFile(path.toString, defaultEncoding)) { source => {
+      for (line <- source.getLines().toList
+           if line.nonEmpty
+      ) yield line
+    }}
   }
 }

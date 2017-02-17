@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Alexey Kuzin <amkuzink@gmail.com>
+ * Copyright 2017 Alexey Kuzin <amkuzink@gmail.com>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,19 +14,20 @@
  * limitations under the License.
  */
 
-package choiceroulette.gui.roulette.data
+package choiceroulette.gui.utils
 
-import choiceroulette.configuration.ConfigurationModule
-import choiceroulette.gui.roulette.arc.ArcModule
-import scaldi.{Module, MutableInjectorAggregation}
+import language.reflectiveCalls
 
-/** Roulette data package module.
+/** Utilities to control some kind of resources.
   *
   * @author Alexey Kuzin <amkuzink@gmail.com>
   */
-object RouletteDataModule extends Module {
-  override implicit val injector: MutableInjectorAggregation = ConfigurationModule :: ArcModule
-
-  binding to injected [RouletteDataController]
-  binding to injected [TextDataGrabber]
+object Control {
+  def using[A <: { def close(): Unit }, B](res: A)(func: A => B): B = {
+    try {
+      func(res)
+    } finally {
+      res.close()
+    }
+  }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Alexey Kuzin <amkuzink@gmail.com>
+ * Copyright 2017 Alexey Kuzin <amkuzink@gmail.com>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,19 +14,12 @@
  * limitations under the License.
  */
 
-package choiceroulette.gui.roulette.data
+package choiceroulette.gui.menubar
 
-import choiceroulette.configuration.ConfigurationModule
-import choiceroulette.gui.roulette.arc.ArcModule
-import scaldi.{Module, MutableInjectorAggregation}
-
-/** Roulette data package module.
+/** Listener for menu actions from its listeners.
   *
   * @author Alexey Kuzin <amkuzink@gmail.com>
   */
-object RouletteDataModule extends Module {
-  override implicit val injector: MutableInjectorAggregation = ConfigurationModule :: ArcModule
-
-  binding to injected [RouletteDataController]
-  binding to injected [TextDataGrabber]
+trait MenuFeedbackListener {
+  def grabbingChanged(enabled: Boolean): Unit
 }

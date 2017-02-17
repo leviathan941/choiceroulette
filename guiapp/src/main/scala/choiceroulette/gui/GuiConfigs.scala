@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Alexey Kuzin <amkuzink@gmail.com>
+ * Copyright 2016, 2017 Alexey Kuzin <amkuzink@gmail.com>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,4 +27,5 @@ object GuiConfigs {
   lazy val lastStylesheetConfigKey: String = configKeyPrefix + ".lastStylesheet"
   lazy val lastSaveResultFileConfigKey: String = configKeyPrefix + ".lastSaveResultFile"
   lazy val viewTypeConfigKey: String = configKeyPrefix + ".viewType"
+  lazy val lastGrabFileConfigKey: String = configKeyPrefix + ".lastGrabFile"
 }

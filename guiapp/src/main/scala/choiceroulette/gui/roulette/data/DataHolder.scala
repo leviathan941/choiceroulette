@@ -201,26 +201,35 @@ object DataHolder {
 
     def wheelRadius: Double = _wheelRadius
     def wheelRadius_=(radius: Double): Unit = {
-      _wheelRadius = radius
-      notifyListeners(this)
+      if (_wheelRadius != radius) {
+        _wheelRadius = radius
+        notifyListeners(this)
+      }
     }
 
     def centerCircleRadius: Double = _centerCircleRadius
     def centerCircleRadius_=(radius: Double): Unit = {
-      _centerCircleRadius = radius
-      notifyListeners(this)
+      if (_centerCircleRadius != radius) {
+        _centerCircleRadius = radius
+        notifyListeners(this)
+      }
     }
 
     def arcsCount: Int = _arcsCount
     def arcsCount_=(count: Int): Unit = {
-      _arcsCount = RouletteDataHolder.limitArcsCount(count)
-      notifyListeners(this)
+      val limitedCount = RouletteDataHolder.limitArcsCount(count)
+      if (_arcsCount != limitedCount) {
+        _arcsCount = limitedCount
+        notifyListeners(this)
+      }
     }
 
     def wonArcRemovable: Boolean = _removeWonArc
     def wonArcRemovable_=(removable: Boolean): Unit = {
-      _removeWonArc = removable
-      notifyListeners(this)
+      if (_removeWonArc != removable) {
+        _removeWonArc = removable
+        notifyListeners(this)
+      }
     }
 
     override def toConfig: Config = {

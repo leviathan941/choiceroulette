@@ -17,7 +17,6 @@
 package choiceroulette.gui.menubar
 
 import choiceroulette.gui.{GuiApplication, ViewType}
-import scaldi.Injector
 
 import scalafx.Includes.handle
 import scalafx.geometry.Insets
@@ -28,7 +27,11 @@ import scalafx.scene.input.{KeyCode, KeyCodeCombination, KeyCombination}
   *
   * @author Alexey Kuzin <amkuzink@gmail.com>
   */
-class AppMenuBar(menuBarController: MenuBarController)(implicit val injector: Injector) extends MenuBar {
+class AppMenuBar(menuBarController: MenuBarController) extends MenuBar {
+
+  private trait ResetableMenu {
+    def resetItems(): Unit
+  }
 
   private val mHelpMenu = new Menu("Help") {
 
@@ -48,15 +51,20 @@ class AppMenuBar(menuBarController: MenuBarController)(implicit val injector: In
       onAction = handle(menuBarController.openCssFile())
     }
 
+    private val mGrabFromFile = new MenuItem("Grab Values From...") {
+      accelerator = new KeyCodeCombination(KeyCode.G, KeyCombination.ShortcutDown)
+      onAction = handle(menuBarController.chooseFileToGrab())
+    }
+
     private val mSaveResult = new MenuItem("Save Result To...") {
       accelerator = new KeyCodeCombination(KeyCode.S, KeyCombination.ShortcutDown)
       onAction = handle(menuBarController.chooseSaveFile())
     }
 
-    items = List(mApplyCss, mSaveResult)
+    items = List(mApplyCss, mGrabFromFile, mSaveResult)
   }
 
-  private val mViewMenu = new Menu("View") {
+  private val mViewMenu = new Menu("View") with ResetableMenu {
 
     private def changeViewTitle: String = neededViewType.toString + " View"
 
@@ -76,6 +84,39 @@ class AppMenuBar(menuBarController: MenuBarController)(implicit val injector: In
     }
 
     items = List(mChangeView)
+
+    override def resetItems(): Unit = {
+      mChangeView.text = changeViewTitle
+    }
+  }
+
+  private val mRunMenu = new Menu("Run") with ResetableMenu {
+
+    private def grabbingTitle: String = {
+      if (menuBarController.isGrabbingEnabled)
+        "Disable Grabbing"
+      else
+        "Start Grabbing"
+    }
+
+    private val mGrabbing = new MenuItem(grabbingTitle) {
+      accelerator = new KeyCodeCombination(KeyCode.R, KeyCombination.ShortcutDown)
+      onAction = handle {
+        menuBarController.setGrabbing(!menuBarController.isGrabbingEnabled)
+        text = grabbingTitle
+      }
+    }
+
+    items = List(mGrabbing)
+
+    override def resetItems(): Unit = {
+      mGrabbing.text = grabbingTitle
+    }
+  }
+
+  def resetMenu(): Unit = {
+    mRunMenu.resetItems()
+    mViewMenu.resetItems()
   }
 
   useSystemMenuBar = true
@@ -83,5 +124,5 @@ class AppMenuBar(menuBarController: MenuBarController)(implicit val injector: In
   style = "-fx-border-style: solid;" +
     "-fx-border-color: grey;" +
     "-fx-border-width: 0 1px 1px 0;"
-  menus = List(mFileMenu, mViewMenu, mHelpMenu)
+  menus = List(mFileMenu, mViewMenu, mRunMenu, mHelpMenu)
 }

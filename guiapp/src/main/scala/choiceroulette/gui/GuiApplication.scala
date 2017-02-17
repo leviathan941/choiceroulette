@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Alexey Kuzin <amkuzink@gmail.com>
+ * Copyright 2016, 2017 Alexey Kuzin <amkuzink@gmail.com>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,8 +15,11 @@
  */
 
 package choiceroulette.gui
+import java.nio.file.Paths
+
 import choiceroulette.configuration.{ConfigurationManager, ConfigurationModule}
 import choiceroulette.gui.menubar.{MenuActionListener, MenuBarController, MenuBarModule}
+import choiceroulette.gui.roulette.data.{RouletteDataModule, TextDataGrabber}
 import scaldi.Injectable.inject
 
 import scalafx.application.{JFXApp, Platform}
@@ -26,12 +29,14 @@ import scalafx.application.{JFXApp, Platform}
   * @author Alexey Kuzin <amkuzink@gmail.com>
   */
 object GuiApplication extends JFXApp {
-  implicit val injector = ConfigurationModule :: new GuiModule :: MenuBarModule
+  private val mGuiModule = new GuiModule
+  implicit val injector = ConfigurationModule :: mGuiModule :: MenuBarModule :: RouletteDataModule
 
   private lazy val mConfigManager = inject [ConfigurationManager]
+  private val mMenuController = inject [MenuBarController]
   private var mMainStage: Option[ApplicationStage] = None
   private val mSplashStage: Splash = new Splash(() => {
-    setViewType(Some(mSplashStage), inject [MenuBarController].viewType)
+    setViewType(Some(mSplashStage), mMenuController.viewType)
   })
 
   def mainStage: Option[ApplicationStage] = mMainStage
@@ -48,12 +53,23 @@ object GuiApplication extends JFXApp {
     thread.start()
   }
 
-  inject [MenuBarController].listenActions(new MenuActionListener {
+  override def stopApp(): Unit = {
+    stopDataGrabbing()
+    super.stopApp()
+  }
+
+  mMenuController.listenActions(new MenuActionListener {
     override def cssFileOpened(path: String): Unit = applyStylesheet(path)
 
     override def saveFileChosen(path: String): Unit = setSaveResultFile(path)
 
     override def viewTypeChanged(viewType: ViewType.Value): Unit = setViewType(None, viewType)
+
+    override def grabFromFileEnabled(): Unit = startDataGrabbing()
+
+    override def grabFromFileDisabled(): Unit = stopDataGrabbing()
+
+    override def grabFileChosen(path: String): Unit = setGrabFile(path)
   })
 
   private def applyStylesheet(filePath: String): Unit = {
@@ -76,5 +92,28 @@ object GuiApplication extends JFXApp {
       case ViewType.Normal => new FullStage(splash, mConfigManager)
       case ViewType.Compact => new CompactStage(splash, mConfigManager)
     }
+  }
+
+  private def setGrabFile(filePath: String): Unit = {
+    mConfigManager.setString(GuiConfigs.lastGrabFileConfigKey, filePath)
+    if (mMenuController.isGrabbingEnabled) {
+      stopDataGrabbing()
+      startDataGrabbing()
+    }
+  }
+
+  private def startDataGrabbing(): Unit = {
+    val lastGrabFilePath = mConfigManager.getString(GuiConfigs.lastGrabFileConfigKey)
+    if (lastGrabFilePath.nonEmpty) {
+      inject [TextDataGrabber].start(Paths.get(lastGrabFilePath))
+    } else {
+      // TODO Show to user
+      println("Grab file is not set")
+      mMenuController.menuFeedback.grabbingChanged(enabled = false)
+    }
+  }
+
+  private def stopDataGrabbing(): Unit = {
+    inject [TextDataGrabber].stop()
   }
 }

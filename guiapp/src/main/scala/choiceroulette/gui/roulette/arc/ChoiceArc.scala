@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Alexey Kuzin <amkuzink@gmail.com>
+ * Copyright 2016, 2017 Alexey Kuzin <amkuzink@gmail.com>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -32,7 +32,8 @@ import scalafx.scene.shape._
   */
 class ChoiceArc(dataController: RouletteDataController,
                 angleStart: Double,
-                angleLength: Double) extends StackPane with DataHoldable {
+                angleLength: Double,
+                initialText: String) extends StackPane with DataHoldable {
 
   private class ArcHoldable extends Arc {
     `type` = ArcType.Round
@@ -57,7 +58,7 @@ class ChoiceArc(dataController: RouletteDataController,
     2 * dataController.rouletteData.wheelRadius, Color.Transparent)
 
   private lazy val mTextLabel: ArcLabel =
-      new ArcLabel(dataController, (angleStart, angleLength), () => getTextStartPoint, "Enter choice") {
+      new ArcLabel(dataController, (angleStart, angleLength), () => getTextStartPoint, initialText) {
     maxWidth = 0.6 * dataController.rouletteData.wheelRadius
   }
 

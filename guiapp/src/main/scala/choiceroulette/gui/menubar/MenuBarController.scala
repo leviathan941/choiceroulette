@@ -24,6 +24,7 @@ import choiceroulette.gui.{GuiApplication, GuiConfigs, ViewType}
 import scaldi.Injectable.inject
 
 import scala.collection.mutable
+import scalafx.application.Platform
 import scalafx.stage.FileChooser
 import scalafx.stage.FileChooser.ExtensionFilter
 
@@ -34,8 +35,19 @@ import scalafx.stage.FileChooser.ExtensionFilter
 class MenuBarController extends Syncable {
   implicit val injector = ConfigurationModule
 
+  private lazy val mConfigurationManager = inject [ConfigurationManager]
   private lazy val mMenuActionListeners = new mutable.HashSet[MenuActionListener]()
-  private var mViewType = inject [ConfigurationManager].getEnum(GuiConfigs.viewTypeConfigKey, ViewType.Normal)
+  val menuFeedback = new MenuFeedbackListener {
+    override def grabbingChanged(enabled: Boolean): Unit =
+      Platform.runLater {
+        mGrabbingEnabled = enabled
+        if (mMenuBar.isDefined) mMenuBar.get.resetMenu()
+      }
+  }
+
+  private var mViewType = mConfigurationManager.getEnum(GuiConfigs.viewTypeConfigKey, ViewType.Normal)
+  private var mGrabbingEnabled: Boolean = false
+  private var mMenuBar: Option[AppMenuBar] = None
 
   def listenActions(listener: MenuActionListener): Unit = mMenuActionListeners += listener
 
@@ -51,16 +63,8 @@ class MenuBarController extends Syncable {
   }
 
   def chooseSaveFile(): Unit = {
-    val initialPath = Paths.get(inject [ConfigurationManager].getString(GuiConfigs.lastSaveResultFileConfigKey))
-    val initDir = initialPath.getParent match {
-      case dir: Path => dir.toFile
-      case _ => new File(".")
-    }
-    val initFileName = initialPath.getFileName match {
-      case name: Path if name.toString.nonEmpty => name.toString
-      case _ => "result.txt"
-    }
-
+    val (initDir, initFileName) = initialDirFileName(
+      mConfigurationManager.getString(GuiConfigs.lastSaveResultFileConfigKey))
     new FileChooser {
       title = "Choose file for saving spin result"
       initialDirectory = initDir
@@ -72,11 +76,53 @@ class MenuBarController extends Syncable {
     }
   }
 
+  def chooseFileToGrab(): Unit = {
+    val (initDir, initFileName) = initialDirFileName(
+      mConfigurationManager.getString(GuiConfigs.lastGrabFileConfigKey))
+    new FileChooser {
+      title = "Choose file to grab from"
+      initialDirectory = initDir
+      initialFileName = initFileName
+      extensionFilters.add(new ExtensionFilter("TXT Files", "*.txt"))
+    }.showOpenDialog(GuiApplication.mainStage.orNull) match {
+      case file: File => notifyListeners(_.grabFileChosen(file.getAbsolutePath))
+      case _ =>
+    }
+  }
+
   def viewType_=(viewType: ViewType.Value): Unit = {
     mViewType = viewType
     notifyListeners(_.viewTypeChanged(viewType))
   }
   def viewType: ViewType.Value = mViewType
+
+  def setGrabbing(enabled: Boolean): Unit = {
+    if (!mGrabbingEnabled)
+      notifyListeners(_.grabFromFileEnabled())
+    else
+      notifyListeners(_.grabFromFileDisabled())
+
+    mGrabbingEnabled = enabled
+  }
+  def isGrabbingEnabled: Boolean = mGrabbingEnabled
+
+  private[menubar] def menuBar_=(menu: AppMenuBar): Unit = {
+    mMenuBar = Some(menu)
+  }
+
+  private def initialDirFileName(filePath: String): (File, String) = {
+    val initialPath = Paths.get(filePath)
+    val initDir = initialPath.getParent match {
+      case dir: Path => dir.toFile
+      case _ => new File(".")
+    }
+    val initFileName = initialPath.getFileName match {
+      case name: Path if name.toString.nonEmpty => name.toString
+      case _ => "result.txt"
+    }
+
+    initDir -> initFileName
+  }
 
   private def notifyListeners(notifyMethod: MenuActionListener => Unit): Unit = {
     mMenuActionListeners.foreach(notifyMethod)

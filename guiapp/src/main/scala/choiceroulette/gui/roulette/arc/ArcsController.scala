@@ -20,7 +20,7 @@ import javafx.scene.paint.Paint
 
 import choiceroulette.gui.roulette.EditChoiceField
 import choiceroulette.gui.roulette.arc.ArcsController.ArcData
-import choiceroulette.gui.roulette.data.RouletteDataController
+import choiceroulette.gui.roulette.data.{DataHolder, RouletteDataController}
 import choiceroulette.gui.utils.CircleUtils
 import scaldi.Injectable.inject
 import scaldi.Injector
@@ -41,18 +41,21 @@ class ArcsController(dataController: RouletteDataController)(implicit val inject
     mArcsData(number)
   }
 
+  def textData: List[String] = mArcsData.map(_.arc.dataHolder.labelDataHolder.text)
+
   def fillPane(number: Int): Unit = {
+    val curTexts = textData.take(number)
+    val texts = curTexts ::: List.fill(number - curTexts.size)("Enter choice")
+    fillPane(texts)
+  }
+
+  def fillPane(texts: List[String]): Unit = {
     val holders = mArcsData.map(_.arc.dataHolder)
     mArcsData.foreach(data => dataController.removeArcData(data.arc.dataHolder))
 
-    if (number >= 2) {
-      mArcsData = createRouletteArcs(number)
-      mArcsData.foreach(data => dataController.addArcData(data.arc.dataHolder))
-      mArcsData.zip(holders).foreach(tup => tup._1.arc.dataHolder = tup._2)
-      applyColors()
-    } else {
-      mArcsData = Nil
-    }
+    if (texts.size >= 2) mArcsData = createArcsData(texts, holders)
+    else mArcsData = Nil
+    dataController.rouletteData.arcsCount = count
 
     mArcsPane.resetPane(mArcsData)
   }
@@ -85,8 +88,7 @@ class ArcsController(dataController: RouletteDataController)(implicit val inject
     mArcsPane.rotateArcToPoint(arcData, pointAngle, turns, angleCalc, resultShower)
   }
 
-  def applyColors(): Unit =
-    mArcsData.zip(arcColors(mArcsData.length)).foreach(data => data._1.arc.dataHolder.fill = data._2)
+  def applyColors(): Unit = applyColors(mArcsData)
 
   def removeArc(arcNumber: Int): Unit = {
     require(arcNumber >= 0 && arcNumber < mArcsData.size, "Check arcs count first")
@@ -99,6 +101,18 @@ class ArcsController(dataController: RouletteDataController)(implicit val inject
 
     val arcData = mArcsData(arcNumber)
     new ArcFader(arcData.arc, removeArcInternal(arcNumber, onRemoved)).fade()
+  }
+
+  private def createArcsData(textData: List[String], holders: List[DataHolder.ArcDataHolder]): List[ArcData] = {
+    val arcsData = createRouletteArcs(textData)
+    arcsData.foreach(data => {
+      val prevHolder = holders.find(_.labelDataHolder.text == data.arc.dataHolder.labelDataHolder.text)
+      if (prevHolder.isDefined)
+        data.arc.dataHolder = prevHolder.get
+      dataController.addArcData(data.arc.dataHolder)
+    })
+    applyColors(arcsData)
+    arcsData
   }
 
   private def removeArcInternal(arcNumber: Int, onRemoved: () => Unit = () => {}): () => Unit =
@@ -134,14 +148,18 @@ class ArcsController(dataController: RouletteDataController)(implicit val inject
       findArc(CircleUtils.fromMathTo0to2Pi(math.toDegrees(phi)))
   }
 
-  private def createRouletteArcs(number: Int): List[ArcData] = {
-    val angles = CircleUtils.splitCircleToArcs(number)
+  private def createRouletteArcs(textData: List[String]): List[ArcData] = {
+    val angles = CircleUtils.splitCircleToArcs(textData.size)
 
-    angles.zip(angles.tail).map(initData => {
-      ArcData(initData._1, initData._2,
-        new ChoiceArc(dataController, initData._1, initData._2 - initData._1))
+    angles.zip(angles.tail).zip(textData).
+      map(data => { // ((startAngle, endAngle), text)
+        ArcData(data._1._1, data._1._2,
+          new ChoiceArc(dataController, data._1._1, data._1._2 - data._1._1, data._2))
     }).toList
   }
+
+  private def applyColors(data: List[ArcData]): Unit =
+    data.zip(arcColors(data.length)).foreach(data => data._1.arc.dataHolder.fill = data._2)
 
   private def arcColors(number: Int): List[Paint] =
     Stream.continually(dataController.arcFills.toStream).take(number).flatten.toList

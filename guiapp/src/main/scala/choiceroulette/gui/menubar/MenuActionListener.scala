@@ -23,7 +23,10 @@ import choiceroulette.gui.ViewType
   * @author Alexey Kuzin <amkuzink@gmail.com>
   */
 trait MenuActionListener {
-  def cssFileOpened(path: String)
-  def saveFileChosen(path: String)
-  def viewTypeChanged(viewType: ViewType.Value)
+  def cssFileOpened(path: String): Unit
+  def saveFileChosen(path: String): Unit
+  def viewTypeChanged(viewType: ViewType.Value): Unit
+  def grabFileChosen(path: String): Unit
+  def grabFromFileEnabled(): Unit
+  def grabFromFileDisabled(): Unit
 }
