@@ -54,9 +54,8 @@ class TextDataGrabber(arcsController: ArcsController) {
 
   private def updateData(filePath: Path): Unit = {
     val data = FileUtils.fileTextLines(filePath)
-    // FIXME Check the same elements
-    val added = data.filterNot(mDataCache.contains(_))
-    val removed = mDataCache.filterNot(data.contains(_))
+    val added = data.diff(mDataCache)
+    val removed = mDataCache.diff(data)
 
     Platform.runLater {
       val wheelData = removeFirstOccurrences(arcsController.textData, removed) ::: added
