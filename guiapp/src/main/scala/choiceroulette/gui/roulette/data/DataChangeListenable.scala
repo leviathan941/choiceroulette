@@ -27,19 +27,25 @@ trait DataChangeListenable[T <: DataHolder] {
   private lazy val mListeners = new mutable.HashSet[WeakReference[T => Unit]]()
 
   def listen(listener: T => Unit): Unit = {
-    mListeners.foreach(weak => weak.get match {
-      case None => mListeners -= weak
-      case _ =>
-    })
+    removeObsolete()
+    ignore(listener)
 
     mListeners += WeakReference(listener)
   }
 
-  def ignore(listener: T => Unit): Unit =
+  def ignore(listener: T => Unit): Unit = {
     mListeners.foreach(weak => weak.get match {
       case Some(stored) if stored == listener => mListeners -= weak
       case _ =>
     })
+  }
+
+  private def removeObsolete(): Unit = {
+    mListeners.foreach(weak => weak.get match {
+      case None => mListeners -= weak
+      case _ =>
+    })
+  }
 
   protected def notifyListeners(dataHolder: T): Unit =
     mListeners.foreach(_.get match {

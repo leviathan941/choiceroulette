@@ -16,12 +16,7 @@
 
 package choiceroulette.gui.controls.actions
 
-import choiceroulette.gui.controls.preferences.FontProvider
-import choiceroulette.gui.utils.FxUtils
-
-import scalafx.Includes.handle
 import scalafx.geometry.{Insets, Pos}
-import scalafx.scene.control.Button
 import scalafx.scene.layout._
 import scalafx.scene.paint.Color
 
@@ -29,38 +24,45 @@ import scalafx.scene.paint.Color
   *
   * @author Alexey Kuzin <amkuzink@gmail.com>
   */
-class ActionsPane(actionController: ActionController) extends VBox {
+class ActionsPane(actionController: ActionController) extends HBox {
 
-  private val mSpinButton = new Button("SPIN") {
+  private val mSpinButton = new ActionButton(
+    "SPIN",
+    (Color.web("#44992a"), Color.web("#4dad30"), Color.web("#32701f")),
+    () => actionController.spinRoulette())
 
-    private lazy val mColor: Color = Color.web("#44992a")
-    private lazy val mHoverColor = Color.web("#4dad30")
-    private lazy val mPressedColor: Color = Color.web("#32701f")
+  private val mRefreshButton = new ActionButton(
+    "REFRESH",
+    (Color.web("00c1c1"), Color.web("00cece"), Color.web("008787")),
+    () => actionController.refreshArcs()
+  )
 
-    onAction = handle(actionController.spinRoulette())
-    onMousePressed = handle {
-      background = FxUtils.backgroundColor(mPressedColor)
-    }
-    onMouseEntered = handle {
-      background = FxUtils.backgroundColor(mHoverColor)
-    }
-    onMouseExited = handle {
-      background = FxUtils.backgroundColor(mColor)
-    }
-    onMouseReleased = handle {
-      background = FxUtils.backgroundColor(mColor)
+  class ActionButtonStack extends StackPane {
+    children = List(mSpinButton, mRefreshButton)
+
+    def showSpin(): Unit = {
+      mRefreshButton.visible = false
+      mSpinButton.visible = true
     }
 
-    prefWidth = 100
-    font = FontProvider.boldRegularFont
-    textFill = Color.White
-    background = FxUtils.backgroundColor(mColor)
+    def showRefresh(): Unit = {
+      mSpinButton.visible = false
+      mRefreshButton.visible = true
+    }
+
+    def action: ActionController.ActionType.Value = {
+      if (mSpinButton.visible.value) ActionController.ActionType.Spin
+      else ActionController.ActionType.Refresh
+    }
   }
 
-  children = mSpinButton
+  val actionButtonStack: ActionButtonStack = new ActionButtonStack
+  actionButtonStack.showSpin()
+
+  children = actionButtonStack
   alignment = Pos.BottomRight
   hgrow = Priority.Always
-  padding = Insets(10, 50, 10, 50)
+  padding = Insets(10, 45, 10, 45)
   style = "-fx-border-width: 1px;" +
     "-fx-border-color: grey;"
 }

@@ -32,13 +32,27 @@ class ActionController {
 
   def listenActions(listener: ActionListener): Unit = mActionListeners += listener
 
-  def spinRoulette(): Unit = {
-    notifyListeners(_.onSpinAction())
+  def spinRoulette(): Unit = notifyListeners(_.onSpinAction())
+  def refreshArcs(): Unit = notifyListeners(_.onRefreshAction())
+
+  def actionButton_=(btnType: ActionController.ActionType.Value): Unit = {
+    btnType match {
+      case ActionController.ActionType.Spin => mActionsPane.actionButtonStack.showSpin()
+      case ActionController.ActionType.Refresh => mActionsPane.actionButtonStack.showRefresh()
+    }
   }
+  def actionButton: ActionController.ActionType.Value = mActionsPane.actionButtonStack.action
 
   private def notifyListeners(notifyMethod: ActionListener => Unit): Unit = {
     mActionListeners.foreach(notifyMethod)
   }
 
   def setActionsEnabled(enable: Boolean = true): Unit = mActionsPane.disable = !enable
+}
+
+object ActionController {
+  object ActionType extends Enumeration {
+    val Spin = Value
+    val Refresh = Value
+  }
 }

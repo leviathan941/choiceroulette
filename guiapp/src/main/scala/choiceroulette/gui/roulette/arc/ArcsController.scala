@@ -18,6 +18,7 @@ package choiceroulette.gui.roulette.arc
 
 import javafx.scene.paint.Paint
 
+import choiceroulette.gui.controls.actions.{ActionController, ActionListener}
 import choiceroulette.gui.roulette.EditChoiceField
 import choiceroulette.gui.roulette.arc.ArcsController.ArcData
 import choiceroulette.gui.roulette.data.{DataHolder, RouletteDataController}
@@ -29,10 +30,18 @@ import scaldi.Injector
   *
   * @author Alexey Kuzin <amkuzink@gmail.com>
   */
-class ArcsController(dataController: RouletteDataController)(implicit val injector: Injector) {
+class ArcsController(dataController: RouletteDataController, actionController: ActionController)
+                    (implicit val injector: Injector) {
 
   private var mArcsData: List[ArcData] = Nil
   private lazy val mArcsPane: ArcsPane = inject [ArcsPane]
+  private val mActionListener = new ActionListener {
+    override def onRefreshAction(): Unit = {
+      mArcsPane.resetPane(mArcsData)
+      actionController.actionButton = ActionController.ActionType.Spin
+    }
+    override def onSpinAction(): Unit = {}
+  }
 
   def data(number: Int): ArcData = {
     require(number >= 0 && number < mArcsData.size, "Check arcs count first")
@@ -54,7 +63,10 @@ class ArcsController(dataController: RouletteDataController)(implicit val inject
     mArcsData = if (texts.nonEmpty) createArcsData(texts, holders) else Nil
     dataController.rouletteData.arcsCount = texts.size
 
-    mArcsPane.resetPane(mArcsData)
+    if (!mArcsPane.isRotating)
+      mArcsPane.resetPane(mArcsData)
+    else
+      actionController.actionButton = ActionController.ActionType.Refresh
   }
 
   def createEditor(loc: (Double, Double), onHide: () => Unit): Option[EditChoiceField] = {
@@ -64,41 +76,26 @@ class ArcsController(dataController: RouletteDataController)(implicit val inject
     }
   }
 
-  def highlight(arcNumber: Int): Unit = {
-    require(arcNumber >= 0 && arcNumber < mArcsData.size, "Check arcs count first")
-
-    val arcData = mArcsData(arcNumber)
-    mArcsPane.highlight(arcData)
-  }
-
   def clearHighlight(): Unit = mArcsPane.resetPane(mArcsData)
 
-  def rotateArcToPoint(arcNumber: Int,
+  def rotateArcToPoint(arcData: ArcData,
                        pointAngle: Double,
                        turns: Double,
                        angleCalc: (Double, Double, Double) => Double,
                        resultShower: () => Unit): Unit = {
-    require(arcNumber >= 0 && arcNumber < mArcsData.size, "Check arcs count first")
     require(turns >= 0)
 
-    val arcData = mArcsData(arcNumber)
-    mArcsPane.rotateArcToPoint(arcData, pointAngle, turns, angleCalc, resultShower)
+    mArcsPane.rotateArcToPoint(arcData, pointAngle, turns, angleCalc, () => {
+      resultShower()
+      mArcsPane.highlight(arcData)
+    })
   }
 
   def applyColors(): Unit = applyColors(mArcsData)
 
-  def removeArc(arcNumber: Int): Unit = {
-    require(arcNumber >= 0 && arcNumber < mArcsData.size, "Check arcs count first")
-
-    removeArcInternal(arcNumber)()
-  }
-
-  def removeArcAnimated(arcNumber: Int, onRemoved: () => Unit): Unit = {
-    require(arcNumber >= 0 && arcNumber < mArcsData.size, "Check arcs count first")
-
-    val arcData = mArcsData(arcNumber)
-    new ArcFader(arcData.arc, removeArcInternal(arcNumber, onRemoved)).fade()
-  }
+  def removeArc(arcData: ArcData): Unit = removeArcInternal(arcData)()
+  def removeArcAnimated(arcData: ArcData, onRemoved: () => Unit): Unit =
+    new ArcFader(arcData.arc, removeArcInternal(arcData, onRemoved)).fade()
 
   private def count: Int = mArcsData.size
 
@@ -114,9 +111,8 @@ class ArcsController(dataController: RouletteDataController)(implicit val inject
     arcsData
   }
 
-  private def removeArcInternal(arcNumber: Int, onRemoved: () => Unit = () => {}): () => Unit =
+  private def removeArcInternal(arcData: ArcData, onRemoved: () => Unit = () => {}): () => Unit =
       () => {
-    val arcData = mArcsData(arcNumber)
     dataController.removeArcData(arcData.arc.dataHolder)
     mArcsData = mArcsData.filter(_ != arcData)
     dataController.rouletteData.arcsCount = count
@@ -162,6 +158,8 @@ class ArcsController(dataController: RouletteDataController)(implicit val inject
 
   private def arcColors(number: Int): List[Paint] =
     Stream.continually(dataController.arcFills.toStream).take(number).flatten.toList
+
+  actionController.listenActions(mActionListener)
 }
 
 object ArcsController {

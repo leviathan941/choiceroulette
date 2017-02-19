@@ -22,4 +22,5 @@ package choiceroulette.gui.controls.actions
   */
 trait ActionListener {
   def onSpinAction(): Unit
+  def onRefreshAction(): Unit
 }

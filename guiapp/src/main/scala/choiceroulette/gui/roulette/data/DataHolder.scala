@@ -258,7 +258,7 @@ object DataHolder {
     }
 
     def apply(wheelRadius: Double = 250,
-              centerCircleRadius: Double = 50,
+              centerCircleRadius: Double = 20,
               arcsCount: Int = 2,
               removeWonArc: Boolean = false): RouletteDataHolder =
       new RouletteDataHolder(wheelRadius, centerCircleRadius, limitArcsCount(arcsCount), removeWonArc)

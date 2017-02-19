@@ -16,16 +16,20 @@
 
 package choiceroulette.gui.roulette.arc
 
+import choiceroulette.gui.controls.actions.{ActionController, ActionModule}
 import choiceroulette.gui.roulette.data.{RouletteDataController, RouletteDataModule}
-import scaldi.Module
+import scaldi.{Module, MutableInjectorAggregation}
 
 /** Module providing arcs management entities.
   *
   * @author Alexey Kuzin <amkuzink@gmail.com>
   */
 object ArcModule extends Module {
-  override implicit val injector = RouletteDataModule
+  override implicit val injector: MutableInjectorAggregation = RouletteDataModule :: ActionModule
 
-  bind [ArcsController] to new ArcsController(inject [RouletteDataController])(this)
+  bind [ArcsController] to new ArcsController(
+    inject [RouletteDataController],
+    inject [ActionController]
+  )(this)
   bind [ArcsPane] to new ArcsPane(inject [RouletteDataController])(this)
 }

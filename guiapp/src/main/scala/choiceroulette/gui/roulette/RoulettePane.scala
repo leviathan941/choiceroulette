@@ -44,7 +44,7 @@ class RoulettePane(prefController: PreferencesController,
     extends Pane with ActionListener { pane =>
 
   implicit val injector = new RouletteInjector
-  private var mWonArcNumber: Int = -1
+  private var mWonArc: Option[ArcsController.ArcData] = None
 
   private lazy val mBackgroundCircle = new Circle() {
     radius = dataController.rouletteData.wheelRadius
@@ -82,7 +82,10 @@ class RoulettePane(prefController: PreferencesController,
     }
     onMouseReleased = handle {
       radius = radius.value + mPressOffset
-      onSpinAction()
+      actionController.actionButton match {
+        case ActionController.ActionType.Spin => actionController.spinRoulette()
+        case ActionController.ActionType.Refresh => actionController.refreshArcs()
+      }
     }
   }
 
@@ -124,12 +127,16 @@ class RoulettePane(prefController: PreferencesController,
       disableControls()
 
       val arcNumber = Random.nextInt(dataController.rouletteData.arcsCount)
-      arcsController.rotateArcToPoint(arcNumber,
+      val arcData = arcsController.data(arcNumber)
+      arcsController.rotateArcToPoint(arcData,
         mCursorArcPane.DEFAULT_POSITION_ANGLE,
         5,
         CircleUtils.randomAngleBetween,
-        () => showResult(arcNumber))
+        () => showResult(arcData))
     })
+  }
+  override def onRefreshAction(): Unit = {
+    rouletteDataChanged(dataController.rouletteData)
   }
 
   private val rouletteDataChanged: RouletteDataHolder => Unit = holder => {
@@ -137,17 +144,16 @@ class RoulettePane(prefController: PreferencesController,
     mCenterCircle.radius = holder.centerCircleRadius
     mCursorArcPane.updateRadius(holder.wheelRadius)
     arcsController.fillPane(holder.arcsCount)
-    mWonArcNumber = -1
+    mWonArc = None
 
     // Recreate stack to update its size
     mRouletteStack = new RouletteStack
     reset()
   }
 
-  private def showResult(arcNumber: Int): Unit = {
-    inject [ResultSaver].save(dataController.arcData(arcNumber).labelDataHolder.text)
-    arcsController.highlight(arcNumber)
-    mWonArcNumber = arcNumber
+  private def showResult(arcData: ArcsController.ArcData): Unit = {
+    inject [ResultSaver].save(arcData.arc.dataHolder.labelDataHolder.text)
+    mWonArc = Some(arcData)
     reset()
   }
 
@@ -157,6 +163,8 @@ class RoulettePane(prefController: PreferencesController,
 
   private lazy val reset = () => {
     children = mRouletteStack
+    dataController.rouletteData.listen(rouletteDataChanged)
+
     if (dataController.rouletteData.arcsCount < 2) {
       actionController.setActionsEnabled(enable = false)
       hoverPane()
@@ -178,10 +186,10 @@ class RoulettePane(prefController: PreferencesController,
   }
 
   private def doSpin(spin: () => Unit): Unit = {
-    if (dataController.rouletteData.wonArcRemovable && mWonArcNumber >= 0 &&
+    if (dataController.rouletteData.wonArcRemovable && mWonArc.isDefined &&
         dataController.rouletteData.arcsCount > 2) {
       disableControls()
-      arcsController.removeArcAnimated(mWonArcNumber, spin)
+      arcsController.removeArcAnimated(mWonArc.get, spin)
     }
     else spin()
   }
@@ -189,6 +197,7 @@ class RoulettePane(prefController: PreferencesController,
   private def disableControls(): Unit = {
     setControlsEnabled(enabled = false)
     hoverPane()
+    dataController.rouletteData.ignore(rouletteDataChanged)
   }
 
   height.onChange(moveToPaneCenter(mRouletteStack))

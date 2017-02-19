@@ -16,7 +16,7 @@
 
 package choiceroulette.gui.roulette
 
-import javafx.animation.Interpolator
+import javafx.animation.{Animation, Interpolator}
 
 import scalafx.Includes._
 import scalafx.animation.{PauseTransition, RotateTransition, SequentialTransition}
@@ -52,7 +52,10 @@ class RouletteRotator(wheel: Node) {
       new PauseTransition(0.5.s))
 
     delay = 0.4.s
-    onFinished = handle(finished())
+    onFinished = handle {
+      finished()
+      mRotationWithDelayedFinish = None
+    }
   }
 
   def spinTheWheel(angle: Double, finished: () => Unit): Unit = {
@@ -63,5 +66,12 @@ class RouletteRotator(wheel: Node) {
   def stopTheWheel(): Unit = {
     if (mRotationWithDelayedFinish.isDefined)
       mRotationWithDelayedFinish.get.stop()
+  }
+
+  def isRunning: Boolean = {
+    if (mRotationWithDelayedFinish.isDefined)
+      mRotationWithDelayedFinish.get.status.value == Animation.Status.RUNNING
+    else
+      false
   }
 }

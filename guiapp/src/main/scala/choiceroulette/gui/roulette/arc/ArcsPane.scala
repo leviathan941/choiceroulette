@@ -56,6 +56,8 @@ class ArcsPane(dataController: RouletteDataController)(implicit val injector: In
     rotate.value
   }
 
+  def isRotating: Boolean = mRotator.isRunning
+
   private def setArcColor(number: Int): javafx.scene.paint.Paint => Unit = color => {
     dataController.arcFills(number) = color
     inject [ArcsController].applyColors()
