@@ -89,6 +89,8 @@ class RoulettePane(prefController: PreferencesController,
     }
   }
 
+  private lazy val mHoverRectangle = Rectangle(width.value, height.value, Color.Transparent)
+
   private class RouletteStack extends StackPane {
 
     onMouseClicked = (event: MouseEvent) => {
@@ -161,7 +163,7 @@ class RoulettePane(prefController: PreferencesController,
   }
 
   private def hoverPane(): Unit = {
-    children += Rectangle(width.value, height.value, Color.Transparent)
+    children += mHoverRectangle
   }
 
   private lazy val reset = () => {
@@ -206,8 +208,14 @@ class RoulettePane(prefController: PreferencesController,
     dataController.rouletteData.ignore(rouletteDataChanged)
   }
 
-  height.onChange(moveToPaneCenter(mRouletteStack))
-  width.onChange(moveToPaneCenter(mRouletteStack))
+  height.onChange {
+    mHoverRectangle.width = width.value
+    moveToPaneCenter(mRouletteStack)
+  }
+  width.onChange {
+    mHoverRectangle.height = height.value
+    moveToPaneCenter(mRouletteStack)
+  }
 
   dataController.rouletteData.listen(rouletteDataChanged)
   actionController.listenActions(this)
