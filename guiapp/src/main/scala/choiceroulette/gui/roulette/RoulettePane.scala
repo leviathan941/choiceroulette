@@ -125,6 +125,8 @@ class RoulettePane(prefController: PreferencesController,
       reset()
       arcsController.clearHighlight()
       disableControls()
+      arcsController.fillPane(dataController.rouletteData.arcsCount)
+      mWonArc = None
 
       val arcNumber = Random.nextInt(dataController.rouletteData.arcsCount)
       val arcData = arcsController.data(arcNumber)
@@ -145,6 +147,7 @@ class RoulettePane(prefController: PreferencesController,
     mCursorArcPane.updateRadius(holder.wheelRadius)
     arcsController.fillPane(holder.arcsCount)
     mWonArc = None
+    actionController.actionButton = ActionController.ActionType.Spin
 
     // Recreate stack to update its size
     mRouletteStack = new RouletteStack
@@ -165,8 +168,10 @@ class RoulettePane(prefController: PreferencesController,
     children = mRouletteStack
     dataController.rouletteData.listen(rouletteDataChanged)
 
-    if (dataController.rouletteData.arcsCount < 2) {
+    if (dataController.rouletteData.arcsCount < 2 &&
+        actionController.actionButton != ActionController.ActionType.Refresh) {
       actionController.setActionsEnabled(enable = false)
+      prefController.setPreferencesEnabled()
       hoverPane()
     } else {
       setControlsEnabled()
@@ -186,7 +191,8 @@ class RoulettePane(prefController: PreferencesController,
   }
 
   private def doSpin(spin: () => Unit): Unit = {
-    if (dataController.rouletteData.wonArcRemovable && mWonArc.isDefined &&
+    if (dataController.rouletteData.wonArcRemovable &&
+        mWonArc.isDefined &&
         dataController.rouletteData.arcsCount > 2) {
       disableControls()
       arcsController.removeArcAnimated(mWonArc.get, spin)

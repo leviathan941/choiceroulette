@@ -35,13 +35,6 @@ class ArcsController(dataController: RouletteDataController, actionController: A
 
   private var mArcsData: List[ArcData] = Nil
   private lazy val mArcsPane: ArcsPane = inject [ArcsPane]
-  private val mActionListener = new ActionListener {
-    override def onRefreshAction(): Unit = {
-      mArcsPane.resetPane(mArcsData)
-      actionController.actionButton = ActionController.ActionType.Spin
-    }
-    override def onSpinAction(): Unit = {}
-  }
 
   def data(number: Int): ArcData = {
     require(number >= 0 && number < mArcsData.size, "Check arcs count first")
@@ -158,8 +151,6 @@ class ArcsController(dataController: RouletteDataController, actionController: A
 
   private def arcColors(number: Int): List[Paint] =
     Stream.continually(dataController.arcFills.toStream).take(number).flatten.toList
-
-  actionController.listenActions(mActionListener)
 }
 
 object ArcsController {

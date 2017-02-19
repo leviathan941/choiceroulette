@@ -33,7 +33,7 @@ class ActionsPane(actionController: ActionController) extends HBox {
 
   private val mRefreshButton = new ActionButton(
     "REFRESH",
-    (Color.web("00c1c1"), Color.web("00cece"), Color.web("008787")),
+    (Color.web("#00b7b7"), Color.web("00cece"), Color.web("008787")),
     () => actionController.refreshArcs()
   )
 
