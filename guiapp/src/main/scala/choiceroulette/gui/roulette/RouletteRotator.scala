@@ -26,7 +26,9 @@ import scalafx.scene.Node
   *
   * @author Alexey Kuzin <amkuzink@gmail.com>
   */
-class RouletteRotator(wheel: Node, angle: Double, finished: () => Unit) {
+class RouletteRotator(wheel: Node) {
+
+  private var mRotationWithDelayedFinish: Option[SequentialTransition] = None
 
   private class SpinInterpolator extends Interpolator {
 
@@ -40,22 +42,26 @@ class RouletteRotator(wheel: Node, angle: Double, finished: () => Unit) {
     }
   }
 
-  private lazy val mRotationWithDelayedFinish: SequentialTransition = new SequentialTransition(wheel, Seq(
+  private class RotationWithDelayedFinish(angle: Double, finished: () => Unit) extends SequentialTransition {
+    node = wheel
+    children = Seq(
       new RotateTransition(10.s) {
         byAngle = angle
         interpolator = new SpinInterpolator
       },
-      new PauseTransition(0.5.s))) {
+      new PauseTransition(0.5.s))
 
     delay = 0.4.s
     onFinished = handle(finished())
   }
 
-  def spinTheWheel(): Unit = {
-    mRotationWithDelayedFinish.playFromStart()
+  def spinTheWheel(angle: Double, finished: () => Unit): Unit = {
+    mRotationWithDelayedFinish = Some(new RotationWithDelayedFinish(angle, finished))
+    mRotationWithDelayedFinish.get.playFromStart()
   }
 
   def stopTheWheel(): Unit = {
-    mRotationWithDelayedFinish.stop()
+    if (mRotationWithDelayedFinish.isDefined)
+      mRotationWithDelayedFinish.get.stop()
   }
 }

@@ -33,6 +33,8 @@ import scalafx.scene.layout.StackPane
 class ArcsPane(dataController: RouletteDataController)(implicit val injector: Injector)
     extends StackPane(new ArcsPaneJfxDelegate) {
 
+  private val mRotator: RouletteRotator = new RouletteRotator(this)
+
   def resetPane(arcsData: List[ArcData]): Unit = {
     children = if (arcsData.size >= 2) arcsData.map(_.arc) else Nil
   }
@@ -43,8 +45,7 @@ class ArcsPane(dataController: RouletteDataController)(implicit val injector: In
                        angleCalc: (Double, Double, Double) => Double,
                        resultShower: () => Unit): Unit = {
     val angle = angleWithRotate(angleCalc(arcData.startAngle, arcData.endAngle, 2)) + turns * 360
-    val rotator = new RouletteRotator(this, pointAngle + angle, resultShower)
-    rotator.spinTheWheel()
+    mRotator.spinTheWheel(pointAngle + angle, resultShower)
   }
 
   private[arc] def highlight(arcData: ArcData): Unit =
