@@ -45,7 +45,8 @@ class MenuBarController extends Syncable {
       }
   }
 
-  private var mViewType = mConfigurationManager.getEnum(GuiConfigs.viewTypeConfigKey, ViewType.Normal)
+  private var mViewType: ViewType = mConfigurationManager.getEnum(GuiConfigs.viewTypeConfigKey,
+    ViewType.Normal : ViewType)
   private var mGrabbingEnabled: Boolean = false
   private var mMenuBar: Option[AppMenuBar] = None
 
@@ -90,11 +91,11 @@ class MenuBarController extends Syncable {
     }
   }
 
-  def viewType_=(viewType: ViewType.Value): Unit = {
+  def viewType_=(viewType: ViewType): Unit = {
     mViewType = viewType
     notifyListeners(_.viewTypeChanged(viewType))
   }
-  def viewType: ViewType.Value = mViewType
+  def viewType: ViewType = mViewType
 
   def setGrabbing(enabled: Boolean): Unit = {
     if (!mGrabbingEnabled)

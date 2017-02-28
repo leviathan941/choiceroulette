@@ -68,7 +68,7 @@ class AppMenuBar(menuBarController: MenuBarController) extends MenuBar {
 
     private def changeViewTitle: String = neededViewType.toString + " View"
 
-    private def neededViewType: ViewType.Value = {
+    private def neededViewType: ViewType = {
        menuBarController.viewType match {
         case ViewType.Normal => ViewType.Compact
         case ViewType.Compact => ViewType.Normal

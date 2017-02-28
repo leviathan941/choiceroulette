@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Alexey Kuzin <amkuzink@gmail.com>
+ * Copyright 2016, 2017 Alexey Kuzin <amkuzink@gmail.com>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,4 +23,5 @@ object Dependencies {
   lazy val scalDi = "org.scaldi" %% "scaldi" % "latest.integration";
   lazy val scalaFx = "org.scalafx" %% "scalafx" % "8.0.102-R11"
   lazy val typesafeConfigs = "com.iheart" %% "ficus" % "latest.integration"
+  lazy val enumeratum = "com.beachape" %% "enumeratum" % "latest.integration"
 }

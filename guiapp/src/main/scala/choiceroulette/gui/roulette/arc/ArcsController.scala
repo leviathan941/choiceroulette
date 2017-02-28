@@ -18,7 +18,7 @@ package choiceroulette.gui.roulette.arc
 
 import javafx.scene.paint.Paint
 
-import choiceroulette.gui.controls.actions.{ActionController, ActionListener}
+import choiceroulette.gui.controls.actions.ActionController
 import choiceroulette.gui.roulette.EditChoiceField
 import choiceroulette.gui.roulette.arc.ArcsController.ArcData
 import choiceroulette.gui.roulette.data.{DataHolder, RouletteDataController}

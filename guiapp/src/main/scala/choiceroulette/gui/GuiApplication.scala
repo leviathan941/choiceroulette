@@ -63,7 +63,7 @@ object GuiApplication extends JFXApp {
 
     override def saveFileChosen(path: String): Unit = setSaveResultFile(path)
 
-    override def viewTypeChanged(viewType: ViewType.Value): Unit = setViewType(None, viewType)
+    override def viewTypeChanged(viewType: ViewType): Unit = setViewType(None, viewType)
 
     override def grabFromFileEnabled(): Unit = startDataGrabbing()
 
@@ -87,7 +87,7 @@ object GuiApplication extends JFXApp {
     mConfigManager.setString(GuiConfigs.lastSaveResultFileConfigKey, filePath)
   }
 
-  private def setViewType(splash: Option[Splash], viewType: ViewType.Value): Unit = {
+  private def setViewType(splash: Option[Splash], viewType: ViewType): Unit = {
     mainStage = viewType match {
       case ViewType.Normal => new FullStage(splash, mConfigManager)
       case ViewType.Compact => new CompactStage(splash, mConfigManager)

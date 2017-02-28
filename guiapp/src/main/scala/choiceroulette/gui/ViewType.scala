@@ -16,11 +16,19 @@
 
 package choiceroulette.gui
 
+import enumeratum.{Enum, EnumEntry}
+
+import scala.collection.immutable.IndexedSeq
+
 /** Application view types enumeration.
   *
   * @author Alexey Kuzin <amkuzink@gmail.com>
   */
-object ViewType extends Enumeration {
-  val Normal = Value("Normal")
-  val Compact = Value("Compact")
+sealed trait ViewType extends EnumEntry
+
+object ViewType extends Enum[ViewType] {
+  override val values: IndexedSeq[ViewType] = findValues
+
+  case object Normal extends ViewType
+  case object Compact extends ViewType
 }
