@@ -16,8 +16,10 @@
 
 package choiceroulette.gui.controls.actions
 
+import enumeratum.{Enum, EnumEntry}
 import scaldi.Injectable.inject
 
+import scala.collection.immutable.IndexedSeq
 import scala.collection.mutable
 
 /** Controls UI actions.
@@ -35,13 +37,13 @@ class ActionController {
   def spinRoulette(): Unit = notifyListeners(_.onSpinAction())
   def refreshArcs(): Unit = notifyListeners(_.onRefreshAction())
 
-  def actionButton_=(btnType: ActionController.ActionType.Value): Unit = {
+  def actionButton_=(btnType: ActionController.ActionType): Unit = {
     btnType match {
       case ActionController.ActionType.Spin => mActionsPane.actionButtonStack.showSpin()
       case ActionController.ActionType.Refresh => mActionsPane.actionButtonStack.showRefresh()
     }
   }
-  def actionButton: ActionController.ActionType.Value = mActionsPane.actionButtonStack.action
+  def actionButton: ActionController.ActionType = mActionsPane.actionButtonStack.action
 
   private def notifyListeners(notifyMethod: ActionListener => Unit): Unit = {
     mActionListeners.foreach(notifyMethod)
@@ -51,8 +53,12 @@ class ActionController {
 }
 
 object ActionController {
-  object ActionType extends Enumeration {
-    val Spin = Value
-    val Refresh = Value
+
+  sealed trait ActionType extends EnumEntry
+  object ActionType extends Enum[ActionType] {
+    override val values: IndexedSeq[ActionType] = findValues
+
+    case object Spin extends ActionType
+    case object Refresh extends ActionType
   }
 }

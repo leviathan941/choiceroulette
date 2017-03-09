@@ -50,7 +50,7 @@ class ActionsPane(actionController: ActionController) extends HBox {
       mRefreshButton.visible = true
     }
 
-    def action: ActionController.ActionType.Value = {
+    def action: ActionController.ActionType = {
       if (mSpinButton.visible.value) ActionController.ActionType.Spin
       else ActionController.ActionType.Refresh
     }
