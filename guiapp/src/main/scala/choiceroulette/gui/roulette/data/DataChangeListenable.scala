@@ -23,17 +23,17 @@ import scala.ref.WeakReference
   *
   * @author Alexey Kuzin <amkuzink@gmail.com>
   */
-trait DataChangeListenable[T <: DataHolder] {
-  private lazy val mListeners = new mutable.HashSet[WeakReference[T => Unit]]()
+trait DataChangeListenable[T <: DataHolder, E <: DataHolder.DataType] {
+  private lazy val mListeners = new mutable.HashSet[WeakReference[(T, E) => Unit]]()
 
-  def listen(listener: T => Unit): Unit = {
+  def listen(listener: (T, E) => Unit): Unit = {
     removeObsolete()
     ignore(listener)
 
     mListeners += WeakReference(listener)
   }
 
-  def ignore(listener: T => Unit): Unit = {
+  def ignore(listener: (T, E) => Unit): Unit = {
     mListeners.foreach(weak => weak.get match {
       case Some(stored) if stored == listener => mListeners -= weak
       case _ =>
@@ -47,9 +47,9 @@ trait DataChangeListenable[T <: DataHolder] {
     })
   }
 
-  protected def notifyListeners(dataHolder: T): Unit =
+  protected def notifyListeners(dataHolder: T, dataType: E): Unit =
     mListeners.foreach(_.get match {
-      case Some(changed) => changed(dataHolder)
+      case Some(changed) => changed(dataHolder, dataType)
       case None =>
     })
 }

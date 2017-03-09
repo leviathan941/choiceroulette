@@ -23,8 +23,10 @@ import choiceroulette.configuration.Configurable
 import choiceroulette.gui.GuiConfigs
 import choiceroulette.gui.utils.Conversions._
 import com.typesafe.config.{Config, ConfigFactory, ConfigValueFactory}
+import enumeratum.{Enum, EnumEntry}
 import net.ceedubs.ficus.readers.ArbitraryTypeReader
 
+import scala.collection.immutable.IndexedSeq
 import scalafx.beans.property.{DoubleProperty, ObjectProperty, StringProperty}
 
 /** Roulette data holder to collect data that can be changed dynamically.
@@ -34,6 +36,8 @@ import scalafx.beans.property.{DoubleProperty, ObjectProperty, StringProperty}
 sealed trait DataHolder
 
 object DataHolder {
+
+  sealed trait DataType extends EnumEntry
 
   /** Holds arc's data except label.
     *
@@ -197,13 +201,13 @@ object DataHolder {
                            private var _removeWonArc: Boolean) extends DataHolder
       with ArbitraryTypeReader
       with Configurable
-      with DataChangeListenable[RouletteDataHolder] {
+      with DataChangeListenable[RouletteDataHolder, RouletteDataHolder.RouletteDataType] {
 
     def wheelRadius: Double = _wheelRadius
     def wheelRadius_=(radius: Double): Unit = {
       if (_wheelRadius != radius) {
         _wheelRadius = radius
-        notifyListeners(this)
+        notifyListeners(this, RouletteDataHolder.RouletteDataType.WheelRadius)
       }
     }
 
@@ -211,7 +215,7 @@ object DataHolder {
     def centerCircleRadius_=(radius: Double): Unit = {
       if (_centerCircleRadius != radius) {
         _centerCircleRadius = radius
-        notifyListeners(this)
+        notifyListeners(this, RouletteDataHolder.RouletteDataType.CenterCircleRadius)
       }
     }
 
@@ -220,7 +224,7 @@ object DataHolder {
       val limitedCount = RouletteDataHolder.limitArcsCount(count)
       if (_arcsCount != limitedCount) {
         _arcsCount = limitedCount
-        notifyListeners(this)
+        notifyListeners(this, RouletteDataHolder.RouletteDataType.ArcsCount)
       }
     }
 
@@ -228,7 +232,7 @@ object DataHolder {
     def wonArcRemovable_=(removable: Boolean): Unit = {
       if (_removeWonArc != removable) {
         _removeWonArc = removable
-        notifyListeners(this)
+        notifyListeners(this, RouletteDataHolder.RouletteDataType.RemoveWonArc)
       }
     }
 
@@ -248,6 +252,16 @@ object DataHolder {
     lazy val removeWonArcConfigKey: String = configKeyPrefix + ".removeWonArc"
 
     lazy val arcsCountLimits: Range = 0 to 50
+
+    sealed trait RouletteDataType extends DataType
+    object RouletteDataType extends Enum[RouletteDataType] {
+      override def values: IndexedSeq[RouletteDataType] = findValues
+
+      case object WheelRadius extends RouletteDataType
+      case object CenterCircleRadius extends RouletteDataType
+      case object ArcsCount extends RouletteDataType
+      case object RemoveWonArc extends RouletteDataType
+    }
 
     def limitArcsCount(count: Int): Int = {
       count match {

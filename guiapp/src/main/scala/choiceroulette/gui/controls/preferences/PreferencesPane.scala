@@ -20,15 +20,16 @@ import javafx.beans.value.{ChangeListener, ObservableValue}
 import javafx.scene.control.TextField
 
 import choiceroulette.gui.roulette.data.DataHolder.RouletteDataHolder
+import choiceroulette.gui.roulette.data.DataHolder.RouletteDataHolder.RouletteDataType
 import choiceroulette.gui.roulette.data.RouletteDataController
 
+import scalafx.Includes._
 import scalafx.geometry.{Insets, Orientation, Pos}
 import scalafx.scene.Node
 import scalafx.scene.control._
 import scalafx.scene.layout.{HBox, VBox}
 import scalafx.scene.paint.Color
 import scalafx.scene.text.FontWeight
-import scalafx.Includes._
 
 /** Pane for roulette preferences.
   *
@@ -108,11 +109,17 @@ class PreferencesPane(dataController: RouletteDataController) extends VBox {
     })
   }
 
-  def update(): Unit = {
-    mChoiceCountSpinner.valueFactory().setValue(dataController.rouletteData.arcsCount)
-    mWheelRadiusSlider.value = dataController.rouletteData.wheelRadius
-    mCenterCircleRadiusSlider.value = dataController.rouletteData.centerCircleRadius
-    mRemoveWonArcCheckbox.selected = dataController.rouletteData.wonArcRemovable
+  def update(dataType: RouletteDataType): Unit = {
+    dataType match {
+      case RouletteDataType.ArcsCount =>
+        mChoiceCountSpinner.valueFactory().setValue(dataController.rouletteData.arcsCount)
+      case RouletteDataType.WheelRadius =>
+        mWheelRadiusSlider.value = dataController.rouletteData.wheelRadius
+      case RouletteDataType.CenterCircleRadius =>
+        mCenterCircleRadiusSlider.value = dataController.rouletteData.centerCircleRadius
+      case RouletteDataType.RemoveWonArc =>
+        mRemoveWonArcCheckbox.selected = dataController.rouletteData.wonArcRemovable
+    }
   }
 
   children = List(new PrefLineLayout("Count:", mChoiceCountSpinner, 50),

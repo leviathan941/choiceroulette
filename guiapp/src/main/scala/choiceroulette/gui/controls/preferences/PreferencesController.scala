@@ -29,8 +29,8 @@ class PreferencesController(dataController: RouletteDataController) {
 
   private lazy val mPrefPane = inject [PreferencesPane]
 
-  private val updatePreferencesPane: RouletteDataHolder => Unit = _ =>
-    mPrefPane.update()
+  private val updatePreferencesPane: (RouletteDataHolder, RouletteDataHolder.RouletteDataType) => Unit =
+    (_, dataType) => mPrefPane.update(dataType)
 
   dataController.rouletteData.listen(updatePreferencesPane)
 

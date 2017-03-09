@@ -20,6 +20,7 @@ import choiceroulette.gui.controls.actions.{ActionController, ActionListener}
 import choiceroulette.gui.controls.preferences.PreferencesController
 import choiceroulette.gui.roulette.arc.{ArcsController, ArcsPane, CursorArcPane}
 import choiceroulette.gui.roulette.data.DataHolder._
+import choiceroulette.gui.roulette.data.DataHolder.RouletteDataHolder.RouletteDataType
 import choiceroulette.gui.roulette.data.RouletteDataController
 import choiceroulette.gui.utils.CircleUtils
 import scaldi.Injectable.inject
@@ -81,7 +82,7 @@ class RoulettePane(prefController: PreferencesController,
       radius = radius.value - mPressOffset
     }
     onMouseReleased = handle {
-      radius = radius.value + mPressOffset
+      radius = dataController.rouletteData.centerCircleRadius
       actionController.actionButton match {
         case ActionController.ActionType.Spin => actionController.spinRoulette()
         case ActionController.ActionType.Refresh => actionController.refreshArcs()
@@ -95,11 +96,11 @@ class RoulettePane(prefController: PreferencesController,
 
     onMouseClicked = (event: MouseEvent) => {
       if (event.clickCount == 2) {
-        reset()
+        resetStack()
         arcsController.clearHighlight()
 
         val location = event.x -> event.y
-        arcsController.createEditor(location, reset) match {
+        arcsController.createEditor(location, resetStack) match {
           case Some(editText) => showEditor(editText, location)
           case _ =>
         }
@@ -124,7 +125,7 @@ class RoulettePane(prefController: PreferencesController,
   override def onSpinAction(): Unit = {
 
     doSpin(() => {
-      reset()
+      resetStack()
       arcsController.clearHighlight()
       disableControls()
       arcsController.fillPane(dataController.rouletteData.arcsCount)
@@ -140,33 +141,53 @@ class RoulettePane(prefController: PreferencesController,
     })
   }
   override def onRefreshAction(): Unit = {
-    rouletteDataChanged(dataController.rouletteData)
+    refresh(refreshData = true)
   }
 
-  private val rouletteDataChanged: RouletteDataHolder => Unit = holder => {
-    mBackgroundCircle.radius = holder.wheelRadius
-    mCenterCircle.radius = holder.centerCircleRadius
-    mCursorArcPane.updateRadius(holder.wheelRadius)
-    arcsController.fillPane(holder.arcsCount)
+  private val rouletteDataChanged: (RouletteDataHolder, RouletteDataType) => Unit =
+      (holder, dataType) => {
+    dataType match {
+      case RouletteDataType.WheelRadius =>
+        mBackgroundCircle.radius = holder.wheelRadius
+        mCursorArcPane.updateRadius(holder.wheelRadius)
+        arcsController.fillPane(holder.arcsCount)
+      case RouletteDataType.CenterCircleRadius =>
+        mCenterCircle.radius = holder.centerCircleRadius
+      case RouletteDataType.ArcsCount =>
+        arcsController.fillPane(holder.arcsCount)
+      case _ =>
+    }
+
+    refresh()
+  }
+
+  private def refresh(refreshData: Boolean = false): Unit = {
+    if (refreshData) {
+      mBackgroundCircle.radius = dataController.rouletteData.wheelRadius
+      mCursorArcPane.updateRadius(dataController.rouletteData.wheelRadius)
+      mCenterCircle.radius = dataController.rouletteData.centerCircleRadius
+      arcsController.fillPane(dataController.rouletteData.arcsCount)
+    }
+
     mWonArc = None
     actionController.actionButton = ActionController.ActionType.Spin
 
     // Recreate stack to update its size
     mRouletteStack = new RouletteStack
-    reset()
+    resetStack()
   }
 
   private def showResult(arcData: ArcsController.ArcData): Unit = {
     inject [ResultSaver].save(arcData.arc.dataHolder.labelDataHolder.text)
     mWonArc = Some(arcData)
-    reset()
+    resetStack()
   }
 
   private def hoverPane(): Unit = {
     children += mHoverRectangle
   }
 
-  private lazy val reset = () => {
+  private lazy val resetStack = () => {
     children = mRouletteStack
     dataController.rouletteData.listen(rouletteDataChanged)
 
@@ -221,7 +242,7 @@ class RoulettePane(prefController: PreferencesController,
   actionController.listenActions(this)
 
   arcsController.fillPane(dataController.rouletteData.arcsCount)
-  reset()
+  resetStack()
 
   dataController.restoreArcsData()
 }
